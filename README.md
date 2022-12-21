@@ -1,100 +1,41 @@
-# Boneyard
-Boneyard is a module for the general use tools I write for my Foundry games. Right now, it includes the following tools:
-- [Quick drawing tool settings menus](#quick-drawing-tools-colorsettings-adjuster)
-- [Socketlib anonymous function wrappers](#socketlib-wrapper-functions-for-executing-anonymous-functions)
+# Boneyard Collection
+- [Boneyard Drawing Tools](https://github.com/operation404/boneyard-drawing-tools)
+- [Boneyard Template Tools](https://github.com/operation404/boneyard-template-tools)
+- [Boneyard Socketlib Companion](https://github.com/operation404/boneyard-socketlib-companion)
 
-Be sure to meet the [Requirements](#requirements) before using Boneyard.
+# Boneyard Template Tools
+The Boneyard Template Tools module currently contains one new feature for extending Measured Template functionality:
+- [Template/Token Targeting Functions](#templatetoken-targeting-functions)
 
-## Quick drawing tools color/settings adjuster
-Boneyard adds two new tools to the Drawing sidebar. These tools open a quick menu that allows fast adjustment of stroke or fill color, opacity, line width, and fill type. The changes to drawing settings are continuously updated as you make adjustments on the panel, and it can be closed by clicking anywhere off of it.
+## Template/Token Targeting Functions
+Three API functions are added for determining whether or not a token is inside of a template, finding all tokens inside of a template, and finding all templates that a token is inside of. These can be used in macros or other modules for automating the process of targeting and applying the effects of abilities that affect an area of the grid. 
 
-The first tool controls line settings. The menu for lines contains options for changing stroke color, opacity, and line width.
-
-![Stroke Example. The line menu has options for changing stroke color, opacity, and width.](https://github.com/operation404/fvtt-boneyard/blob/main/images/stroke_example.png?raw=true)
-
-The second tool controls fill settings. The menu for fill contains options for changing fill color, opacity, and fill type.
-
-![Stroke Example. The line menu has options for changing stroke color, opacity, and width.](https://github.com/operation404/fvtt-boneyard/blob/main/images/fill_example.png?raw=true)
-
-## Socketlib wrapper functions for executing anonymous functions
-It is possible to execute anonymous functions through the wrapper functions Boneyard provides. Boneyard converts the function to a string and sends that string through socketlib to a registered handler which parses the string back into a function and executes it. 
+These functions can be accessed with the `Boneyard.Template_Tools' namespace. The `target_style` parameter is optional and if not present, the functions will use whatever targeting style is currently set as the module's default.
 
 ```js
-Boneyard.executeForEveryone_wrapper((args) => {
-  console.log(`Greetings ${game.user.name}!`);
-});
+// in the Template_Tools class
+static token_in_template(token_doc, template_doc, target_style)
+static template_get_tokens(template_doc, target_style)
+static token_get_templates(token_doc, target_style)
 
-// Each user should see 'Greetings' followed by their name
+// example call
+Boneyard.Template_Tools.template_get_tokens(templateDocument, "token region");
 ```
 
-The functions can have a single argument called *args* which should be an object that contains any actual arguments the function might need.
+### Targeting Modes
 
-```js
-let result = await Boneyard.executeAsGM_wrapper((args) => {
-  console.log(args.a);
-  console.log(args.b);
-  let c = args.a+args.b;
-  console.log(c);
-  return c;
-}, {a: 5, b: 3});
+Boneyard Template Tools supports three targeting modes currently, all of which generate and test points to see if they are within the measured template. The amount and location of points generated is determined by the targeting mode.
+- `"token center"` generates a single point at the center of the token.
+- `"any token space"` generates a point at the center of each grid square the token occupies.
+- `"token region"` generates points at the corners, center, and middle of the edges of each grid square the token occupies.
 
-result += 1;
-console.log(result);
+![Examples of the points the different targeting modes generate.](https://github.com/operation404/boneyard-template-tools/blob/master/images/example_targeting_points.jpg?raw=true)
 
-// Should output 5, 3, 8, and 9
-```
+This example shows whether or not a token is determined to be inside of a template based on the targeting mode.
 
-Keep in mind that when *args* is sent through socketlib it is converted into a JSON object before being converted back on the other client. Therefore any objects *args* possessed will be copies of their original and any references will likely be broken. The function being executed will also be in the global scope instead of the current scope at the time of calling the Boneyard wrapper. This means that while your function cannot access local variables in the scope it was declared in, it can still access global foundry variables such as *game*, as seen in the first example.
+![Examples of what the targeting modes look like on the grid.](https://github.com/operation404/boneyard-template-tools/blob/master/images/example_templates.jpg?raw=true)
 
-***Note:*** *I am a novice in regards to JS and this might not be an entirely accurate description of what's really going on, but it's my best understanding of the limitations of socketlib.*
-
-```js
-// This will cause errors when any client other than the sender executes the
-// function because game.user.targets won't correctly persist through the socket
-Boneyard.executeAsGM_wrapper((args)=>{
-    args.targets.forEach(token => { // Throws an error
-        token.actor.update({
-            "data.hp.value": token.actor.data.data.hp.value - 1, // Reduce target hp by 1
-        });
-    });
-}, args={targets: game.user.targets});
-
-// This is a workaround for the above. Token ids are strings and can be safely sent
-// over sockets, the receiving client can then find the desired tokens by their id
-Boneyard.executeAsGM_wrapper((args)=>{
-    args.target_ids.forEach(id => { // Find each token the player had targeted
-        let token = canvas.tokens.placeables.find(token => token.id === id);
-        token.actor.update({
-            "data.hp.value": token.actor.data.data.hp.value - 1, // Reduce target hp by 1
-        });
-    });
-}, args={target_ids: game.user.targets.ids});
-```
-
-Boneyard provides a wrapper for each of the socketlib call functions.
-
-```js
-static executeAsGM_wrapper = async (func, args) => {...};
-static executeAsUser_wrapper = async (userID, func, args) => {...};
-static executeForAllGMs_wrapper = async (func, args) => {...};
-static executeForOtherGMs_wrapper = async (func, args) => {...};
-static executeForEveryone_wrapper = async (func, args) => {...};
-static executeForOthers_wrapper = async (func, args) => {...};
-static executeForUsers_wrapper = async (recipients, func, args) => {...};
-```
-
-If desired, you can also access Boneyard's socket directly as well as use the functions used for convering and recovering functions to and from strings. Since socketlib requires the function being called to be registered, this likely isn't very useful unless you use a world script or modify this module to register more functions, since the only registered function is Boneyard's *boneyard_exec* function and Boneyard already wraps each possible socketlib call with it.
-
-```js
-let result = await Boneyard.socket.executeAsGM("boneyard_exec", 
-  Boneyard.prepare_func(() => {console.log("Hello!"); return 5;})
-);
-console.log(result);
-
-// Sender should log '5', GM should log 'Hello!'
-```
-
-## Requirements
-The following modules are required for Boneyard to function properly:
-* [socketlib](https://github.com/manuelVo/foundryvtt-socketlib)
+### Token Region Targeting Edge Case
+TODO 
+add description and example, then clean up code 
 
