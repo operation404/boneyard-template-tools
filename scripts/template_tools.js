@@ -80,15 +80,15 @@ class Template_Tools {
         target_style = target_style ?? window?.Boneyard?.Template_Tools.default_targeting_mode;
         switch (target_style) { // don't need breaks due to return
 
-            // token_center
+            // token center
             case Template_Tools.targeting_types[0]:
                 return Template_Tools.points_token_center(token_doc);
 
-                // any_token_space
+            // any token space
             case Template_Tools.targeting_types[1]:
                 return Template_Tools.points_any_token_space(token_doc);
 
-                // token_region
+            // token region
             case Template_Tools.targeting_types[2]:
                 return Template_Tools.points_token_region(token_doc);
 
