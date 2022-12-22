@@ -24,13 +24,25 @@ token_get_templates(token_doc, target_style);
 Boneyard.Template_Tools.template_get_tokens(templateDocument, 'token region');
 ```
 
-- `token_in_template` returns a boolean representing whether or not a token is inside of the template.
-- `template_get_tokens` returns an array of token documents of all the tokens that are inside of the template.
-- `token_get_templates` returns an array of template documents of all the templates that a token is inside of.
+- `token_in_template()` returns a boolean representing whether or not a token is inside of the template.
+- `template_get_tokens()` returns an array of token documents of all the tokens that are inside of the template.
+- `token_get_templates()` returns an array of template documents of all the templates that a token is inside of.
 
 ### Targeting Modes
 
-Boneyard Template Tools supports three targeting modes currently, all of which generate and test points to see if they are within the measured template. The amount and location of points generated is determined by the targeting mode.
+Boneyard Template Tools supports three targeting modes currently, all of which generate and test points to see if they are within the measured template. The amount and location of points generated is determined by the targeting mode. The list of targeting modes can be found by accessing `targeting_types` and the default targeting mode can be set through `default_targeting_mode`.
+```js
+Boneyard.Template_Tools.targeting_types = [
+  'token center',
+  'any token space',
+  'token region'
+];
+
+// setting the default targeting mode to 'any token space'
+Boneyard.Template_Tools.default_targeting_mode = Boneyard.Template_Tools.targeting_types[1];
+```
+
+
 - `'token center'` generates a single point at the center of the token.
 - `'any token space'` generates a point at the center of each grid square the token occupies.
 - `'token region'` generates points at the corners, center, and middle of the edges of each grid square the token occupies.
