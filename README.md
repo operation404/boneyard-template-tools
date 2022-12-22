@@ -13,7 +13,7 @@ The Boneyard Template Tools module currently contains one new feature for extend
 ## Template/Token Targeting Functions
 Three API functions are added for determining whether or not a token is inside of a template, finding all tokens inside of a template, and finding all templates that a token is inside of.
 
-These functions can be accessed with the `Boneyard.Template_Tools` namespace. The `target_style` parameter is case sensitive and optional. If not present, the functions will use whatever targeting style is currently set as the module's default.
+These functions can be accessed through the global `Boneyard.Template_Tools` namespace. The `target_style` parameter is case sensitive and optional. If not present, the functions will use whatever targeting style is currently set as the module's default.
 
 ```js
 token_in_template(token_doc, template_doc, target_style);
