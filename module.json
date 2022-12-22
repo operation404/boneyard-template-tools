@@ -7,8 +7,8 @@
   "manifestPlusVersion": "1.2.0",
   "compatibility": {
     "minimum": 10,
-		"maximum": 10,
-		"verified": 10.291
+    "maximum": 10,
+    "verified": 10.291
   },
   "authors": [
     {
@@ -24,12 +24,9 @@
   "esmodules": [
     "scripts/template_tools.js"
   ],
-  "scripts": [
-  ],
-  "styles": [
-  ],
-  "languages": [
-  ],
+  "scripts": [],
+  "styles": [],
+  "languages": [],
   "url": "This is auto replaced",
   "manifest": "This is auto replaced",
   "download": "This is auto replaced",
