@@ -8,6 +8,7 @@ The Boneyard Template Tools module currently contains one new feature for extend
 - [Template/Token Targeting Functions](#templatetoken-targeting-functions)
   - [Targeting Modes](#targeting-modes)
   - [Token Region Targeting Edge Case](#token-region-targeting-edge-case)
+- [TODO](#todo)
 
 ## Template/Token Targeting Functions
 Three API functions are added for determining whether or not a token is inside of a template, finding all tokens inside of a template, and finding all templates that a token is inside of.
@@ -40,6 +41,8 @@ This example shows whether or not a token is determined to be inside of a templa
 
 <img src="https://github.com/operation404/boneyard-template-tools/blob/master/images/example_templates.jpg?raw=true" width=50%>
 
+These targeting modes assume that the token is both properly aligned to the grid, as well as having whole numbers for their height and width.
+
 ### Token Region Targeting Edge Case
 In the case of the `'token region'` targeting mode, an edge case arises when a template and a token are adjacent to each other. When adjacent, there is at least one point on both the edge of the token's occupied region that is also on the edge of the template's contained region. Because the two regions share at least one point, the token is considered to be inside of the template, even if the regions they occupy do not actually overlap.
 
@@ -48,3 +51,7 @@ In this example the point that each token's occupied region shares with the edge
 <img src="https://github.com/operation404/boneyard-template-tools/blob/master/images/example_token_region_edge_case.jpg?raw=true" width=40%>
 
 As a workaround for the `'token region'` targeting mode, the points generated on the border of a token's occupied region are all **shifted inwards by 1 pixel**. This prevents the token from being considered inside of an adjacent template that doesn't share any overlapping area with it.
+
+## TODO
+- [ ] Add proper module settings to set the default targeting mode.
+- [ ] Either add new targeting modes or update the existing modes to handle targeting more accurately to the targeting mode descriptions. Any token space should actually calculate center points of grid spaces even if the token isn't properly aligned to them. Token region should actually check if the regions overlap rather than the simpler workaround of generating a dense field of points.
