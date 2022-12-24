@@ -13,12 +13,12 @@ The Boneyard Template Tools module currently contains one new feature for extend
 ## Template/Token Targeting Functions
 Three API functions are added for determining whether or not a token is inside of a template, finding all tokens inside of a template, and finding all templates that a token is inside of.
 
-These functions can be accessed through the global `Boneyard.Template_Tools` namespace. The `target_style` parameter is case sensitive and optional. If not present, the functions will use whatever targeting style is currently set as the module's default.
+These functions can be accessed through the global `Boneyard.Template_Tools` namespace. The `targeting_mode` parameter is case sensitive and optional. If not present, the functions will use whatever targeting mode is currently set as the module's default. The default targeting mode is a configurable world setting.
 
 ```js
-token_in_template(token_doc, template_doc, target_style);
-template_get_tokens(template_doc, target_style);
-token_get_templates(token_doc, target_style);
+token_in_template(token_doc, template_doc, targeting_mode);
+template_get_tokens(template_doc, targeting_mode);
+token_get_templates(token_doc, targeting_mode);
 
 // example call
 Boneyard.Template_Tools.template_get_tokens(templateDocument, 'token region');
@@ -30,18 +30,14 @@ Boneyard.Template_Tools.template_get_tokens(templateDocument, 'token region');
 
 ### Targeting Modes
 
-Boneyard Template Tools supports three targeting modes currently, all of which generate and test points to see if they are within the measured template. The amount and location of points generated is determined by the targeting mode. The list of targeting modes can be found by accessing `targeting_types` and the default targeting mode can be set through `default_targeting_mode`.
+Boneyard Template Tools supports three targeting modes currently, all of which generate and test points to see if they are within the measured template. The amount and location of points generated is determined by the targeting mode. The list of targeting modes can be accessed through `TARGETING_MODES`.
 ```js
-Boneyard.Template_Tools.targeting_types = [
-  'token center',
-  'any token space',
-  'token region'
-];
-
-// setting the default targeting mode to 'any token space'
-Boneyard.Template_Tools.default_targeting_mode = Boneyard.Template_Tools.targeting_types[1];
+Boneyard.Template_Tools.TARGETING_MODES = {
+  CENTER: 'token center',
+  REGION: 'token region',
+  SPACE: 'any token space'
+}
 ```
-
 
 - `'token center'` generates a single point at the center of the token.
 - `'any token space'` generates a point at the center of each grid square the token occupies.
@@ -65,5 +61,5 @@ In this example the point that each token's occupied region shares with the edge
 As a workaround for the `'token region'` targeting mode, the points generated on the border of a token's occupied region are all **shifted inwards by 1 pixel**. This prevents the token from being considered inside of an adjacent template that doesn't share any overlapping area with it.
 
 ## TODO
-- [ ] Add proper module settings to set the default targeting mode.
+- [x] ~~Add proper module settings to set the default targeting mode.~~
 - [ ] Either add new targeting modes or update the existing modes to handle targeting more accurately to the targeting mode descriptions. Any token space should actually calculate center points of grid spaces even if the token isn't properly aligned to them. Token region should actually check if the regions overlap rather than the simpler workaround of generating a dense field of points.
