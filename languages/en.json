@@ -1,0 +1,7 @@
+{
+	"SETTINGS.Targeting_Mode_Name": "Default Targeting Mode",
+	"SETTINGS.Targeting_Mode_Hint": "How tokens are determined whether or not they are inside of a template. Token Center will target a token only if the center of the token is inside of the template. Any Token Space will target a token if the center of any space the token occupies is in the template. Token Region will target a token if any part of the token overlaps with the template.",
+	"SETTINGS.TARGETING_MODES.CENTER": "Token Center",
+	"SETTINGS.TARGETING_MODES.SPACE": "Any Token Space",
+	"SETTINGS.TARGETING_MODES.REGION": "Token Region"
+}

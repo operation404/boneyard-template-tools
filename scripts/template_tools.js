@@ -1,12 +1,19 @@
-class Template_Tools {
+import {
+    MODULE,
+    TARGET_MODE,
+    TARGETING_MODES
+} from "./constants.js";
+
+export class Template_Tools {
+
+    static default_targeting_mode;
 
     static init() {
-        // Template_Tools.prepare_hook_handlers();
+        Template_Tools.default_targeting_mode = game.settings.get(MODULE, TARGET_MODE);
 
         window.Boneyard = window.Boneyard ?? {};
         window.Boneyard.Template_Tools = {
-            targeting_types: Template_Tools.targeting_types,
-            default_targeting_mode: Template_Tools.targeting_types[1],
+            TARGETING_MODES: TARGETING_MODES,
             token_get_templates: Template_Tools.token_get_templates,
             template_get_tokens: Template_Tools.template_get_tokens,
             token_in_template: Template_Tools.token_in_template,
@@ -15,25 +22,17 @@ class Template_Tools {
         console.log(`====== Boneyard ======\n - Template tools initialized`);
     }
 
-    static prepare_hook_handlers() {}
-
-    static targeting_types = [
-        "token center", // center of token must be inside area
-        "any token space", // the center of at least one occupied space of token must be inside area
-        "token region", // any point on the token occupied region must be inside area
-    ];
-
-    static token_get_templates(token_doc, target_style) {
+    static token_get_templates(token_doc, targeting_mode) {
         return token_doc.parent.templates.filter(template_doc =>
-            Template_Tools.token_in_template(token_doc, template_doc, target_style));
+            Template_Tools.token_in_template(token_doc, template_doc, targeting_mode));
     }
 
-    static template_get_tokens(template_doc, target_style) {
+    static template_get_tokens(template_doc, targeting_mode) {
         return template_doc.parent.tokens.filter(token_doc =>
-            Template_Tools.token_in_template(token_doc, template_doc, target_style));
+            Template_Tools.token_in_template(token_doc, template_doc, targeting_mode));
     }
 
-    static token_in_template(token_doc, template_doc, target_style) {
+    static token_in_template(token_doc, template_doc, targeting_mode) {
         if (token_doc.parent.id !== template_doc.parent.id ||
             token_doc.hidden || template_doc.hidden)
             return false;
@@ -45,7 +44,7 @@ class Template_Tools {
 
         let temp;
         try {
-            temp = Template_Tools.get_token_points(token_doc, target_style);
+            temp = Template_Tools.get_token_points(token_doc, targeting_mode);
         } catch (e) {
             console.error(e);
             console.log("Error in calculating token points to test.");
@@ -76,24 +75,22 @@ class Template_Tools {
         return in_template;
     }
 
-    static get_token_points(token_doc, target_style) {
-        target_style = target_style ?? window?.Boneyard?.Template_Tools.default_targeting_mode;
-        switch (target_style) { // don't need breaks due to return
+    static get_token_points(token_doc, targeting_mode) {
 
-            // token center
-            case Template_Tools.targeting_types[0]:
+        targeting_mode = targeting_mode ?? Template_Tools.default_targeting_mode;
+        switch (targeting_mode) {
+
+            case TARGETING_MODES.CENTER:
                 return Template_Tools.points_token_center(token_doc);
 
-            // any token space
-            case Template_Tools.targeting_types[1]:
+            case TARGETING_MODES.SPACE:
                 return Template_Tools.points_any_token_space(token_doc);
 
-            // token region
-            case Template_Tools.targeting_types[2]:
+            case TARGETING_MODES.REGION:
                 return Template_Tools.points_token_region(token_doc);
 
             default:
-                throw new Error(`Invalid targeting type: ${target_style}`);
+                throw new Error(`Invalid targeting type: ${targeting_mode}`);
         }
     }
 
@@ -311,5 +308,3 @@ class Template_Tools {
     }
 
 }
-
-Template_Tools.init();
