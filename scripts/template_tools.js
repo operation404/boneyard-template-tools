@@ -6,11 +6,7 @@ import {
 
 export class Template_Tools {
 
-    static default_targeting_mode;
-
     static init() {
-        Template_Tools.default_targeting_mode = game.settings.get(MODULE, TARGET_MODE);
-
         window.Boneyard = window.Boneyard ?? {};
         window.Boneyard.Template_Tools = {
             TARGETING_MODES: TARGETING_MODES,
@@ -76,8 +72,7 @@ export class Template_Tools {
     }
 
     static get_token_points(token_doc, targeting_mode) {
-
-        targeting_mode = targeting_mode ?? Template_Tools.default_targeting_mode;
+        targeting_mode = targeting_mode ?? game.settings.get(MODULE, TARGET_MODE);
         switch (targeting_mode) {
 
             case TARGETING_MODES.CENTER:

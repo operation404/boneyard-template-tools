@@ -3,7 +3,6 @@ import {
     TARGET_MODE,
     TARGETING_MODES
 } from "./constants.js";
-import { Template_Tools } from "./template_tools.js";
 
 export function prepare_settings() {
 
@@ -20,11 +19,8 @@ export function prepare_settings() {
             [TARGETING_MODES.SPACE]: "SETTINGS.TARGETING_MODES.SPACE",
             [TARGETING_MODES.REGION]: "SETTINGS.TARGETING_MODES.REGION"
         },
-        requiresReload: false,
-
-        onChange: value => { // value is the new value of the setting
-            Template_Tools.default_targeting_mode = value;
-        },
+        //requiresReload: false,
+        //onChange: value => {}, // value is the new value of the setting
     });
 
 }
