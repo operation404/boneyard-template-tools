@@ -1,2 +1,2 @@
-images/example_targeting_points.psd
-images/example_templates.psd
+images/*.psd
+*.bat
