@@ -41,7 +41,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
 
     static templateContainsToken(measuredTemplateDoc, tokenDoc, targetingMode) {}
 
-    static templateGetTokens(measuredTemplateDoc, targetingMode) {}
+    static templateGetTokens(measuredTemplateDoc, targetingMode) {
+        return measuredTemplateDoc.parent.tokens.filter((token) =>
+            measuredTemplateDoc.containsToken(token, targetingMode)
+        );
+    }
 
     // -------------------- Instance Methods --------------------
 

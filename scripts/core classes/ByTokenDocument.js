@@ -209,9 +209,13 @@ export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
 
     // -------------------- Class Methods --------------------
 
-    static tokenInTemplate(tokenDoc, measuredTemplateDoc) {}
+    static tokenInTemplate(tokenDoc, measuredTemplateDoc, targetingMode) {
+        return measuredTemplateDoc.containsToken(tokenDoc, targetingMode);
+    }
 
-    static tokenGetTemplates(tokenDoc) {}
+    static tokenGetTemplates(tokenDoc, targetingMode) {
+        return tokenDoc.parent.templates.filter((template) => template.containsToken(tokenDoc, targetingMode));
+    }
 
     // -------------------- Private Instance Methods --------------------
 
