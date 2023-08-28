@@ -8,7 +8,7 @@ export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
      * Attach init hooks to set class fields and override the core class.
      */
     static _init() {
-        Hooks.once('init', _overrideSimpleTokenDocument._overrideSimpleTokenDocument);
+        BySimpleTokenDocument._overrideSimpleTokenDocument();
     }
 
     /**

@@ -5,17 +5,13 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     // -------------------- Private Class Fields --------------------
 
     /**
-     * Attach init hooks to set class fields and override the core class.
+     * Initialize class fields and override the core class.
      */
     static _init() {
-        Hooks.once('init', ByMeasuredTemplateDocument._overrideMeasuredTemplateDocument);
-        Hooks.once(
-            'init',
-            () =>
-                (ByMeasuredTemplateDocument._defaultTargetingMode = game.settings.get(
-                    CONST.MODULE,
-                    CONST.SETTINGS.TARGETING_MODE
-                ))
+        ByMeasuredTemplateDocument._overrideMeasuredTemplateDocument();
+        ByMeasuredTemplateDocument._defaultTargetingMode = game.settings.get(
+            CONST.MODULE,
+            CONST.SETTINGS.TARGETING_MODE
         );
     }
 

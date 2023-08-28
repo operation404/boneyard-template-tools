@@ -1,3 +1,4 @@
+export const MODULE = 'boneyard-template-tools';
 export const SETTINGS = Object.freeze({
     TARGETING_MODE: 'TARGETING_MODE',
 });
