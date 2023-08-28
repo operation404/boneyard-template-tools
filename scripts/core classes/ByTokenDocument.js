@@ -229,7 +229,11 @@ export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
 
     // -------------------- Instance Methods --------------------
 
-    inTemplate() {}
+    inTemplate(measuredTemplateDoc, targetingMode) {
+        return BySimpleTokenDocument.tokenInTemplate(this, measuredTemplateDoc, targetingMode);
+    }
 
-    getTemplates() {}
+    getTemplates(targetingMode) {
+        return BySimpleTokenDocument.tokenGetTemplates(this, targetingMode);
+    }
 }

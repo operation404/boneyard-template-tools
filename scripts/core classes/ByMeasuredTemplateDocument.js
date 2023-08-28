@@ -32,21 +32,24 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      */
     static _defaultTargetingMode;
 
+    static _templateContainsPoints(measuredTemplateDoc, points) {
+        const { x, y } = measuredTemplateDoc;
+        return points.some((point) => measuredTemplateDoc.object.shape.contains(point.x - x, point.y - y));
+    }
+
     // -------------------- Class Methods --------------------
 
-    static templateContainsToken(measuredTemplateDoc, tokenDoc) {}
+    static templateContainsToken(measuredTemplateDoc, tokenDoc, targetingMode) {}
 
-    static templateGetTokens() {}
+    static templateGetTokens(measuredTemplateDoc, targetingMode) {}
 
     // -------------------- Instance Methods --------------------
 
-    //constructor(...args) {super(...args);}
-
-    containsToken(tokenDoc) {
+    containsToken(tokenDoc, targetingMode) {
         return false;
     }
 
-    getTokens() {
+    getTokens(targetingMode) {
         return [];
     }
 }
