@@ -39,17 +39,27 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         return points.some((point) => this.object.shape.contains(point.x - x, point.y - y));
     }
 
-    _targetingMethods = {
-        [CONST.TARGETING_MODE.POINTS_CENTER]: null,
-        [CONST.TARGETING_MODE.POINTS_SPACES]: null,
-        [CONST.TARGETING_MODE.POINTS_REGION]: null,
-    };
-
     // -------------------- Instance Fields --------------------
 
     containsToken(tokenDoc, targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode) {
-        
-        return false;
+        if (tokenDoc instanceof TokenDocument) {
+            switch (targetingMode) {
+                case CONST.TARGETING_MODE.POINTS_CENTER:
+                    return this._containsPoints(tokenDoc._centerPoint());
+                case CONST.TARGETING_MODE.POINTS_SPACES:
+                    return this._containsPoints(tokenDoc._spacesPoints());
+                case CONST.TARGETING_MODE.POINTS_REGION:
+                    return this._containsPoints(tokenDoc._regionPoints());
+                default:
+                    const msg = `Invalid targeting mode: ${targetingMode}`;
+                    console.log(msg, targetingMode);
+                    return ui.notifications.error(msg);
+            }
+        } else {
+            const msg = `Function parameter tokenDoc not instance of TokenDocument.`;
+            console.log(msg, tokenDoc);
+            return ui.notifications.error(msg);
+        }
     }
 
     getTokens(targetingMode) {

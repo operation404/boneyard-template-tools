@@ -209,10 +209,16 @@ export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
     // -------------------- Instance Fields --------------------
 
     inTemplate(measuredTemplateDoc, targetingMode) {
-        return measuredTemplateDoc.containsToken(this, targetingMode);
+        if (measuredTemplateDoc instanceof MeasuredTemplateDocument) {
+            return measuredTemplateDoc.containsToken(this, targetingMode);
+        } else {
+            const msg = `Function parameter measuredTemplateDoc not instance of MeasuredTemplateDocument.`;
+            console.log(msg, measuredTemplateDoc);
+            return ui.notifications.error(msg);
+        }
     }
 
     getTemplates(targetingMode) {
-        return this.parent.templates.filter((template) => template.containsToken(this, targetingMode));
+        return this.parent.templates.filter((template) => this.inTemplate(template, targetingMode));
     }
 }
