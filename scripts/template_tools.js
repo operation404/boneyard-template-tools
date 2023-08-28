@@ -1,15 +1,10 @@
-import {
-    MODULE,
-    TARGET_MODE,
-    TARGETING_MODES
-} from "./constants.js";
+import * as CONST from './constants.js';
 
 export class Template_Tools {
-
     static init() {
         window.Boneyard = window.Boneyard ?? {};
         window.Boneyard.Template_Tools = {
-            TARGETING_MODES: TARGETING_MODES,
+            TARGETING_MODES: CONST.TARGETING_MODES,
             token_get_templates: Template_Tools.token_get_templates,
             template_get_tokens: Template_Tools.template_get_tokens,
             token_in_template: Template_Tools.token_in_template,
@@ -19,38 +14,36 @@ export class Template_Tools {
     }
 
     static token_get_templates(token_doc, targeting_mode) {
-        return token_doc.parent.templates.filter(template_doc =>
-            Template_Tools.token_in_template(token_doc, template_doc, targeting_mode));
+        return token_doc.parent.templates.filter((template_doc) =>
+            Template_Tools.token_in_template(token_doc, template_doc, targeting_mode)
+        );
     }
 
     static template_get_tokens(template_doc, targeting_mode) {
-        return template_doc.parent.tokens.filter(token_doc =>
-            Template_Tools.token_in_template(token_doc, template_doc, targeting_mode));
+        return template_doc.parent.tokens.filter((token_doc) =>
+            Template_Tools.token_in_template(token_doc, template_doc, targeting_mode)
+        );
     }
 
     static token_in_template(token_doc, template_doc, targeting_mode) {
-        if (token_doc.parent.id !== template_doc.parent.id ||
-            token_doc.hidden || template_doc.hidden)
-            return false;
+        if (token_doc.parent.id !== template_doc.parent.id || token_doc.hidden || template_doc.hidden) return false;
 
-        const {
-            x,
-            y
-        } = template_doc;
+        const { x, y } = template_doc;
 
         let temp;
         try {
             temp = Template_Tools.get_token_points(token_doc, targeting_mode);
         } catch (e) {
             console.error(e);
-            console.log("Error in calculating token points to test.");
+            console.log('Error in calculating token points to test.');
             return false;
         }
         const token_points = temp; // 'token_points' should be array
         temp = undefined;
 
         let in_template = false;
-        token_points.some(p => { // 'some' breaks on true return
+        token_points.some((p) => {
+            // 'some' breaks on true return
 
             // template_doc.object.shape.contains(testX, testY);
             // testX and testY are offsets from the x,y position of the shape itself
@@ -72,16 +65,15 @@ export class Template_Tools {
     }
 
     static get_token_points(token_doc, targeting_mode) {
-        targeting_mode = targeting_mode ?? game.settings.get(MODULE, TARGET_MODE);
+        targeting_mode = targeting_mode ?? game.settings.get(CONST.MODULE, CONST.TARGET_MODE);
         switch (targeting_mode) {
-
-            case TARGETING_MODES.CENTER:
+            case CONST.TARGETING_MODES.CENTER:
                 return Template_Tools.points_token_center(token_doc);
 
-            case TARGETING_MODES.SPACE:
+            case CONST.TARGETING_MODES.SPACE:
                 return Template_Tools.points_any_token_space(token_doc);
 
-            case TARGETING_MODES.REGION:
+            case CONST.TARGETING_MODES.REGION:
                 return Template_Tools.points_token_region(token_doc);
 
             default:
@@ -90,26 +82,23 @@ export class Template_Tools {
     }
 
     static points_token_center(token_doc) {
-        const {
-            size
-        } = token_doc.parent.dimensions;
+        const { size } = token_doc.parent.dimensions;
         const {
             x,
             y,
             width, // width/height are in grid units, not px
-            height
+            height,
         } = token_doc;
 
         const width_offset = (width / 2) * size;
         const height_offset = (height / 2) * size;
         const point = {
             x: x + width_offset,
-            y: y + height_offset
+            y: y + height_offset,
         };
 
         return [point];
     }
-
 
     /*
     	This function is written in such a way that it assumes the token's width
@@ -128,14 +117,12 @@ export class Template_Tools {
     	TODO: implement a more robust solution
     */
     static points_any_token_space(token_doc) {
-        const {
-            size
-        } = token_doc.parent.dimensions;
+        const { size } = token_doc.parent.dimensions;
         const {
             x,
             y,
             width, // width/height are in grid units, not px
-            height
+            height,
         } = token_doc;
         const c_width = Math.ceil(width);
         const c_height = Math.ceil(height);
@@ -147,7 +134,7 @@ export class Template_Tools {
                 const offset_y = h * size;
                 const point = {
                     x: x + offset_x,
-                    y: y + offset_y
+                    y: y + offset_y,
                 };
                 points.push(point);
             }
@@ -187,14 +174,12 @@ export class Template_Tools {
     	inside of it.
     */
     static points_token_region(token_doc) {
-        const {
-            size
-        } = token_doc.parent.dimensions;
+        const { size } = token_doc.parent.dimensions;
         const {
             x,
             y,
             width, // width/height are in grid units, not px
-            height
+            height,
         } = token_doc;
         const c_width = Math.ceil(width);
         const c_height = Math.ceil(height);
@@ -233,21 +218,21 @@ export class Template_Tools {
             // a - top left point
             points.push({
                 x: x + 1,
-                y: y + 1
+                y: y + 1,
             });
 
             // b - top middle points
             for (w = 0.5; w < c_width; w += 0.5) {
                 points.push({
-                    x: x + (w * size),
-                    y: y + 1
+                    x: x + w * size,
+                    y: y + 1,
                 });
             }
 
             // c - top right point
             points.push({
-                x: x + (w * size) - 1,
-                y: y + 1
+                x: x + w * size - 1,
+                y: y + 1,
             });
         }
 
@@ -256,22 +241,22 @@ export class Template_Tools {
             for (h = 0.5; h < c_height; h += 0.5) {
                 // d - left edge points
                 points.push({
-                    x: x + (w * size) + 1,
-                    y: y + (h * size)
+                    x: x + w * size + 1,
+                    y: y + h * size,
                 });
 
                 // e - all inner points
                 for (w = 0.5; w < c_width; w += 0.5) {
                     points.push({
-                        x: x + (w * size),
-                        y: y + (h * size)
+                        x: x + w * size,
+                        y: y + h * size,
                     });
                 }
 
                 // f - right edge points
                 points.push({
-                    x: x + (w * size) - 1,
-                    y: y + (h * size)
+                    x: x + w * size - 1,
+                    y: y + h * size,
                 });
             }
         }
@@ -281,25 +266,24 @@ export class Template_Tools {
             // g - bottom left point
             points.push({
                 x: x + 1,
-                y: y + (h * size) - 1
+                y: y + h * size - 1,
             });
 
             // h - bottom middle points
             for (w = 0.5; w < c_width; w += 0.5) {
                 points.push({
-                    x: x + (w * size),
-                    y: y + (h * size) - 1
+                    x: x + w * size,
+                    y: y + h * size - 1,
                 });
             }
 
             // i - bottom right point
             points.push({
-                x: x + (w * size) - 1,
-                y: y + (h * size) - 1
+                x: x + w * size - 1,
+                y: y + h * size - 1,
             });
         }
 
         return points;
     }
-
 }
