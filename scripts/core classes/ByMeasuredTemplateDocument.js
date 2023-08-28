@@ -2,6 +2,10 @@ import * as CONST from '../constants.js';
 
 /** @inheritdoc */
 export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.documentClass {
+    static init() {
+        Hooks.once('init', ByMeasuredTemplateDocument.overrideMeasuredTemplateDocument);
+    }
+
     /**
      * Attempt to override the core MeasuredTemplateDocument class.
      * If the targeting mode setting cannot be read, the core class is not overriden.
@@ -13,7 +17,6 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
             CONST.SETTINGS.TARGETING_MODE
         );
         if (ByMeasuredTemplateDocument._defaultTargetingMode) {
-            
             //
             //
             //
@@ -39,9 +42,6 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
             
             */
             CONFIG.MeasuredTemplate.documentClass = ByMeasuredTemplateDocument;
-
-
-
 
             console.log(`====== Boneyard ======\n - ByMeasuredTemplateDocument override success`);
         } else {

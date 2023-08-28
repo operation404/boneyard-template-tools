@@ -1,11 +1,3 @@
-export const MODULE = 'boneyard-template-tools';
-export const TARGET_MODE = 'targetMode';
-export const TARGETING_MODES = {
-    CENTER: 'pointsTokenCenter',
-    SPACE: 'pointsTokenSpaces',
-    REGION: 'pointsTokenRegion',
-};
-
 export const SETTINGS = Object.freeze({
     TARGETING_MODE: 'TARGETING_MODE',
 });

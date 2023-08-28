@@ -1,7 +1,7 @@
 import * as CONST from './constants.js';
-import { ByMeasuredTemplateDocument } from './core classes/MeasuredTemplate.js';
+import { ByMeasuredTemplateDocument } from './core classes/ByMeasuredTemplateDocument.js';
 
-export function prepare_settings() {
+export function registerSettings() {
     game.settings.register(CONST.MODULE, CONST.SETTINGS.TARGETING_MODE, {
         name: `SETTINGS.NAME.${CONST.SETTINGS.TARGETING_MODE}`,
         hint: `SETTINGS.HINT.${CONST.SETTINGS.TARGETING_MODE}`,
@@ -13,7 +13,7 @@ export function prepare_settings() {
             Object.keys(CONST.TARGETING_MODE).map((key) => [key, `SETTINGS.CHOICES.${key}.POINTS_CENTER`])
         ),
         onChange: (value) => {
-            ByMeasuredTemplate._defaultTargetingMode = value;
+            ByMeasuredTemplateDocument._defaultTargetingMode = value;
         },
     });
 }

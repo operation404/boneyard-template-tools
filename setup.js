@@ -1,7 +1,6 @@
-import { prepare_settings } from './scripts/settings.js';
-import { Template_Tools } from './scripts/template_tools.js';
-import { ByMeasuredTemplateDocument } from './scripts/core classes/MeasuredTemplate.js';
+import { registerSettings } from './scripts/settings.js';
+import { ByMeasuredTemplateDocument } from './scripts/core classes/ByMeasuredTemplateDocument.js';
 
-Hooks.once('init', prepare_settings);
-//Hooks.once('setup', Template_Tools.init);
-Hooks.once('setup', ByMeasuredTemplateDocument.overrideMeasuredTemplateDocument);
+Hooks.once('init', registerSettings);
+Hooks.once('init', ByMeasuredTemplateDocument.overrideMeasuredTemplateDocument);
+ByMeasuredTemplateDocument.init();
