@@ -2,7 +2,7 @@ import * as CONST from '../constants.js';
 
 /** @inheritdoc */
 export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.documentClass {
-    // -------------------- Private Class Methods --------------------
+    // -------------------- Private Class Fields --------------------
 
     /**
      * Attach init hooks to set class fields and override the core class.
@@ -32,28 +32,27 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      */
     static _defaultTargetingMode;
 
-    static _templateContainsPoints(measuredTemplateDoc, points) {
-        const { x, y } = measuredTemplateDoc;
-        return points.some((point) => measuredTemplateDoc.object.shape.contains(point.x - x, point.y - y));
+    // -------------------- Private Instance Fields --------------------
+
+    _containsPoints(points) {
+        const { x, y } = this;
+        return points.some((point) => this.object.shape.contains(point.x - x, point.y - y));
     }
 
-    // -------------------- Class Methods --------------------
+    _targetingMethods = {
+        [CONST.TARGETING_MODE.POINTS_CENTER]: null,
+        [CONST.TARGETING_MODE.POINTS_SPACES]: null,
+        [CONST.TARGETING_MODE.POINTS_REGION]: null,
+    };
 
-    static templateContainsToken(measuredTemplateDoc, tokenDoc, targetingMode) {}
+    // -------------------- Instance Fields --------------------
 
-    static templateGetTokens(measuredTemplateDoc, targetingMode) {
-        return measuredTemplateDoc.parent.tokens.filter((token) =>
-            measuredTemplateDoc.containsToken(token, targetingMode)
-        );
-    }
-
-    // -------------------- Instance Methods --------------------
-
-    containsToken(tokenDoc, targetingMode) {
+    containsToken(tokenDoc, targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode) {
+        
         return false;
     }
 
     getTokens(targetingMode) {
-        return [];
+        return this.parent.tokens.filter((token) => this.containsToken(token, targetingMode));
     }
 }

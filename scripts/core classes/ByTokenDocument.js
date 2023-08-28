@@ -2,7 +2,7 @@ import * as CONST from '../constants.js';
 
 /** @inheritdoc */
 export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
-    // -------------------- Private Class Methods --------------------
+    // -------------------- Private Class Fields --------------------
 
     /**
      * Attach init hooks to set class fields and override the core class.
@@ -19,15 +19,16 @@ export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
         console.log(`====== Boneyard ======\n - BySimpleTokenDocument override complete`);
     }
 
+    // -------------------- Private Instance Fields --------------------
+
     /**
-     *  Get the point at the center of token.
-     * @param {SimpleTokenDocument} tokenDoc
+     * Get the point at the center of token.
      * @returns {Point[]}
      */
-    static _tokenCenterPoint(tokenDoc) {
-        const { size } = tokenDoc.parent.dimensions;
+    _centerPoint() {
+        const { size } = this.parent.dimensions;
         // width/height are in grid units, not px
-        const { x, y, width, height } = tokenDoc;
+        const { x, y, width, height } = this;
         return [
             {
                 x: x + (width * size) / 2,
@@ -38,16 +39,15 @@ export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
 
     /**
      * Get the point at the center of each space the token occupies.
-     * @param {SimpleTokenDocument} tokenDoc
      * @returns {Point[]}
      */
-    static _tokenSpacesPoints(tokenDoc) {
-        const { size } = tokenDoc.parent.dimensions;
-        const { x, y } = tokenDoc;
+    _spacesPoints() {
+        const { size } = this.parent.dimensions;
+        const { x, y } = this;
         // width/height are in grid units, not px
         // ceil so tokens partially occupying a space include that entire space
-        const width = Math.ceil(tokenDoc.width);
-        const height = Math.ceil(tokenDoc.height);
+        const width = Math.ceil(this.width);
+        const height = Math.ceil(this.height);
 
         const points = [];
         for (let h = 0.5; h < height; h++) {
@@ -93,16 +93,15 @@ export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
     */
     /**
      * Get the points that approximately form the spacial region the token occupies.
-     * @param {SimpleTokenDocument} tokenDoc
      * @returns {Point[]}
      */
-    static _tokenRegionPoints(tokenDoc) {
-        const { size } = tokenDoc.parent.dimensions;
-        const { x, y } = tokenDoc;
+    _regionPoints() {
+        const { size } = this.parent.dimensions;
+        const { x, y } = this;
         // width/height are in grid units, not px
         // ceil so tokens partially occupying a space include that entire space
-        const width = Math.ceil(tokenDoc.width);
-        const height = Math.ceil(tokenDoc.height);
+        const width = Math.ceil(this.width);
+        const height = Math.ceil(this.height);
 
         /*
         	Top points:
@@ -207,37 +206,13 @@ export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
         return points;
     }
 
-    // -------------------- Class Methods --------------------
-
-    static tokenInTemplate(tokenDoc, measuredTemplateDoc, targetingMode) {
-        return measuredTemplateDoc.containsToken(tokenDoc, targetingMode);
-    }
-
-    static tokenGetTemplates(tokenDoc, targetingMode) {
-        return tokenDoc.parent.templates.filter((template) => template.containsToken(tokenDoc, targetingMode));
-    }
-
-    // -------------------- Private Instance Methods --------------------
-
-    _centerPoint() {
-        return BySimpleTokenDocument._tokenCenterPoint(this);
-    }
-
-    _spacesPoints() {
-        return BySimpleTokenDocument._tokenSpacesPoints(this);
-    }
-
-    _regionPoints() {
-        return BySimpleTokenDocument._tokenRegionPoints(this);
-    }
-
-    // -------------------- Instance Methods --------------------
+    // -------------------- Instance Fields --------------------
 
     inTemplate(measuredTemplateDoc, targetingMode) {
-        return BySimpleTokenDocument.tokenInTemplate(this, measuredTemplateDoc, targetingMode);
+        return measuredTemplateDoc.containsToken(this, targetingMode);
     }
 
     getTemplates(targetingMode) {
-        return BySimpleTokenDocument.tokenGetTemplates(this, targetingMode);
+        return this.parent.templates.filter((template) => template.containsToken(this, targetingMode));
     }
 }
