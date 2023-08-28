@@ -1,5 +1,5 @@
 import * as CONST from './constants.js';
-import { ByMeasuredTemplateDocument } from './scripts/core classes/MeasuredTemplate.js';
+import { ByMeasuredTemplateDocument } from './core classes/MeasuredTemplate.js';
 
 export function prepare_settings() {
     game.settings.register(CONST.MODULE, CONST.SETTINGS.TARGETING_MODE, {
