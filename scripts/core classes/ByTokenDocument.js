@@ -208,6 +208,12 @@ export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
 
     // -------------------- Instance Fields --------------------
 
+    /**
+     * 
+     * @param {MeasuredTemplateDocument} measuredTemplateDoc 
+     * @param {string} targetingMode 
+     * @returns 
+     */
     inTemplate(measuredTemplateDoc, targetingMode) {
         if (measuredTemplateDoc instanceof MeasuredTemplateDocument) {
             return measuredTemplateDoc.containsToken(this, targetingMode);
@@ -218,6 +224,11 @@ export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
         }
     }
 
+    /**
+     * 
+     * @param {string} targetingMode 
+     * @returns 
+     */
     getTemplates(targetingMode) {
         return this.parent.templates.filter((template) => this.inTemplate(template, targetingMode));
     }
