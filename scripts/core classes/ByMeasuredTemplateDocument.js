@@ -2,6 +2,9 @@ import * as CONST from '../constants.js';
 
 /** @inheritdoc */
 export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.documentClass {
+
+    // -------------------- Private Class Methods --------------------
+
     static _init() {
         Hooks.once('init', ByMeasuredTemplateDocument._overrideMeasuredTemplateDocument);
     }
@@ -26,6 +29,14 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     }
 
     static _defaultTargetingMode;
+
+    // -------------------- Class Methods --------------------
+
+    static templateContainsToken(measuredTemplateDocument, tokenDocument) {
+        
+    }
+
+    // -------------------- Instance Methods --------------------
 
     //constructor(...args) {super(...args);}
 
