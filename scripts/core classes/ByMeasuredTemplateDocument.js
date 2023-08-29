@@ -43,7 +43,8 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     _boundsOverlap(doc) {
         if (!(doc instanceof ByTokenDocument || doc instanceof ByMeasuredTemplateDocument)) {
             const msg = `Argument doc not instance of BySimpleTokenDocument or ByMeasuredTemplateDocument.`;
-            return console.error(msg, doc);
+            console.error(msg, doc);
+            return false;
         }
         const b1 = this._getBounds();
         const b2 = doc._getBounds();
@@ -74,7 +75,8 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      */
     containsToken(tokenDoc, targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode) {
         if (tokenDoc instanceof ByTokenDocument) {
-            if (tokenDoc.parent !== this.parent) return false;
+            if (this.parent !== tokenDoc.parent) return false;
+            if (!this._boundsOverlap(tokenDoc)) return false;
             switch (targetingMode) {
                 case CONST.TARGETING_MODE.POINTS_CENTER:
                     return this._containsPoints(tokenDoc._centerPoint());
