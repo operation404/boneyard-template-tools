@@ -59,7 +59,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         if (l1.x > r2.x || l2.x > r1.x) return false;
 
         // if one rectangle is above the other
-        if (r1.y > l2.y || r2.y > l1.y) return false;
+        if (r1.y < l2.y || r2.y < l1.y) return false;
 
         return true;
     }
