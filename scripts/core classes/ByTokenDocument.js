@@ -22,6 +22,10 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
 
     // -------------------- Private Instance Fields --------------------
 
+    _getBounds() {
+        return this.object.bounds;
+    }
+
     /**
      * Get the point at the center of token.
      * @returns {Point[]}

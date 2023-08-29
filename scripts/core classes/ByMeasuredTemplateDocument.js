@@ -36,6 +36,34 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         return points.some((point) => this.object.shape.contains(point.x - x, point.y - y));
     }
 
+    _getBounds() {
+        return this.object.bounds;
+    }
+
+    _boundsOverlap(doc) {
+        if (!(doc instanceof ByTokenDocument || doc instanceof ByMeasuredTemplateDocument)) {
+            const msg = `Argument doc not instance of BySimpleTokenDocument or ByMeasuredTemplateDocument.`;
+            return console.error(msg, doc);
+        }
+        const b1 = this._getBounds();
+        const b2 = doc._getBounds();
+        const l1 = { x: b1.x, y: b1.y },
+            r1 = { x: b1.x + b1.width, y: b1.y + b1.height },
+            l2 = { x: b2.x, y: b2.y },
+            r2 = { x: b2.x + b2.width, y: b2.y + b2.height };
+
+        // if rectangles have no area, no overlap
+        if (l1.x === r1.x || l1.y === l2.y || l2.x === r2.x || l2.y === r2.y) return false;
+
+        // if one rectangle is to the left of the other
+        if (l1.x > r2.x || l2.x > r1.x) return false;
+
+        // if one rectangle is above the other
+        if (r1.y > l2.y || r2.y > l1.y) return false;
+
+        return true;
+    }
+
     // -------------------- Instance Fields --------------------
 
     /**
