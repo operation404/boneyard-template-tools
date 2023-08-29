@@ -1,4 +1,5 @@
 import * as CONST from '../constants.js';
+import { ByMeasuredTemplateDocument } from './ByMeasuredTemplateDocument.js';
 
 /** @inheritdoc */
 export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
@@ -215,10 +216,10 @@ export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
      * @returns
      */
     inTemplate(measuredTemplateDoc, targetingMode) {
-        if (measuredTemplateDoc instanceof MeasuredTemplateDocument) {
+        if (measuredTemplateDoc instanceof ByMeasuredTemplateDocument) {
             return measuredTemplateDoc.containsToken(this, targetingMode);
         } else {
-            const msg = `Argument measuredTemplateDoc not instance of MeasuredTemplateDocument.`;
+            const msg = `Argument measuredTemplateDoc not instance of ByMeasuredTemplateDocument.`;
             return console.error(msg, measuredTemplateDoc);
         }
     }

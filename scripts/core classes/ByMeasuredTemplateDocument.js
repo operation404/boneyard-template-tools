@@ -45,7 +45,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @returns
      */
     containsToken(tokenDoc, targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode) {
-        if (tokenDoc instanceof TokenDocument) {
+        if (tokenDoc instanceof BySimpleTokenDocument) {
             if (tokenDoc.parent !== this.parent) return false;
             switch (targetingMode) {
                 case CONST.TARGETING_MODE.POINTS_CENTER:
@@ -59,7 +59,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
                     return console.error(msg, targetingMode);
             }
         } else {
-            const msg = `Argument tokenDoc not instance of TokenDocument.`;
+            const msg = `Argument tokenDoc not instance of BySimpleTokenDocument.`;
             return console.error(msg, tokenDoc);
         }
     }
