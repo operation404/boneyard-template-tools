@@ -2,22 +2,22 @@ import * as CONST from '../constants.js';
 import { ByMeasuredTemplateDocument } from './ByMeasuredTemplateDocument.js';
 
 /** @inheritdoc */
-export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
+export class ByTokenDocument extends CONFIG.Token.documentClass {
     // -------------------- Private Class Fields --------------------
 
     /**
      * Attach init hooks to set class fields and override the core class.
      */
     static _init() {
-        BySimpleTokenDocument._overrideSimpleTokenDocument();
+        ByTokenDocument._overrideSimpleTokenDocument();
     }
 
     /**
      * Override the core SimpleTokenDocument class.
      */
     static _overrideSimpleTokenDocument() {
-        CONFIG.Token.documentClass = BySimpleTokenDocument;
-        console.log(`====== Boneyard ======\n - BySimpleTokenDocument override complete`);
+        CONFIG.Token.documentClass = ByTokenDocument;
+        console.log(`====== Boneyard ======\n - ByTokenDocument override complete`);
     }
 
     // -------------------- Private Instance Fields --------------------

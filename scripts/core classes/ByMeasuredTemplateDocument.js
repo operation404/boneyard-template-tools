@@ -1,5 +1,5 @@
 import * as CONST from '../constants.js';
-import { BySimpleTokenDocument } from './ByTokenDocument.js';
+import { ByTokenDocument } from './ByTokenDocument.js';
 
 /** @inheritdoc */
 export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.documentClass {
@@ -45,7 +45,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @returns
      */
     containsToken(tokenDoc, targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode) {
-        if (tokenDoc instanceof BySimpleTokenDocument) {
+        if (tokenDoc instanceof ByTokenDocument) {
             if (tokenDoc.parent !== this.parent) return false;
             switch (targetingMode) {
                 case CONST.TARGETING_MODE.POINTS_CENTER:
