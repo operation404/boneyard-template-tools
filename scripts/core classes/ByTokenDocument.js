@@ -209,25 +209,24 @@ export class BySimpleTokenDocument extends CONFIG.Token.documentClass {
     // -------------------- Instance Fields --------------------
 
     /**
-     * 
-     * @param {MeasuredTemplateDocument} measuredTemplateDoc 
-     * @param {string} targetingMode 
-     * @returns 
+     *
+     * @param {MeasuredTemplateDocument} measuredTemplateDoc
+     * @param {string} targetingMode
+     * @returns
      */
     inTemplate(measuredTemplateDoc, targetingMode) {
         if (measuredTemplateDoc instanceof MeasuredTemplateDocument) {
             return measuredTemplateDoc.containsToken(this, targetingMode);
         } else {
-            const msg = `Function parameter measuredTemplateDoc not instance of MeasuredTemplateDocument.`;
-            console.log(msg, measuredTemplateDoc);
-            return ui.notifications.error(msg);
+            const msg = `Argument measuredTemplateDoc not instance of MeasuredTemplateDocument.`;
+            return console.error(msg, measuredTemplateDoc);
         }
     }
 
     /**
-     * 
-     * @param {string} targetingMode 
-     * @returns 
+     *
+     * @param {string} targetingMode
+     * @returns
      */
     getTemplates(targetingMode) {
         return this.parent.templates.filter((template) => this.inTemplate(template, targetingMode));

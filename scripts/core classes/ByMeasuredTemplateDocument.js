@@ -46,6 +46,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      */
     containsToken(tokenDoc, targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode) {
         if (tokenDoc instanceof TokenDocument) {
+            if (tokenDoc.parent !== this.parent) return false;
             switch (targetingMode) {
                 case CONST.TARGETING_MODE.POINTS_CENTER:
                     return this._containsPoints(tokenDoc._centerPoint());
@@ -55,13 +56,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
                     return this._containsPoints(tokenDoc._regionPoints());
                 default:
                     const msg = `Invalid targeting mode: ${targetingMode}`;
-                    console.log(msg, targetingMode);
-                    return ui.notifications.error(msg);
+                    return console.error(msg, targetingMode);
             }
         } else {
-            const msg = `Function parameter tokenDoc not instance of TokenDocument.`;
-            console.log(msg, tokenDoc);
-            return ui.notifications.error(msg);
+            const msg = `Argument tokenDoc not instance of TokenDocument.`;
+            return console.error(msg, tokenDoc);
         }
     }
 
