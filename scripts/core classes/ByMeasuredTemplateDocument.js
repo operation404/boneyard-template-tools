@@ -90,7 +90,8 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
             }
         } else {
             const msg = `Argument tokenDoc not instance of BySimpleTokenDocument.`;
-            return console.error(msg, tokenDoc);
+            console.error(msg, tokenDoc);
+            return false;
         }
     }
 
