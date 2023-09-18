@@ -174,22 +174,28 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
             const msg = `Argument tokenDoc not on same scene as measured template.`;
             return console.error(msg, tokenDoc);
         }
-        console.log(tolerance);
+
+        console.log(tolerance, targetingMode, percentateOutput);
 
         let collisionResult = 0;
         if (this._boundsOverlap(tokenDoc)) {
             console.log('bounds overlap');
             switch (targetingMode) {
                 case CONST.TARGETING_MODE.POINTS_CENTER:
-                    collisionResult = this._containsPoints(tokenDoc._centerPoint(), tolerance);
+                    collisionResult = this._containsPoints(tokenDoc._centerPoint());
+                    break;
                 case CONST.TARGETING_MODE.POINTS_SPACES:
-                    collisionResult = this._containsPoints(tokenDoc._spacesPoints(), tolerance);
+                    collisionResult = this._containsPoints(tokenDoc._spacesPoints());
+                    break;
                 case CONST.TARGETING_MODE.POINTS_REGION:
-                    collisionResult = this._containsPoints(tokenDoc._regionPoints(), tolerance);
+                    collisionResult = this._containsPoints(tokenDoc._regionPoints());
+                    break;
                 case CONST.TARGETING_MODE.CIRCLE_AREA:
-                    collisionResult = this._polyIntersection(tokenDoc._circlePoly(), tolerance);
+                    collisionResult = this._polyIntersection(tokenDoc._circlePoly());
+                    break;
                 case CONST.TARGETING_MODE.RECTANGLE_AREA:
-                    collisionResult = this._polyIntersection(tokenDoc._rectanglePoly(), tolerance);
+                    collisionResult = this._polyIntersection(tokenDoc._rectanglePoly());
+                    break;
             }
         }
         console.log(collisionResult);
