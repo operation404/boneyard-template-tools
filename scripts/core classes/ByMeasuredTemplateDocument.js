@@ -175,11 +175,8 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
             return console.error(msg, tokenDoc);
         }
 
-        console.log(tolerance, targetingMode, percentateOutput);
-
         let collisionResult = 0;
         if (this._boundsOverlap(tokenDoc)) {
-            console.log('bounds overlap');
             switch (targetingMode) {
                 case CONST.TARGETING_MODE.POINTS_CENTER:
                     collisionResult = this._containsPoints(tokenDoc._centerPoint());
@@ -198,7 +195,6 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
                     break;
             }
         }
-        console.log(collisionResult);
 
         return percentateOutput ? collisionResult : collisionResult >= tolerance;
     }
