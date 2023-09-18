@@ -211,6 +211,19 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         return points;
     }
 
+    _circleShape() {
+        const { size } = this.parent.dimensions;
+        const { x, y, width, height } = this; // width/height are in grid units, not px
+        const radius = (Math.max(width, height) * size) / 2;
+        return new PIXI.Circle(x + radius, y + radius, radius);
+    }
+
+    _rectangleShape() {
+        const { size } = this.parent.dimensions;
+        const { x, y, width, height } = this; // width/height are in grid units, not px
+        return new PIXI.Rectangle(x, y, width * size, height * size);
+    }
+
     // -------------------- Instance Fields --------------------
 
     /**

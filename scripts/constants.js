@@ -3,5 +3,5 @@ export const SETTINGS = Object.freeze({
     TARGETING_MODE: 'TARGETING_MODE',
 });
 
-const targetingModeStrings = ['POINTS_CENTER', 'POINTS_SPACES', 'POINTS_REGION'];
+const targetingModeStrings = ['POINTS_CENTER', 'POINTS_SPACES', 'POINTS_REGION', 'CIRCLE_AREA', 'RECTANGLE_AREA'];
 export const TARGETING_MODE = Object.freeze(Object.fromEntries(targetingModeStrings.map((v) => [v, v])));

@@ -104,3 +104,15 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         return this.parent.tokens.filter((token) => this.containsToken(token, targetingMode));
     }
 }
+
+/*
+
+All Pixi objects are created assuming they have some point on the origin of 0,0 even if the canvas
+objects that contain them are not on the origin
+
+This means to use the Pixi algorithms to test for area overlapping, I'll need to translate one of the objects
+before using any of the intersection methods so that with one pixi object on the origin, the other is the same
+distance from it relative to their actual canvas positions
+
+
+*/
