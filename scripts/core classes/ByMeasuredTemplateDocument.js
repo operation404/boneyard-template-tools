@@ -14,6 +14,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
             CONST.MODULE,
             CONST.SETTINGS.TARGETING_MODE
         );
+        ByMeasuredTemplateDocument._defaultTolerance = game.settings.get(CONST.MODULE, CONST.SETTINGS.TOLERANCE);
     }
 
     /**
@@ -28,6 +29,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * The targeting mode to use when no explicit mode is given.
      */
     static _defaultTargetingMode;
+
+    /**
+     * The tolerance to use when no explicit tolerance is given.
+     */
+    static _defaultTolerance;
 
     // -------------------- Private Instance Fields --------------------
 
@@ -127,7 +133,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @param {string} targetingMode
      * @returns
      */
-    containsToken(tokenDoc, targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode) {
+    containsToken(
+        tokenDoc,
+        tolerance = ByMeasuredTemplateDocument._defaultTolerance,
+        targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode
+    ) {
         if (tokenDoc instanceof ByTokenDocument) {
             if (this.parent !== tokenDoc.parent) return false;
             if (!this._boundsOverlap(tokenDoc)) return false;
@@ -158,19 +168,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @param {string} targetingMode
      * @returns
      */
-    getTokens(targetingMode) {
-        return this.parent.tokens.filter((token) => this.containsToken(token, targetingMode));
+    getTokens(tolerance, targetingMode) {
+        return this.parent.tokens.filter((token) => this.containsToken(token, tolerance, targetingMode));
     }
 }
-
-/*
-
-All Pixi objects are created assuming they have some point on the origin of 0,0 even if the canvas
-objects that contain them are not on the origin
-
-This means to use the Pixi algorithms to test for area overlapping, I'll need to translate one of the objects
-before using any of the intersection methods so that with one pixi object on the origin, the other is the same
-distance from it relative to their actual canvas positions
-
-
-*/

@@ -211,6 +211,13 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         return points;
     }
 
+    /**
+     * Create a circle approximation representing the occupied area of the token.
+     * If the token's width and height are not equal, the larger of the two is used as
+     * the radius of the circle. The circle's center point is still the true center of the
+     * token.
+     * @returns {PIXI.Polygon} The polygon approximation of the token's occupied area as a circle
+     */
     _circlePoly() {
         const { size } = this.parent.dimensions;
         const { x, y, width, height } = this; // width/height are in grid units, not px
@@ -219,6 +226,10 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         return new PIXI.Circle(x + widthRadius, y + heightRadius, Math.max(widthRadius, heightRadius)).toPolygon();
     }
 
+    /**
+     * Create a rectangular approximation representing the occupied area of the token.
+     * @returns {PIXI.Polygon} The polygon approximation of the token's occupied area as a rectangle
+     */
     _rectanglePoly() {
         const { size } = this.parent.dimensions;
         const { x, y, width, height } = this; // width/height are in grid units, not px
@@ -233,9 +244,9 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      * @param {string} targetingMode
      * @returns
      */
-    inTemplate(measuredTemplateDoc, targetingMode) {
+    inTemplate(measuredTemplateDoc, tolerance, targetingMode) {
         if (measuredTemplateDoc instanceof ByMeasuredTemplateDocument) {
-            return measuredTemplateDoc.containsToken(this, targetingMode);
+            return measuredTemplateDoc.containsToken(this, tolerance, targetingMode);
         } else {
             const msg = `Argument measuredTemplateDoc not instance of ByMeasuredTemplateDocument.`;
             console.error(msg, measuredTemplateDoc);
@@ -248,7 +259,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      * @param {string} targetingMode
      * @returns
      */
-    getTemplates(targetingMode) {
-        return this.parent.templates.filter((template) => this.inTemplate(template, targetingMode));
+    getTemplates(tolerance, targetingMode) {
+        return this.parent.templates.filter((template) => this.inTemplate(template, tolerance, targetingMode));
     }
 }
