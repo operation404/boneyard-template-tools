@@ -53,7 +53,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      */
     _containsPoints(points) {
         const { x, y } = this;
-        containedCount = points.reduce(
+        const containedCount = points.reduce(
             (counter, p) => (counter += this.object.shape.contains(p.x - x, p.y - y) ? 1 : 0),
             0
         );
