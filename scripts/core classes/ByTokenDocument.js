@@ -214,8 +214,9 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
     _circleShape() {
         const { size } = this.parent.dimensions;
         const { x, y, width, height } = this; // width/height are in grid units, not px
-        const radius = (Math.max(width, height) * size) / 2;
-        return new PIXI.Circle(x + radius, y + radius, radius);
+        const widthRadius = (width * size) / 2;
+        const heightRadius = (height * size) / 2;
+        return new PIXI.Circle(x + widthRadius, y + heightRadius, Math.max(widthRadius, heightRadius));
     }
 
     _rectangleShape() {
