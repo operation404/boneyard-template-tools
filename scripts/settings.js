@@ -10,7 +10,7 @@ export function registerSettings() {
         type: String,
         default: CONST.TARGETING_MODE.POINTS_SPACES,
         choices: Object.fromEntries(
-            Object.keys(CONST.TARGETING_MODE).map((key) => [key, `SETTINGS.CHOICES.${key}.POINTS_CENTER`])
+            Object.keys(CONST.TARGETING_MODE).map((key) => [key, `SETTINGS.CHOICES.${key}`])
         ),
         onChange: (value) => {
             ByMeasuredTemplateDocument._defaultTargetingMode = value;
