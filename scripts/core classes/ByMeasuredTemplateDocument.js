@@ -168,7 +168,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
                             return console.error(msg, targetingMode);
                     }
                 })();
-                if (collisionResult === undefined) return undefined;
+                return collisionResult === undefined
+                    ? undefined
+                    : percentateOutput
+                    ? collisionResult
+                    : collisionResult >= tolerance;
             } else {
                 const msg = `Argument tokenDoc not on same scene as measured template.`;
                 return console.error(msg, tokenDoc);

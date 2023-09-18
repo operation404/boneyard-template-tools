@@ -15,14 +15,16 @@ export function registerSettings() {
         },
     });
 
+    // Cannot be less than or equal to zero
     game.settings.register(CONST.MODULE, CONST.SETTINGS.TOLERANCE, {
         name: `SETTINGS.NAME.${CONST.SETTINGS.TOLERANCE}`,
         hint: `SETTINGS.HINT.${CONST.SETTINGS.TOLERANCE}`,
         scope: 'world',
         config: true,
         type: Number,
-        default: 0.0001,
+        default: Number.MIN_VALUE,
         onChange: (value) => {
+            if (value <= 0) value = Number.MIN_VALUE;
             ByMeasuredTemplateDocument._defaultTolerance = value;
         },
     });
