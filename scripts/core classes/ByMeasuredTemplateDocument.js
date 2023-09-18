@@ -53,7 +53,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      */
     _containsPoints(points) {
         const { x, y } = this;
-        return points.some((point) => this.object.shape.contains(point.x - x, point.y - y));
+        containedCount = points.reduce(
+            (counter, p) => (counter += this.object.shape.contains(p.x - x, p.y - y) ? 1 : 0),
+            0
+        );
+        return containedCount / points.length;
     }
 
     _getBounds() {
@@ -130,8 +134,9 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     }
 
     _polyIntersection(tokenPoly) {
-        const templatePoly = this._polyForm();
-        return templatePoly.intersectPolygon(tokenPoly).signedArea() > 0;
+        const intersectionArea = this._polyForm().intersectPolygon(tokenPoly).signedArea();
+        const tokenArea = tokenPoly.signedArea();
+        return intersectionArea / tokenArea;
     }
 
     // -------------------- Instance Fields --------------------
