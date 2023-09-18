@@ -143,15 +143,20 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
 
     /**
      *
-     * @param {TokenDocument} tokenDoc
-     * @param {string} targetingMode
+     * @param {TokenDocument} tokenDoc                  The Token being tested on whether the template contains it
+     * @param {object} [options]                        Options to configure how collision is calculated
+     * @param {number} [options.tolerance]              Percentage of overlap needed to be considered inside template
+     * @param {string} [options.targetingMode]          Targeting mode to use for collision detection
+     * @param {boolean} [options.percentateOutput]      Whether to return a boolean representing collision result or the area of the collision intersection
      * @returns
      */
     containsToken(
         tokenDoc,
-        tolerance = ByMeasuredTemplateDocument._defaultTolerance,
-        targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode,
-        percentateOutput = ByMeasuredTemplateDocument._defaultPercentageOutput
+        {
+            tolerance = ByMeasuredTemplateDocument._defaultTolerance,
+            targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode,
+            percentateOutput = ByMeasuredTemplateDocument._defaultPercentageOutput,
+        } = {}
     ) {
         if (!(tokenDoc instanceof ByTokenDocument)) {
             const msg = `Argument tokenDoc not instance of BySimpleTokenDocument.`;
@@ -169,9 +174,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
             const msg = `Argument tokenDoc not on same scene as measured template.`;
             return console.error(msg, tokenDoc);
         }
+        console.log(tolerance);
 
         let collisionResult = 0;
         if (this._boundsOverlap(tokenDoc)) {
+            console.log('bounds overlap');
             switch (targetingMode) {
                 case CONST.TARGETING_MODE.POINTS_CENTER:
                     collisionResult = this._containsPoints(tokenDoc._centerPoint(), tolerance);
@@ -185,17 +192,17 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
                     collisionResult = this._polyIntersection(tokenDoc._rectanglePoly(), tolerance);
             }
         }
+        console.log(collisionResult);
+
         return percentateOutput ? collisionResult : collisionResult >= tolerance;
     }
 
     /**
      *
-     * @param {string} targetingMode
+     * @param {object} options
      * @returns
      */
-    getTokens(tolerance, targetingMode, percentateOutput) {
-        return this.parent.tokens.filter((token) =>
-            this.containsToken(token, tolerance, targetingMode, percentateOutput)
-        );
+    getTokens(options) {
+        return this.parent.tokens.filter((token) => this.containsToken(token, options));
     }
 }
