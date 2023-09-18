@@ -85,12 +85,14 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * Translate a PIXI polygon to the template's location
      * @returns {PIXI.Polygon} The translated polygon
      */
-    _polygon() {
-        const options = { scalingFactor: 100 };
+    _polygon(options = { scalingFactor: 100 }) {
+        let { x, y } = this;
+        x *= options.scalingFactor;
+        y *= options.scalingFactor;
         const clipperPolygon = this.object.shape.toClipperPoints(options);
         clipperPolygon.forEach((p) => {
-            p.x += this.x;
-            p.y += this.y;
+            p.X += x;
+            p.Y += y;
         });
         return PIXI.Polygon.fromClipperPoints(clipperPolygon, options);
     }
