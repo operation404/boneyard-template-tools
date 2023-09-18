@@ -211,18 +211,18 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         return points;
     }
 
-    _circleShape() {
+    _circlePoly() {
         const { size } = this.parent.dimensions;
         const { x, y, width, height } = this; // width/height are in grid units, not px
         const widthRadius = (width * size) / 2;
         const heightRadius = (height * size) / 2;
-        return new PIXI.Circle(x + widthRadius, y + heightRadius, Math.max(widthRadius, heightRadius));
+        return new PIXI.Circle(x + widthRadius, y + heightRadius, Math.max(widthRadius, heightRadius)).toPolygon();
     }
 
-    _rectangleShape() {
+    _rectanglePoly() {
         const { size } = this.parent.dimensions;
         const { x, y, width, height } = this; // width/height are in grid units, not px
-        return new PIXI.Rectangle(x, y, width * size, height * size);
+        return new PIXI.Rectangle(x, y, width * size, height * size).toPolygon();
     }
 
     // -------------------- Instance Fields --------------------
