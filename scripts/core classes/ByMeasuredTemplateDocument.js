@@ -148,39 +148,39 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode,
         percentateOutput = ByMeasuredTemplateDocument._defaultPercentageOutput
     ) {
-        if (tokenDoc instanceof ByTokenDocument) {
-            if (this.parent === tokenDoc.parent) {
-                if (!this._boundsOverlap(tokenDoc)) return percentateOutput ? 0 : false;
-                const collisionResult = (() => {
-                    switch (targetingMode) {
-                        case CONST.TARGETING_MODE.POINTS_CENTER:
-                            return this._containsPoints(tokenDoc._centerPoint(), tolerance);
-                        case CONST.TARGETING_MODE.POINTS_SPACES:
-                            return this._containsPoints(tokenDoc._spacesPoints(), tolerance);
-                        case CONST.TARGETING_MODE.POINTS_REGION:
-                            return this._containsPoints(tokenDoc._regionPoints(), tolerance);
-                        case CONST.TARGETING_MODE.CIRCLE_AREA:
-                            return this._polyIntersection(tokenDoc._circlePoly(), tolerance);
-                        case CONST.TARGETING_MODE.RECTANGLE_AREA:
-                            return this._polyIntersection(tokenDoc._rectanglePoly(), tolerance);
-                        default:
-                            const msg = `Invalid targeting mode: ${targetingMode}`;
-                            return console.error(msg, targetingMode);
-                    }
-                })();
-                return collisionResult === undefined
-                    ? undefined
-                    : percentateOutput
-                    ? collisionResult
-                    : collisionResult >= tolerance;
-            } else {
-                const msg = `Argument tokenDoc not on same scene as measured template.`;
-                return console.error(msg, tokenDoc);
-            }
-        } else {
+        if (!(tokenDoc instanceof ByTokenDocument)) {
             const msg = `Argument tokenDoc not instance of BySimpleTokenDocument.`;
             return console.error(msg, tokenDoc);
         }
+        if (tolerance <= 0) {
+            const msg = `Argument tolerance must be greater than or equal to 0: ${tolerance}`;
+            return console.error(msg, tolerance);
+        }
+        if (CONST.TARGETING_MODE[targetingMode] === undefined) {
+            const msg = `Invalid targeting mode: ${targetingMode}`;
+            return console.error(msg, targetingMode);
+        }
+        if (this.parent !== tokenDoc.parent) {
+            const msg = `Argument tokenDoc not on same scene as measured template.`;
+            return console.error(msg, tokenDoc);
+        }
+
+        let collisionResult = 0;
+        if (this._boundsOverlap(tokenDoc)) {
+            switch (targetingMode) {
+                case CONST.TARGETING_MODE.POINTS_CENTER:
+                    collisionResult = this._containsPoints(tokenDoc._centerPoint(), tolerance);
+                case CONST.TARGETING_MODE.POINTS_SPACES:
+                    collisionResult = this._containsPoints(tokenDoc._spacesPoints(), tolerance);
+                case CONST.TARGETING_MODE.POINTS_REGION:
+                    collisionResult = this._containsPoints(tokenDoc._regionPoints(), tolerance);
+                case CONST.TARGETING_MODE.CIRCLE_AREA:
+                    collisionResult = this._polyIntersection(tokenDoc._circlePoly(), tolerance);
+                case CONST.TARGETING_MODE.RECTANGLE_AREA:
+                    collisionResult = this._polyIntersection(tokenDoc._rectanglePoly(), tolerance);
+            }
+        }
+        return percentateOutput ? collisionResult : collisionResult >= tolerance;
     }
 
     /**
