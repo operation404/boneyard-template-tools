@@ -114,9 +114,6 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
 
     _polyIntersection(tokenPoly) {
         const templatePoly = this._polyForm();
-        console.log(templatePoly);
-        console.log(tokenPoly);
-        console.log(templatePoly.intersectPolygon(tokenPoly).signedArea());
         return templatePoly.intersectPolygon(tokenPoly).signedArea() > 0;
     }
 
