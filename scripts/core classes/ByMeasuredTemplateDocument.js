@@ -15,6 +15,10 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
             CONST.SETTINGS.TARGETING_MODE
         );
         ByMeasuredTemplateDocument._defaultTolerance = game.settings.get(CONST.MODULE, CONST.SETTINGS.TOLERANCE);
+        ByMeasuredTemplateDocument._defaultPercentageOutput = game.settings.get(
+            CONST.MODULE,
+            CONST.SETTINGS.PERCENTAGE_OUTPUT
+        );
     }
 
     /**
@@ -34,6 +38,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * The tolerance to use when no explicit tolerance is given.
      */
     static _defaultTolerance;
+
+    /**
+     * Whether to output a percentage or boolean if not explicit output mode is given.
+     */
+    static _defaultPercentageOutput;
 
     // -------------------- Private Instance Fields --------------------
 
@@ -136,7 +145,8 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     containsToken(
         tokenDoc,
         tolerance = ByMeasuredTemplateDocument._defaultTolerance,
-        targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode
+        targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode,
+        percentateOutput = ByMeasuredTemplateDocument._defaultPercentageOutput
     ) {
         if (tokenDoc instanceof ByTokenDocument) {
             if (this.parent !== tokenDoc.parent) return false;
@@ -168,7 +178,9 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @param {string} targetingMode
      * @returns
      */
-    getTokens(tolerance, targetingMode) {
-        return this.parent.tokens.filter((token) => this.containsToken(token, tolerance, targetingMode));
+    getTokens(tolerance, targetingMode, percentateOutput) {
+        return this.parent.tokens.filter((token) =>
+            this.containsToken(token, tolerance, targetingMode, percentateOutput)
+        );
     }
 }

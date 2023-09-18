@@ -26,4 +26,16 @@ export function registerSettings() {
             ByMeasuredTemplateDocument._defaultTolerance = value;
         },
     });
+
+    game.settings.register(CONST.MODULE, CONST.SETTINGS.PERCENTAGE_OUTPUT, {
+        name: `SETTINGS.NAME.${CONST.SETTINGS.PERCENTAGE_OUTPUT}`,
+        hint: `SETTINGS.HINT.${CONST.SETTINGS.PERCENTAGE_OUTPUT}`,
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: false,
+        onChange: (value) => {
+            ByMeasuredTemplateDocument._defaultPercentageOutput = value;
+        },
+    });
 }

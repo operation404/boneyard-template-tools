@@ -1,7 +1,8 @@
 export const MODULE = 'boneyard-template-tools';
 export const SETTINGS = Object.freeze({
     TARGETING_MODE: 'TARGETING_MODE',
-    TOLERANCE: 'TOLERANCE'
+    TOLERANCE: 'TOLERANCE',
+    PERCENTAGE_OUTPUT: 'PERCENTAGE_OUTPUT',
 });
 
 const targetingModeStrings = ['POINTS_CENTER', 'POINTS_SPACES', 'POINTS_REGION', 'CIRCLE_AREA', 'RECTANGLE_AREA'];

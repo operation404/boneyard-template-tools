@@ -244,9 +244,9 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      * @param {string} targetingMode
      * @returns
      */
-    inTemplate(measuredTemplateDoc, tolerance, targetingMode) {
+    inTemplate(measuredTemplateDoc, tolerance, targetingMode, percentateOutput) {
         if (measuredTemplateDoc instanceof ByMeasuredTemplateDocument) {
-            return measuredTemplateDoc.containsToken(this, tolerance, targetingMode);
+            return measuredTemplateDoc.containsToken(this, tolerance, targetingMode, percentateOutput);
         } else {
             const msg = `Argument measuredTemplateDoc not instance of ByMeasuredTemplateDocument.`;
             console.error(msg, measuredTemplateDoc);
@@ -259,7 +259,9 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      * @param {string} targetingMode
      * @returns
      */
-    getTemplates(tolerance, targetingMode) {
-        return this.parent.templates.filter((template) => this.inTemplate(template, tolerance, targetingMode));
+    getTemplates(tolerance, targetingMode, percentateOutput) {
+        return this.parent.templates.filter((template) =>
+            this.inTemplate(template, tolerance, targetingMode, percentateOutput)
+        );
     }
 }
