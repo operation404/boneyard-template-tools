@@ -149,29 +149,33 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         percentateOutput = ByMeasuredTemplateDocument._defaultPercentageOutput
     ) {
         if (tokenDoc instanceof ByTokenDocument) {
-            if (this.parent !== tokenDoc.parent) return percentateOutput ? 0 : false;
-            if (!this._boundsOverlap(tokenDoc)) return percentateOutput ? 0 : false;
-            const collisionResult = (() => {
-                switch (targetingMode) {
-                    case CONST.TARGETING_MODE.POINTS_CENTER:
-                        return this._containsPoints(tokenDoc._centerPoint(), tolerance);
-                    case CONST.TARGETING_MODE.POINTS_SPACES:
-                        return this._containsPoints(tokenDoc._spacesPoints(), tolerance);
-                    case CONST.TARGETING_MODE.POINTS_REGION:
-                        return this._containsPoints(tokenDoc._regionPoints(), tolerance);
-                    case CONST.TARGETING_MODE.CIRCLE_AREA:
-                        return this._polyIntersection(tokenDoc._circlePoly(), tolerance);
-                    case CONST.TARGETING_MODE.RECTANGLE_AREA:
-                        return this._polyIntersection(tokenDoc._rectanglePoly(), tolerance);
-                    default:
-                        const msg = `Invalid targeting mode: ${targetingMode}`;
-                        return console.error(msg, targetingMode);
-                }
-            })();
+            if (this.parent === tokenDoc.parent) {
+                if (!this._boundsOverlap(tokenDoc)) return percentateOutput ? 0 : false;
+                const collisionResult = (() => {
+                    switch (targetingMode) {
+                        case CONST.TARGETING_MODE.POINTS_CENTER:
+                            return this._containsPoints(tokenDoc._centerPoint(), tolerance);
+                        case CONST.TARGETING_MODE.POINTS_SPACES:
+                            return this._containsPoints(tokenDoc._spacesPoints(), tolerance);
+                        case CONST.TARGETING_MODE.POINTS_REGION:
+                            return this._containsPoints(tokenDoc._regionPoints(), tolerance);
+                        case CONST.TARGETING_MODE.CIRCLE_AREA:
+                            return this._polyIntersection(tokenDoc._circlePoly(), tolerance);
+                        case CONST.TARGETING_MODE.RECTANGLE_AREA:
+                            return this._polyIntersection(tokenDoc._rectanglePoly(), tolerance);
+                        default:
+                            const msg = `Invalid targeting mode: ${targetingMode}`;
+                            return console.error(msg, targetingMode);
+                    }
+                })();
+                if (collisionResult === undefined) return undefined;
+            } else {
+                const msg = `Argument tokenDoc not on same scene as measured template.`;
+                return console.error(msg, tokenDoc);
+            }
         } else {
             const msg = `Argument tokenDoc not instance of BySimpleTokenDocument.`;
-            console.error(msg, tokenDoc);
-            return false;
+            return console.error(msg, tokenDoc);
         }
     }
 

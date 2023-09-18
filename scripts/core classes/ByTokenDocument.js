@@ -249,8 +249,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
             return measuredTemplateDoc.containsToken(this, tolerance, targetingMode, percentateOutput);
         } else {
             const msg = `Argument measuredTemplateDoc not instance of ByMeasuredTemplateDocument.`;
-            console.error(msg, measuredTemplateDoc);
-            return false;
+            return console.error(msg, measuredTemplateDoc);
         }
     }
 
