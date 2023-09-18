@@ -31,6 +31,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
 
     // -------------------- Private Instance Fields --------------------
 
+    /**
+     *
+     * @param {Point[]} points      Array of points to test for being contained in the template shape
+     * @returns {Boolean}           Whether the template shape contains any of the points
+     */
     _containsPoints(points) {
         const { x, y } = this;
         return points.some((point) => this.object.shape.contains(point.x - x, point.y - y));
@@ -107,6 +112,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         }
     }
 
+    _polyIntersection(tokenPoly) {
+        const templatePoly = this._polyForm();
+        return templatePoly.intersectPolygon(tokenPoly) !== null;
+    }
+
     // -------------------- Instance Fields --------------------
 
     /**
@@ -126,6 +136,10 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
                     return this._containsPoints(tokenDoc._spacesPoints());
                 case CONST.TARGETING_MODE.POINTS_REGION:
                     return this._containsPoints(tokenDoc._regionPoints());
+                case CONST.TARGETING_MODE.CIRCLE_AREA:
+                    return this._polyIntersection(tokenDoc._circlePoly());
+                case CONST.TARGETING_MODE.RECTANGLE_AREA:
+                    return this._polyIntersection(tokenDoc._rectanglePoly());
                 default:
                     const msg = `Invalid targeting mode: ${targetingMode}`;
                     return console.error(msg, targetingMode);
