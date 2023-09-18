@@ -9,11 +9,21 @@ export function registerSettings() {
         config: true,
         type: String,
         default: CONST.TARGETING_MODE.POINTS_SPACES,
-        choices: Object.fromEntries(
-            Object.keys(CONST.TARGETING_MODE).map((key) => [key, `SETTINGS.CHOICES.${key}`])
-        ),
+        choices: Object.fromEntries(Object.keys(CONST.TARGETING_MODE).map((key) => [key, `SETTINGS.CHOICES.${key}`])),
         onChange: (value) => {
             ByMeasuredTemplateDocument._defaultTargetingMode = value;
+        },
+    });
+
+    game.settings.register(CONST.MODULE, CONST.SETTINGS.TOLERANCE, {
+        name: `SETTINGS.NAME.${CONST.SETTINGS.TOLERANCE}`,
+        hint: `SETTINGS.HINT.${CONST.SETTINGS.TOLERANCE}`,
+        scope: 'world',
+        config: true,
+        type: Number,
+        default: 0.0001,
+        onChange: (value) => {
+            ByMeasuredTemplateDocument._defaultTolerance = value;
         },
     });
 }
