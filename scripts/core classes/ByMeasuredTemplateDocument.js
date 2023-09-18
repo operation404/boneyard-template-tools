@@ -65,6 +65,48 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         return true;
     }
 
+    /**
+     * Translate a PIXI rectangle or circle to the template's location and convert to polygon
+     * @returns {PIXI.Polygon} The translated polygon form of the shape
+     */
+    _2dShape() {
+        const shapeCopy = this.object.shape.clone();
+        shapeCopy.x += this.x;
+        shapeCopy.y += this.y;
+        return shapeCopy.toPolygon();
+    }
+
+    /**
+     * Translate a PIXI polygon to the template's location
+     * @returns {PIXI.Polygon} The translated polygon
+     */
+    _polygon() {
+        const options = { scalingFactor: 100 };
+        const clipperPolygon = this.object.shape.toClipperPoints(options);
+        clipperPolygon.forEach((p) => {
+            p.x += this.x;
+            p.y += this.y;
+        });
+        return PIXI.Polygon.fromClipperPoints(clipperPolygon, options);
+    }
+
+    /**
+     * Translate shape to the template's location and convert to PIXI polygon
+     * @returns {PIXI.Polygon} The translated polygon form of the shape
+     */
+    _polyForm() {
+        switch (this.object.shape.type) {
+            case 0: // generic poly
+                return this._polygon();
+            case 1: // rect
+            case 2: // circle
+                return this._2dShape();
+            default:
+                const msg = `Unkown PIXI object type: ${this.object.shape.type}`;
+                return console.error(msg, this.object.shape.type);
+        }
+    }
+
     // -------------------- Instance Fields --------------------
 
     /**
