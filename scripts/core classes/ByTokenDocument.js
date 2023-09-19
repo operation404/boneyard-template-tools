@@ -262,3 +262,15 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         return this.parent.templates.filter((template) => this.inTemplate(template, options));
     }
 }
+
+/*
+TODO
+
+Rerwite the points methods to better generate for oddly sized and non-aligned stuff
+
+need to have ways to handle cases where things are and are not grid aligned.
+
+i also probably don't need the points region option anymore, that can be deleted. 
+the point center and spaces are still useful tho
+
+*/

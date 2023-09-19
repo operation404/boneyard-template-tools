@@ -133,7 +133,13 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         }
     }
 
-    _polyIntersection(tokenPoly) {
+    /**
+     *
+     * @param {PIXI.Polygon} tokenPoly          The polygon tested for intersection
+     * @returns {Number}                        The ratio of the area of the token-template intersection and either the token
+     *                                          or the template's area, whichever result is larger.
+     */
+    _polyIntersection(tokenPoly, options) {
         const intersectionArea = this._polyForm().intersectPolygon(tokenPoly).signedArea();
         const tokenArea = tokenPoly.signedArea();
         return intersectionArea / tokenArea;
@@ -150,53 +156,56 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @param {boolean} [options.percentateOutput]      Whether to return a boolean representing collision result or the area of the collision intersection
      * @returns
      */
-    containsToken(
-        tokenDoc,
-        {
+    containsToken(tokenDoc, options = {}) {
+        const {
             tolerance = ByMeasuredTemplateDocument._defaultTolerance,
             targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode,
             percentateOutput = ByMeasuredTemplateDocument._defaultPercentageOutput,
-        } = {}
-    ) {
-        if (!(tokenDoc instanceof ByTokenDocument)) {
-            const msg = `Argument tokenDoc not instance of BySimpleTokenDocument.`;
-            return console.error(msg, tokenDoc);
-        }
-        if (tolerance <= 0) {
-            const msg = `Argument tolerance must be greater than or equal to 0: ${tolerance}`;
-            return console.error(msg, tolerance);
-        }
-        if (CONST.TARGETING_MODE[targetingMode] === undefined) {
-            const msg = `Invalid targeting mode: ${targetingMode}`;
-            return console.error(msg, targetingMode);
-        }
-        if (this.parent !== tokenDoc.parent) {
-            const msg = `Argument tokenDoc not on same scene as measured template.`;
-            return console.error(msg, tokenDoc);
+        } = options;
+
+        // Check for invalid input errors
+        {
+            if (!(tokenDoc instanceof ByTokenDocument)) {
+                const msg = `Argument tokenDoc not instance of BySimpleTokenDocument.`;
+                return console.error(msg, tokenDoc);
+            }
+            if (tolerance <= 0) {
+                const msg = `Argument tolerance must be greater than or equal to 0: ${tolerance}`;
+                return console.error(msg, tolerance);
+            }
+            if (CONST.TARGETING_MODE[targetingMode] === undefined) {
+                const msg = `Invalid targeting mode: ${targetingMode}`;
+                return console.error(msg, targetingMode);
+            }
+            if (this.parent !== tokenDoc.parent) {
+                const msg = `Argument tokenDoc not on same scene as measured template.`;
+                return console.error(msg, tokenDoc);
+            }
         }
 
-        let collisionResult = 0;
+        // Test for token-template collision
+        let collisionRatio = 0;
         if (this._boundsOverlap(tokenDoc)) {
             switch (targetingMode) {
                 case CONST.TARGETING_MODE.POINTS_CENTER:
-                    collisionResult = this._containsPoints(tokenDoc._centerPoint());
+                    collisionRatio = this._containsPoints(tokenDoc._centerPoint(), options);
                     break;
                 case CONST.TARGETING_MODE.POINTS_SPACES:
-                    collisionResult = this._containsPoints(tokenDoc._spacesPoints());
+                    collisionRatio = this._containsPoints(tokenDoc._spacesPoints(), options);
                     break;
                 case CONST.TARGETING_MODE.POINTS_REGION:
-                    collisionResult = this._containsPoints(tokenDoc._regionPoints());
+                    collisionRatio = this._containsPoints(tokenDoc._regionPoints(), options);
                     break;
                 case CONST.TARGETING_MODE.CIRCLE_AREA:
-                    collisionResult = this._polyIntersection(tokenDoc._circlePoly());
+                    collisionRatio = this._polyIntersection(tokenDoc._circlePoly(), options);
                     break;
                 case CONST.TARGETING_MODE.RECTANGLE_AREA:
-                    collisionResult = this._polyIntersection(tokenDoc._rectanglePoly());
+                    collisionRatio = this._polyIntersection(tokenDoc._rectanglePoly(), options);
                     break;
             }
         }
 
-        return percentateOutput ? collisionResult : collisionResult >= tolerance;
+        return percentateOutput ? collisionRatio : collisionRatio >= tolerance;
     }
 
     /**
