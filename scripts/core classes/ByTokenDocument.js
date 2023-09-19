@@ -121,9 +121,9 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
     _shape({ tokenCollisionShape = ByTokenDocument._defaultTokenCollisionShape }) {
         switch (tokenCollisionShape) {
             case CONST.TOKEN_COLLISION_SHAPE.CIRCLE:
-                return this._circle(options);
+                return this._circle();
             case CONST.TOKEN_COLLISION_SHAPE.RECTANGLE:
-                return this._rectangle(options);
+                return this._rectangle();
             default:
                 const msg = `Invalid token collision shape: ${tokenCollisionShape}`;
                 return console.error(msg, tokenCollisionShape);
