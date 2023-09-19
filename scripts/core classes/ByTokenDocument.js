@@ -51,7 +51,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      * Get the point at the center of each grid space the token occupies.
      * @returns {Point[]}
      */
-    _gridSpacesPoints(options) {
+    _gridSpacesPoints(options = {}) {
         if (this.object === null || this.parent !== canvas.scene) {
             const msg = `Token not on current active scene.`;
             return console.error(msg, this);
