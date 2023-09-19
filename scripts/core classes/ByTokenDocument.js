@@ -10,6 +10,10 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      */
     static _init() {
         ByTokenDocument._overrideSimpleTokenDocument();
+        ByTokenDocument._defaultTokenCollisionShape = game.settings.get(
+            CONST.MODULE,
+            CONST.SETTINGS.TOKEN_COLLISION_SHAPE
+        );
     }
 
     /**
@@ -72,7 +76,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      * Get the point at the center of each space the token occupies.
      * @returns {Point[]}
      */
-    _gridSpaces({ tokenCollisionShape = ByTokenDocument._defaultTokenCollisionShape }) {
+    _gridSpacesCenterPoints({ tokenCollisionShape = ByTokenDocument._defaultTokenCollisionShape }) {
         // Check for invalid input errors
         {
             if (this.object === null || this.parent !== canvas.scene) {

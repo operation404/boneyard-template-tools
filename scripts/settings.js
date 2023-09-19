@@ -1,5 +1,6 @@
 import * as CONST from './constants.js';
 import { ByMeasuredTemplateDocument } from './core classes/ByMeasuredTemplateDocument.js';
+import { ByTokenDocument } from './core classes/ByTokenDocument.js';
 
 export function registerSettings() {
     game.settings.register(CONST.MODULE, CONST.SETTINGS.TARGETING_MODE, {
@@ -12,6 +13,21 @@ export function registerSettings() {
         choices: Object.fromEntries(Object.keys(CONST.TARGETING_MODE).map((key) => [key, `SETTINGS.CHOICES.${key}`])),
         onChange: (value) => {
             ByMeasuredTemplateDocument._defaultTargetingMode = value;
+        },
+    });
+
+    game.settings.register(CONST.MODULE, CONST.SETTINGS.TOKEN_COLLISION_SHAPE, {
+        name: `SETTINGS.NAME.${CONST.SETTINGS.TOKEN_COLLISION_SHAPE}`,
+        hint: `SETTINGS.HINT.${CONST.SETTINGS.TOKEN_COLLISION_SHAPE}`,
+        scope: 'world',
+        config: true,
+        type: String,
+        default: CONST.TOKEN_COLLISION_SHAPE.RECTANGLE,
+        choices: Object.fromEntries(
+            Object.keys(CONST.TOKEN_COLLISION_SHAPE).map((key) => [key, `SETTINGS.CHOICES.${key}`])
+        ),
+        onChange: (value) => {
+            ByTokenDocument._defaultTokenCollisionShape = value;
         },
     });
 
