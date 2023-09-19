@@ -198,10 +198,10 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
                     collisionRatio = this._containsPoints(tokenDoc._centerPoint(), options);
                     break;
                 case CONST.TARGETING_MODE.GRID_SPACES_POINTS:
-                    collisionRatio = this._containsPoints(tokenDoc._gridSpacesPoints(), options);
+                    collisionRatio = this._containsPoints(tokenDoc._gridSpacesPoints(options), options);
                     break;
                 case CONST.TARGETING_MODE.AREA_INTERSECTION:
-                    collisionRatio = this._polyIntersection(tokenDoc._circle().toPolygon(), options);
+                    collisionRatio = this._polyIntersection(tokenDoc._shape(options).toPolygon(), options);
                     break;
             }
         }

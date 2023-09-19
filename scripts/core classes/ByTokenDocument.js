@@ -52,16 +52,9 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      * @returns {Point[]}
      */
     _gridSpacesPoints({ tokenCollisionShape = ByTokenDocument._defaultTokenCollisionShape }) {
-        // Check for invalid input errors
-        {
-            if (this.object === null || this.parent !== canvas.scene) {
-                const msg = `Token not on current active scene.`;
-                return console.error(msg, this);
-            }
-            if (CONST.TOKEN_COLLISION_SHAPE[tokenCollisionShape] === undefined) {
-                const msg = `Invalid token collision shape: ${tokenCollisionShape}`;
-                return console.error(msg, tokenCollisionShape);
-            }
+        if (this.object === null || this.parent !== canvas.scene) {
+            const msg = `Token not on current active scene.`;
+            return console.error(msg, this);
         }
         if (canvas.grid.type === window.CONST.GRID_TYPES.GRIDLESS) return [];
 
@@ -131,6 +124,9 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
                 return this._circle(options);
             case CONST.TOKEN_COLLISION_SHAPE.RECTANGLE:
                 return this._rectangle(options);
+            default:
+                const msg = `Invalid token collision shape: ${tokenCollisionShape}`;
+                return console.error(msg, tokenCollisionShape);
         }
     }
 
