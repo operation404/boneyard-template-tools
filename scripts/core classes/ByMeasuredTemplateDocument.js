@@ -197,17 +197,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
                 case CONST.TARGETING_MODE.POINTS_CENTER:
                     collisionRatio = this._containsPoints(tokenDoc._centerPoint(), options);
                     break;
-                case CONST.TARGETING_MODE.POINTS_SPACES:
-                    collisionRatio = this._containsPoints(tokenDoc._spacesPoints(), options);
+                case CONST.TARGETING_MODE.GRID_SPACES_POINTS:
+                    collisionRatio = this._containsPoints(tokenDoc._gridSpacesPoints(), options);
                     break;
-                case CONST.TARGETING_MODE.POINTS_REGION:
-                    collisionRatio = this._containsPoints(tokenDoc._regionPoints(), options);
-                    break;
-                case CONST.TARGETING_MODE.CIRCLE_AREA:
+                case CONST.TARGETING_MODE.AREA_INTERSECTION:
                     collisionRatio = this._polyIntersection(tokenDoc._circle().toPolygon(), options);
-                    break;
-                case CONST.TARGETING_MODE.RECTANGLE_AREA:
-                    collisionRatio = this._polyIntersection(tokenDoc._rectangle().toPolygon(), options);
                     break;
             }
         }

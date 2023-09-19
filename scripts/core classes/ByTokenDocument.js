@@ -51,7 +51,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      * Get the point at the center of each space the token occupies.
      * @returns {Point[]}
      */
-    _gridSpacesCenterPoints({ tokenCollisionShape = ByTokenDocument._defaultTokenCollisionShape }) {
+    _gridSpacesPoints({ tokenCollisionShape = ByTokenDocument._defaultTokenCollisionShape }) {
         // Check for invalid input errors
         {
             if (this.object === null || this.parent !== canvas.scene) {
@@ -65,16 +65,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         }
         if (canvas.grid.type === window.CONST.GRID_TYPES.GRIDLESS) return [];
 
-        let collisionShape;
-        switch (tokenCollisionShape) {
-            case CONST.TOKEN_COLLISION_SHAPE.CIRCLE:
-                collisionShape = this._circle(options);
-                break;
-            case CONST.TOKEN_COLLISION_SHAPE.RECTANGLE:
-                collisionShape = this._rectangle(options);
-                break;
-        }
-
+        const collisionShape = this._shape(options);
         const d = canvas.dimensions;
         const grid = canvas.grid.grid;
         let { x, y, width, height } = this; // width/height are in grid units, not px
@@ -132,6 +123,15 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         const { size } = this.parent.dimensions;
         const { x, y, width, height } = this; // width/height are in grid units, not px
         return new PIXI.Rectangle(x, y, width * size, height * size);
+    }
+
+    _shape({ tokenCollisionShape = ByTokenDocument._defaultTokenCollisionShape }) {
+        switch (tokenCollisionShape) {
+            case CONST.TOKEN_COLLISION_SHAPE.CIRCLE:
+                return this._circle(options);
+            case CONST.TOKEN_COLLISION_SHAPE.RECTANGLE:
+                return this._rectangle(options);
+        }
     }
 
     // -------------------- Instance Fields --------------------
