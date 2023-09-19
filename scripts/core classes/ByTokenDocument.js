@@ -103,6 +103,8 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         y += (height * size) / 2;
         const distance = (Math.sqrt(width * width + height * height) / 2) * d.distance;
 
+        // ---------- modified from foundry MeasuredTemplate._getGridHighlightPositions ----------
+
         // Get number of rows and columns
         const [maxRow, maxCol] = grid.getGridPositionFromPixels(d.width, d.height);
         let nRows = Math.ceil((distance * 1.5) / d.distance / (d.size / grid.h));
