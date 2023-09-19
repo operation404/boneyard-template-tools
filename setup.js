@@ -7,6 +7,7 @@ Hooks.once('init', () => {
     window.Boneyard = window.Boneyard ?? {};
     window.Boneyard.TemplateTools = {
         targetingModes: CONST.TARGETING_MODE,
+        collisionShapes: CONST.TOKEN_COLLISION_SHAPE,
     };
     registerSettings();
     ByMeasuredTemplateDocument._init();
