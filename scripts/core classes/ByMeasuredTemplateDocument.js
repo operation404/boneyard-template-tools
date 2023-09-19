@@ -40,18 +40,18 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     static _defaultTolerance;
 
     /**
-     * Whether to output a percentage or boolean if not explicit output mode is given.
+     * Whether to output a percentage or boolean if not explicity requested.
      */
     static _defaultPercentageOutput;
 
     // -------------------- Private Instance Fields --------------------
 
     /**
-     *
-     * @param {Point[]} points      Array of points to test for being contained in the template shape
-     * @returns {Boolean}           Whether the template shape contains any of the points
+     * Find the percentage of how many points from a set are contained inside of a template.
+     * @param {Point[]} points      The points to test for being contained in the template.
+     * @returns {Number}            The percentage of points from the array that the template contained.
      */
-    _containsPoints(points) {
+    _containedPoints(points) {
         const { x, y } = this;
         const containedCount = points.reduce(
             (counter, p) => (counter += this.object.shape.contains(p.x - x, p.y - y) ? 1 : 0),
@@ -60,10 +60,20 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         return containedCount / points.length;
     }
 
+    /**
+     * Get the bounding box containing this document's template object.
+     * @returns {PIXI.Rectangle}    Bounding box of this document's template object.
+     */
     _getBounds() {
         return this.object.bounds;
     }
 
+    /**
+     * Check if the bounding box of the given document overlaps with the bounding box of this document.
+     * @param {ByTokenDocument|ByMeasuredTemplateDocument} doc      Document to test for bounding box collision.
+     * @returns {boolean}                                           Whether the bounding box of the given document overlaps
+     *                                                              with this document's bounding box.
+     */
     _boundsOverlap(doc) {
         if (!(doc instanceof ByTokenDocument || doc instanceof ByMeasuredTemplateDocument)) {
             const msg = `Argument doc not instance of BySimpleTokenDocument or ByMeasuredTemplateDocument.`;
@@ -90,8 +100,9 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     }
 
     /**
-     * Translate a PIXI rectangle or circle to the template's location and convert to polygon
-     * @returns {PIXI.Polygon} The translated polygon form of the shape
+     * Create a PIXI polygon from the template's shape and translate it to the template's grid location.
+     * This method should only be called if the shape associated with this template is a rectangle or circle.
+     * @returns {PIXI.Polygon}  The translated polygon form of the shape.
      */
     _2dShape() {
         const shapeCopy = this.object.shape.clone();
@@ -101,8 +112,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     }
 
     /**
-     * Translate a PIXI polygon to the template's location
-     * @returns {PIXI.Polygon} The translated polygon
+     * Create a copy of this template's PIXI polygon shape and translate it to the template's grid location.
+     * This method should only be called if the shape associated with this template is a polygon.
+     * @param {number} [options.scalingFactor]  The scalar to use for preserving floating point precision
+     *                                          when converting to integers.
+     * @returns {PIXI.Polygon}                  The copied and translated polygon.
      */
     _polygon(options = { scalingFactor: 100 }) {
         let { x, y } = this;
@@ -117,8 +131,8 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     }
 
     /**
-     * Translate shape to the template's location and convert to PIXI polygon
-     * @returns {PIXI.Polygon} The translated polygon form of the shape
+     * Create a new PIXI polygon representation of the template's shape at the template's grid location.
+     * @returns {PIXI.Polygon}  The polygon representing this template.
      */
     _polyForm() {
         switch (this.object.shape.type) {
@@ -134,34 +148,44 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     }
 
     /**
-     *
-     * @param {PIXI.Polygon} tokenPoly                      The polygon tested for intersection
-     * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas
-     * @returns {number}                                    The ratio of the intersection and token areas, or if considerTemplateRatio is true, the ratio
-     *                                                      of the intersection and template areas if it results in a larger value.
+     * Find the percentage of overlap between the argument polygon and a polygon representing this template's shape.
+     * If the two polygons don't overlap, the return value is 0. If the argument polygon is 100% contained within
+     * the template, the return value is 1. Otherwise, returns the area of the intersection divided by the area of
+     * the argument polygon.
+     * If considerTemplateRatio is true, the ratio of the intersection's area and the template's area is also evaluated,
+     * and the larger of the two ratios is returned. This may be desired in cases where the template may be smaller than the
+     * polygon it is intersecting, in which case it can never return a value of 1 even if the template is completely contained
+     * within the argument polygon.
+     * @param {PIXI.Polygon} testPoly                       The polygon tested for intersection.
+     * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
+     * @returns {number}                                    The ratio of the intersection and argument polygon areas, or if considerTemplateRatio is true,
+     *                                                      the ratio of the intersection and template areas if it results in a larger value.
      */
-    _polyIntersection(tokenPoly, { considerTemplateRatio = false }) {
+    _polyIntersection(testPoly, { considerTemplateRatio = false }) {
         const templatePoly = this._polyForm();
-        const intersectionArea = templatePoly.intersectPolygon(tokenPoly).signedArea();
+        const intersectionArea = templatePoly.intersectPolygon(testPoly).signedArea();
         return (
             intersectionArea /
-            (considerTemplateRatio
-                ? Math.min(templatePoly.signedArea(), tokenPoly.signedArea())
-                : tokenPoly.signedArea())
+            (considerTemplateRatio ? Math.min(templatePoly.signedArea(), testPoly.signedArea()) : testPoly.signedArea())
         );
     }
 
     // -------------------- Instance Fields --------------------
 
     /**
-     *
-     * @param {ByTokenDocument} tokenDoc                The Token being tested on whether the template contains it
-     * @param {object} [options]                        Options to configure how collision is calculated
-     * @param {number} [options.tolerance]              Percentage of overlap needed to be considered inside template
-     * @param {string} [options.targetingMode]          Targeting mode to use for collision detection
-     * @param {boolean} [options.percentateOutput]      Whether to return a boolean representing collision result or the area of the collision intersection
-     * @param {boolean} [options.considerTemplateRatio] Whether to account for the ratio of the intersection and template areas
-     * @returns
+     * Check if a token is contained by this template.
+     * This method can either return a boolean if only a simple binary collision result is required,
+     * or it can return the ratio of the area of the collision intersection and either the token or template's area.
+     * @param {ByTokenDocument} tokenDoc                    The token being tested.
+     * @param {object} [options]                            Options to configure how collision is calculated.
+     * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
+     * @param {string} [options.targetingMode]              Type of collision detection method to use.
+     * @param {boolean} [options.percentateOutput]          Whether to return a boolean representing the collision result or ratio of
+     *                                                      the collision intersection area.
+     * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
+     * @param {string} [options.tokenCollisionShape]        What shape type to use for the token's collision area.
+     * @returns {boolean|number}                            Whether the token is inside the template or the ratio of the collision
+     *                                                      intersection area.
      */
     containsToken(tokenDoc, options = {}) {
         const {
@@ -195,10 +219,10 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         if (this._boundsOverlap(tokenDoc)) {
             switch (targetingMode) {
                 case CONST.TARGETING_MODE.POINTS_CENTER:
-                    collisionRatio = this._containsPoints(tokenDoc._centerPoint(), options);
+                    collisionRatio = this._containedPoints([tokenDoc._centerPoint()], options);
                     break;
                 case CONST.TARGETING_MODE.GRID_SPACES_POINTS:
-                    collisionRatio = this._containsPoints(tokenDoc._gridSpacesPoints(options), options);
+                    collisionRatio = this._containedPoints(tokenDoc._gridSpacesPoints(options), options);
                     break;
                 case CONST.TARGETING_MODE.AREA_INTERSECTION:
                     collisionRatio = this._polyIntersection(tokenDoc._shape(options).toPolygon(), options);
@@ -210,11 +234,16 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     }
 
     /**
-     *
-     * @param {object} options
-     * @returns
+     * Find all tokens that are considered to be contained within this template.
+     * @param {object} [options]                            Options to configure how collision is calculated.
+     * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
+     * @param {string} [options.targetingMode]              Type of collision detection method to use.
+     * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
+     * @param {string} [options.tokenCollisionShape]        What shape type to use for the token's collision area.
+     * @returns {ByTokenDocument[]}                         Array of all tokens contained within the template.
      */
-    getTokens(options) {
+    getTokens(options = {}) {
+        options.percentateOutput = false;
         return this.parent.tokens.filter((token) => this.containsToken(token, options));
     }
 }

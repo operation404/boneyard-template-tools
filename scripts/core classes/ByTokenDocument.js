@@ -6,7 +6,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
     // -------------------- Private Class Fields --------------------
 
     /**
-     * Attach init hooks to set class fields and override the core class.
+     * Initialize class fields and override the core class.
      */
     static _init() {
         ByTokenDocument._overrideSimpleTokenDocument();
@@ -24,32 +24,39 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         console.log(`====== Boneyard ======\n - ByTokenDocument override complete`);
     }
 
+    /**
+     * What shape to use for collision when no explicit shape is given.
+     */
     static _defaultTokenCollisionShape;
 
     // -------------------- Private Instance Fields --------------------
 
+    /**
+     * Get the bounding box containing this document's token object.
+     * @returns {PIXI.Rectangle}    Bounding box of this document's token object.
+     */
     _getBounds() {
         return this.object.bounds;
     }
 
     /**
      * Get the point at the center of token.
-     * @returns {Point[]}
+     * @returns {Point}       A point at the center of the token.
      */
     _centerPoint() {
         const { size } = this.parent.dimensions;
         const { x, y, width, height } = this; // width/height are in grid units, not px
-        return [
-            {
-                x: x + (width * size) / 2,
-                y: y + (height * size) / 2,
-            },
-        ];
+        return {
+            x: x + (width * size) / 2,
+            y: y + (height * size) / 2,
+        };
     }
 
     /**
      * Get the point at the center of each grid space the token occupies.
-     * @returns {Point[]}
+     * If the canvas is in gridless mode, returns an empty array.
+     * @param {boolean} [options.tokenCollisionShape]       What shape to use when determining if a token occupies a grid space.
+     * @returns {Point[]}                                   Array of points at the center of spaces on the grid that the token occupies.
      */
     _gridSpacesPoints(options = {}) {
         if (this.object === null || this.parent !== canvas.scene) {
@@ -103,7 +110,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      * If the token's width and height are not equal, the larger of the two is used as
      * the radius of the circle. The circle's center point is still the true center of the
      * token.
-     * @returns {PIXI.Polygon} The polygon approximation of the token's occupied area as a circle
+     * @returns {PIXI.Polygon}  A circle polygon approximation of the token's occupied area.
      */
     _circle() {
         const { size } = this.parent.dimensions;
@@ -115,7 +122,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
 
     /**
      * Create a rectangular approximation representing the occupied area of the token.
-     * @returns {PIXI.Polygon} The polygon approximation of the token's occupied area as a rectangle
+     * @returns {PIXI.Polygon}  A rectangle polygon approximation of the token's occupied area.
      */
     _rectangle() {
         const { size } = this.parent.dimensions;
@@ -123,6 +130,11 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         return new PIXI.Rectangle(x, y, width * size, height * size);
     }
 
+    /**
+     * Get a PIXI shape representing the area the token occupies to use for collision detection.
+     * @param {string} [options.tokenCollisionShape]    What shape type to use for the token's collision area.
+     * @returns {PIXI.Circle|PIXI.Rectangle}            The shape representing the token's collision area.
+     */
     _shape({ tokenCollisionShape = ByTokenDocument._defaultTokenCollisionShape }) {
         switch (tokenCollisionShape) {
             case CONST.TOKEN_COLLISION_SHAPE.CIRCLE:
@@ -138,10 +150,19 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
     // -------------------- Instance Fields --------------------
 
     /**
-     *
-     * @param {MeasuredTemplateDocument} measuredTemplateDoc
-     * @param {object} options
-     * @returns
+     * Check if a template contains this token.
+     * This method can either return a boolean if only a simple binary collision result is required,
+     * or it can return the ratio of the area of the collision intersection and either the token or template's area.
+     * @param {ByMeasuredTemplateDocument} measuredTemplateDoc  The template being tested.
+     * @param {object} [options]                                Options to configure how collision is calculated.
+     * @param {number} [options.tolerance]                      Percentage of overlap needed to be considered inside the template.
+     * @param {string} [options.targetingMode]                  Type of collision detection method to use.
+     * @param {boolean} [options.percentateOutput]              Whether to return a boolean representing the collision result or ratio of
+     *                                                          the collision intersection area.
+     * @param {boolean} [options.considerTemplateRatio]         Whether to account for the ratio of the intersection and template areas.
+     * @param {string} [options.tokenCollisionShape]            What shape type to use for the token's collision area.
+     * @returns {boolean|number}                                Whether the token is inside the template or the ratio of the collision
+     *                                                          intersection area.
      */
     inTemplate(measuredTemplateDoc, options) {
         if (measuredTemplateDoc instanceof ByMeasuredTemplateDocument) {
@@ -153,11 +174,16 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
     }
 
     /**
-     *
-     * @param {object} options
-     * @returns
+     * Find all templates that this token is contained within.
+     * @param {object} [options]                            Options to configure how collision is calculated.
+     * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
+     * @param {string} [options.targetingMode]              Type of collision detection method to use.
+     * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
+     * @param {string} [options.tokenCollisionShape]        What shape type to use for the token's collision area.
+     * @returns {ByMeasuredTemplateDocument[]}              Array of all templates that contain the token.
      */
     getTemplates(options) {
+        options.percentateOutput = false;
         return this.parent.templates.filter((template) => this.inTemplate(template, options));
     }
 }
