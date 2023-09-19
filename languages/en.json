@@ -1,7 +1,21 @@
 {
-	"SETTINGS.Targeting_Mode_Name": "Default Targeting Mode",
-	"SETTINGS.Targeting_Mode_Hint": "How tokens are determined whether or not they are inside of a template. Token Center will target a token only if the center of the token is inside of the template. Any Token Space will target a token if the center of any space the token occupies is in the template. Token Region will target a token if any part of the token overlaps with the template.",
-	"SETTINGS.TARGETING_MODES.CENTER": "Token Center",
-	"SETTINGS.TARGETING_MODES.SPACE": "Any Token Space",
-	"SETTINGS.TARGETING_MODES.REGION": "Token Region"
+    "SETTINGS.NAME.TARGETING_MODE": "Collision Detection Method",
+    "SETTINGS.HINT.TARGETING_MODE": "Which method to use for collision detection. Token center point will create a single point at the center of the token's location and test if that point is inside of the template or not. This point won't be aligned to the grid if the token isn't aligned. Occupied grid spaces will find the center points of each grid space the token is considered to occupy and test if any of those points are within the template. While the points generated are aligned to the grid, the token doesn't need to be. If the token isn't grid aligned, it is considered to occupy any space where the center of that space overlaps with the token. Area intersection will create a polygon representing the space the token occupies on the scene and intersect it with the template to determine if they overlap at all.",
+    "SETTINGS.CHOICES.POINTS_CENTER": "Token center point",
+    "SETTINGS.CHOICES.GRID_SPACES_POINTS": "Occupied grid spaces",
+    "SETTINGS.CHOICES.AREA_INTERSECTION": "Area intersection",
+
+    "SETTINGS.NAME.TOKEN_COLLISION_SHAPE": "Token Collision Shape",
+    "SETTINGS.HINT.TOKEN_COLLISION_SHAPE": "What shape to use for token collision detection. A rectangle will use the token's width and height as its dimensions. A circle will use the token's center point as its center and half of either the width or height as its radius, whichever is larger. The shape used for collision detection affects both the occupied grid space and area intersection collision methods. If the token collision shape is a circle, some of the grid spaces around the corners of the token will not be considered occupied when they normally would be with rectangular collision. Likewise, the corners of a token won't be considered overlapping with a template in the same manner. Additionally, the circle collision option doesn't use a true circle but rather a polygon approximation of one, as many of Foundry's internal methods do the same. This should have no impact on accuracy in actual play.",
+    "SETTINGS.CHOICES.CIRCLE": "Circle",
+    "SETTINGS.CHOICES.RECTANGLE": "Rectangle",
+
+    "SETTINGS.NAME.TOLERANCE": "Collision Ratio Tolerance",
+    "SETTINGS.HINT.TOLERANCE": "The tolerance for how much of the token must be contained within the template to be actually considered 'contained.' This value must be a positive, non-zero number. By default it is the smallest possible value javascript can represent that meets these conditions, which means any non-zero amount of overlap will result in the token being considered as contained within a template. Passing an invalid value will result in this default being used instead.",
+
+    "SETTINGS.NAME.PERCENTAGE_OUTPUT": "Return Collision Ratio",
+    "SETTINGS.HINT.PERCENTAGE_OUTPUT": "By default the methods this module provides will return a boolean value representing whether a token is contained by a template or not. If this setting is enabled, the ratio of overlap between the token and template will be returned instead. This can be used for cases where you may want to be able to examine how much a given token overlaps with a template in case you wish to have different results depending on how much overlap there is. The center point collision method will only ever return 0 or 1 as there is only a single point being tested. Occupied grid spaces collision will test each space the token occupies and return the percentage of those spaces that are contained within the template. Area intersection will calculate the area of the intersection between the token and template and divide that by the token's area, returning a 0 if they don't overlap and a 1 if the token is completely within the template.",
+
+    "SETTINGS.NAME.CONSIDER_TEMPLATE_RATIO": "Consider Intersection and Template Ratio",
+    "SETTINGS.HINT.CONSIDER_TEMPLATE_RATIO": "In cases where the template's area is smaller than the token's, the template might mostly or completely overlap with the token, but as the token is larger the ratio of the intersection's area to the token's area may still be small and result in the token not being contained in the template. This setting requires the collision methods to also evaluate the ratio of the intersection's area to the template's area and use it if the result would be larger than the ratio between the intersection and token areas. This is useful in cases where you would still want a token to be considered contained within a template that completely overlaps with it even if the token is larger than the template and so can't be contained within it normally."
 }

@@ -19,6 +19,10 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
             CONST.MODULE,
             CONST.SETTINGS.PERCENTAGE_OUTPUT
         );
+        ByMeasuredTemplateDocument._defaultConsiderTemplateRatio = game.settings.get(
+            CONST.MODULE,
+            CONST.SETTINGS.CONSIDER_TEMPLATE_RATIO
+        );
     }
 
     /**
@@ -43,6 +47,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * Whether to output a percentage or boolean if not explicity requested.
      */
     static _defaultPercentageOutput;
+
+    /**
+     * Whether to consider the intersection and template ratio when not explicity requested.
+     */
+    static _defaultConsiderTemplateRatio;
 
     // -------------------- Private Instance Fields --------------------
 
@@ -161,7 +170,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @returns {number}                                    The ratio of the intersection and argument polygon areas, or if considerTemplateRatio is true,
      *                                                      the ratio of the intersection and template areas if it results in a larger value.
      */
-    _polyIntersection(testPoly, { considerTemplateRatio = false }) {
+    _polyIntersection(testPoly, { considerTemplateRatio = ByMeasuredTemplateDocument._defaultConsiderTemplateRatio }) {
         const templatePoly = this._polyForm();
         const intersectionArea = templatePoly.intersectPolygon(testPoly).signedArea();
         return (

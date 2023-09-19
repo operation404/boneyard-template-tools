@@ -56,4 +56,16 @@ export function registerSettings() {
             ByMeasuredTemplateDocument._defaultPercentageOutput = value;
         },
     });
+
+    game.settings.register(CONST.MODULE, CONST.SETTINGS.CONSIDER_TEMPLATE_RATIO, {
+        name: `SETTINGS.NAME.${CONST.SETTINGS.CONSIDER_TEMPLATE_RATIO}`,
+        hint: `SETTINGS.HINT.${CONST.SETTINGS.CONSIDER_TEMPLATE_RATIO}`,
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: false,
+        onChange: (value) => {
+            ByMeasuredTemplateDocument._defaultConsiderTemplateRatio = value;
+        },
+    });
 }
