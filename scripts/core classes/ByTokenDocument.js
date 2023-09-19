@@ -48,7 +48,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
     }
 
     /**
-     * Get the point at the center of each space the token occupies.
+     * Get the point at the center of each grid space the token occupies.
      * @returns {Point[]}
      */
     _gridSpacesPoints(options) {
@@ -84,10 +84,15 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         for (let r = -nRows; r < nRows; r++) {
             for (let c = -nCols; c < nCols; c++) {
                 const [gx, gy] = grid.getPixelsFromGridPosition(row0 + r, col0 + c);
-                const [testX, testY] = [gx + hx - x, gy + hy - y];
+                // const [testX, testY] = [gx + hx - x, gy + hy - y];
+                // original shifts test points by shape's x,y as template shapes are defined at a 0,0 origin, but the shapes
+                // ByTokens generate for collision are not relative to a 0,0 origin and instead the token's actual x,y
+                // position on the grid, shifting the test points isn't required
+                const [testX, testY] = [gx + hx, gy + hy];
                 const contains = (r === 0 && c === 0 && isCenter) || grid._testShape(testX, testY, collisionShape);
                 if (!contains) continue;
-                positions.push({ x: gx, y: gy });
+                // original saves top-left of grid space, save center of space instead
+                positions.push({ x: testX, y: testY });
             }
         }
         return positions;
