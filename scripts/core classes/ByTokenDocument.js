@@ -1,5 +1,5 @@
-import * as CONST from '../constants.js';
 import { ByMeasuredTemplateDocument } from './ByMeasuredTemplateDocument.js';
+import * as CONST from '../constants.js';
 
 /** @inheritdoc */
 export class ByTokenDocument extends CONFIG.Token.documentClass {
@@ -19,6 +19,8 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         CONFIG.Token.documentClass = ByTokenDocument;
         console.log(`====== Boneyard ======\n - ByTokenDocument override complete`);
     }
+
+    static _defaultTokenCollisionShape;
 
     // -------------------- Private Instance Fields --------------------
 
@@ -64,6 +66,67 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
             }
         }
         return points;
+    }
+
+    /**
+     * Get the point at the center of each space the token occupies.
+     * @returns {Point[]}
+     */
+    _gridSpaces({ tokenCollisionShape = ByTokenDocument._defaultTokenCollisionShape }) {
+        // Check for invalid input errors
+        {
+            if (this.object === null || this.parent !== canvas.scene) {
+                const msg = `Token not on current active scene.`;
+                return console.error(msg, this);
+            }
+            if (CONST.TOKEN_COLLISION_SHAPE[tokenCollisionShape] === undefined) {
+                const msg = `Invalid token collision shape: ${tokenCollisionShape}`;
+                return console.error(msg, tokenCollisionShape);
+            }
+        }
+        if (canvas.grid.type === window.CONST.GRID_TYPES.GRIDLESS) return [];
+
+        let collisionShape;
+        switch (tokenCollisionShape) {
+            case CONST.TOKEN_COLLISION_SHAPE.CIRCLE:
+                collisionShape = this._circle(options);
+                break;
+            case CONST.TOKEN_COLLISION_SHAPE.RECTANGLE:
+                collisionShape = this._rectangle(options);
+                break;
+        }
+
+        const d = canvas.dimensions;
+        const grid = canvas.grid.grid;
+        let { x, y, width, height } = this; // width/height are in grid units, not px
+        x += (width * size) / 2;
+        y += (height * size) / 2;
+        const distance = (Math.sqrt(width * width + height * height) / 2) * d.distance;
+
+        // Get number of rows and columns
+        const [maxRow, maxCol] = grid.getGridPositionFromPixels(d.width, d.height);
+        let nRows = Math.ceil((distance * 1.5) / d.distance / (d.size / grid.h));
+        let nCols = Math.ceil((distance * 1.5) / d.distance / (d.size / grid.w));
+        [nRows, nCols] = [Math.min(nRows, maxRow), Math.min(nCols, maxCol)];
+
+        // Get the offset of the template origin relative to the top-left grid space
+        const [tx, ty] = grid.getTopLeft(x, y);
+        const [row0, col0] = grid.getGridPositionFromPixels(tx, ty);
+        const [hx, hy] = [Math.ceil(grid.w / 2), Math.ceil(grid.h / 2)];
+        const isCenter = x - tx === hx && y - ty === hy;
+
+        // Identify grid coordinates covered by the template Graphics
+        const positions = [];
+        for (let r = -nRows; r < nRows; r++) {
+            for (let c = -nCols; c < nCols; c++) {
+                const [gx, gy] = grid.getPixelsFromGridPosition(row0 + r, col0 + c);
+                const [testX, testY] = [gx + hx - x, gy + hy - y];
+                const contains = (r === 0 && c === 0 && isCenter) || grid._testShape(testX, testY, collisionShape);
+                if (!contains) continue;
+                positions.push({ x: gx, y: gy });
+            }
+        }
+        return positions;
     }
 
     /*
@@ -218,22 +281,22 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      * token.
      * @returns {PIXI.Polygon} The polygon approximation of the token's occupied area as a circle
      */
-    _circlePoly() {
+    _circle() {
         const { size } = this.parent.dimensions;
         const { x, y, width, height } = this; // width/height are in grid units, not px
         const widthRadius = (width * size) / 2;
         const heightRadius = (height * size) / 2;
-        return new PIXI.Circle(x + widthRadius, y + heightRadius, Math.max(widthRadius, heightRadius)).toPolygon();
+        return new PIXI.Circle(x + widthRadius, y + heightRadius, Math.max(widthRadius, heightRadius));
     }
 
     /**
      * Create a rectangular approximation representing the occupied area of the token.
      * @returns {PIXI.Polygon} The polygon approximation of the token's occupied area as a rectangle
      */
-    _rectanglePoly() {
+    _rectangle() {
         const { size } = this.parent.dimensions;
         const { x, y, width, height } = this; // width/height are in grid units, not px
-        return new PIXI.Rectangle(x, y, width * size, height * size).toPolygon();
+        return new PIXI.Rectangle(x, y, width * size, height * size);
     }
 
     // -------------------- Instance Fields --------------------

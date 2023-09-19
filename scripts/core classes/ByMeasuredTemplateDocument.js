@@ -204,10 +204,10 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
                     collisionRatio = this._containsPoints(tokenDoc._regionPoints(), options);
                     break;
                 case CONST.TARGETING_MODE.CIRCLE_AREA:
-                    collisionRatio = this._polyIntersection(tokenDoc._circlePoly(), options);
+                    collisionRatio = this._polyIntersection(tokenDoc._circle().toPolygon(), options);
                     break;
                 case CONST.TARGETING_MODE.RECTANGLE_AREA:
-                    collisionRatio = this._polyIntersection(tokenDoc._rectanglePoly(), options);
+                    collisionRatio = this._polyIntersection(tokenDoc._rectangle().toPolygon(), options);
                     break;
             }
         }
