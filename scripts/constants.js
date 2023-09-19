@@ -6,7 +6,7 @@ export const SETTINGS = Object.freeze({
     TOKEN_COLLISION_SHAPE: 'TOKEN_COLLISION_SHAPE',
 });
 
-const targetingModeStrings = ['POINTS_CENTER', 'POINTS_SPACES', 'POINTS_REGION', 'CIRCLE_AREA', 'RECTANGLE_AREA'];
+const targetingModeStrings = ['POINTS_CENTER', 'GRID_SPACES_POINTS', 'AREA_INTERSECTION'];
 export const TARGETING_MODE = Object.freeze(Object.fromEntries(targetingModeStrings.map((v) => [v, v])));
 
 const tokenCollisionShapeStrings = ['CIRCLE', 'RECTANGLE'];
