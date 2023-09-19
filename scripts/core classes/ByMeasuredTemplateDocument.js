@@ -135,25 +135,32 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
 
     /**
      *
-     * @param {PIXI.Polygon} tokenPoly          The polygon tested for intersection
-     * @returns {Number}                        The ratio of the area of the token-template intersection and either the token
-     *                                          or the template's area, whichever result is larger.
+     * @param {PIXI.Polygon} tokenPoly                      The polygon tested for intersection
+     * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas
+     * @returns {number}                                    The ratio of the intersection and token areas, or if considerTemplateRatio is true, the ratio
+     *                                                      of the intersection and template areas if it results in a larger value.
      */
-    _polyIntersection(tokenPoly, options) {
-        const intersectionArea = this._polyForm().intersectPolygon(tokenPoly).signedArea();
-        const tokenArea = tokenPoly.signedArea();
-        return intersectionArea / tokenArea;
+    _polyIntersection(tokenPoly, { considerTemplateRatio = false }) {
+        const templatePoly = this._polyForm();
+        const intersectionArea = templatePoly.intersectPolygon(tokenPoly).signedArea();
+        return (
+            intersectionArea /
+            (considerTemplateRatio
+                ? Math.min(templatePoly.signedArea(), tokenPoly.signedArea())
+                : tokenPoly.signedArea())
+        );
     }
 
     // -------------------- Instance Fields --------------------
 
     /**
      *
-     * @param {TokenDocument} tokenDoc                  The Token being tested on whether the template contains it
+     * @param {ByTokenDocument} tokenDoc                The Token being tested on whether the template contains it
      * @param {object} [options]                        Options to configure how collision is calculated
      * @param {number} [options.tolerance]              Percentage of overlap needed to be considered inside template
      * @param {string} [options.targetingMode]          Targeting mode to use for collision detection
      * @param {boolean} [options.percentateOutput]      Whether to return a boolean representing collision result or the area of the collision intersection
+     * @param {boolean} [options.considerTemplateRatio] Whether to account for the ratio of the intersection and template areas
      * @returns
      */
     containsToken(tokenDoc, options = {}) {
