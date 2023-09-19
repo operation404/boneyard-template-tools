@@ -62,7 +62,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
         const d = canvas.dimensions;
         const grid = canvas.grid.grid;
         let { x, y, width, height } = this; // width/height are in grid units, not px
-        [x, y] = [x + (width * size) / 2, y + (height * size) / 2]; // set x,y to token center
+        [x, y] = [x + (width * d.size) / 2, y + (height * d.size) / 2]; // set x,y to token center
         const distance = (Math.sqrt(width * width + height * height) / 2) * d.distance;
 
         // ---------- modified from foundry MeasuredTemplate._getGridHighlightPositions ----------
