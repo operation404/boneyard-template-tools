@@ -140,15 +140,15 @@ This example shows how the different representations of a token affects which gr
 
 All modules settings are global and define the default behavior of collision detection.
 
-`Collision Detection Method` sets the default collision style to use for collision detection.
+**Collision Detection Method** sets the default collision style to use for collision detection.
 
-`Token Collision Shape` sets the default representation for the token grid area.
+**Token Collision Shape** sets the default representation for the token grid area.
 
-`Collision Ratio Tolerance` sets the default tolerance to use for collision detection when returning a boolean. If the collision ratio is equal to or above this tolerance, the token is considered contained by the template and true is returned, otherwise false. The tolerance must be a number greater than zero, and is the smallest possible number JS can represent by default. For this value, any non-zero overlap is considered a collision.
+**Collision Ratio Tolerance** sets the default tolerance to use for collision detection when returning a boolean. If the collision ratio is equal to or above this tolerance, the token is considered contained by the template and true is returned, otherwise false. The tolerance must be a number greater than zero, and is the smallest possible number JS can represent by default. For this value, any non-zero overlap is considered a collision.
 
-`Return Collision Ratio` sets whether collision methods should return the collision ratio instead of a boolean. This ratio can be useful when one would want to do different things depending on how much the token overlaps with the template.
+**Return Collision Ratio** sets whether collision methods should return the collision ratio instead of a boolean. This ratio can be useful when one would want to do different things depending on how much the token overlaps with the template.
 
-`Consider Intersection and Template Ratio` sets whether the `AREA_INTERSECTION` collision method should also account for both the ratio of the intersection and token areas and the intersection and template areas. This may be desired for cases where the area of the token is close to or greater than the area of the template. In such cases, the ratio of the intersection and token areas might be very small despite most of the template overlapping with the token. This option requests the collision methods to also calculate the ratio of the intersection and template areas, and return that if it would be greater than the intersection and token area ratio. This can be useful for where one would want a token to be considered to collide with a smaller template that mostly or completely overlaps with it.
+**Consider Intersection and Template Ratio** sets whether the `AREA_INTERSECTION` collision method should also account for both the ratio of the intersection and token areas and the intersection and template areas. This may be desired for cases where the area of the token is close to or greater than the area of the template. In such cases, the ratio of the intersection and token areas might be very small despite most of the template overlapping with the token. This option requests the collision methods to also calculate the ratio of the intersection and template areas, and return that if it would be greater than the intersection and token area ratio. This can be useful for where one would want a token to be considered to collide with a smaller template that mostly or completely overlaps with it.
 
 ## TODO
 
