@@ -1,41 +1,39 @@
 {
-  "id": "boneyard-template-tools",
-  "title": "Boneyard Template Tools",
-  "description": "Utilities and tools for Measured Templates.",
-  "version": "This is auto replaced",
-  "library": "false",
-  "manifestPlusVersion": "1.2.0",
-  "compatibility": {
-    "minimum": 10,
-    "verified": 11.307,
-    "maximum": 11
-  },
-  "authors": [
-    {
-      "name": "Lich",
-      "url": "https://github.com/operation404",
-      "discord": "operation404#8123"
-    }
-  ],
-  "relationships": {
-    "systems": [],
-    "requires": []
-  },
-  "esmodules": [
-    "setup.js"
-  ],
-  "scripts": [],
-  "styles": [],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "languages/en.json"
-    }
-  ],
-  "url": "This is auto replaced",
-  "manifest": "This is auto replaced",
-  "download": "This is auto replaced",
-  "license": "LICENSE",
-  "readme": "README.md"
+    "id": "boneyard-template-tools",
+    "title": "Boneyard Template Tools",
+    "description": "Utilities and tools for Measured Templates.",
+    "version": "#{VERSION}#",
+    "library": "false",
+    "manifestPlusVersion": "1.2.0",
+    "compatibility": {
+        "minimum": 10,
+        "verified": 11.307,
+        "maximum": 11
+    },
+    "authors": [
+        {
+            "name": "Lich",
+            "url": "https://github.com/operation404",
+            "discord": "operation404#8123"
+        }
+    ],
+    "relationships": {
+        "systems": [],
+        "requires": []
+    },
+    "esmodules": ["setup.js"],
+    "scripts": [],
+    "styles": [],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "languages/en.json"
+        }
+    ],
+    "url": "#{URL}#",
+    "manifest": "#{MANIFEST}#",
+    "download": "#{DOWNLOAD}#",
+    "license": "LICENSE",
+    "readme": "README.md"
 }
