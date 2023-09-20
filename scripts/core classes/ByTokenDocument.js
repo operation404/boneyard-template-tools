@@ -152,6 +152,8 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
     /**
      * Check if a template contains this token.
      * @see {@link ByMeasuredTemplateDocument#collidesToken}
+     * @returns {boolean|number}        Whether the token is inside the template or the ratio of the collision
+     *                                  intersection area.
      */
     collidesTemplate(measuredTemplateDoc, options) {
         if (measuredTemplateDoc instanceof ByMeasuredTemplateDocument) {
@@ -165,6 +167,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
     /**
      * Find all templates that this token is contained within.
      * @see {@link ByMeasuredTemplateDocument#getTokens}
+     * @returns {ByTokenDocument[]}     Array of all templates that contain the token.
      */
     getTemplates(options) {
         options.percentateOutput = false;
