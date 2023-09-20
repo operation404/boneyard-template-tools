@@ -244,6 +244,8 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
 
     /**
      * Find all tokens that are contained within this template.
+     * As a definitive answer is needed for whether a token collides with a template in order to populate the array,
+     * the percentateOutput option is always set to false regardless of any default or explicitly declared value.
      * @param {object} [options]                            Options to configure how collision is calculated.
      * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
      * @param {string} [options.collisionMethod]            Type of collision detection method to use.

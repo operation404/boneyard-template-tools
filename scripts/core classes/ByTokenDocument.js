@@ -151,18 +151,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
 
     /**
      * Check if a template contains this token.
-     * This method can either return a boolean if only a simple binary collision result is required,
-     * or it can return the ratio of the area of the collision intersection and either the token or template's area.
-     * @param {ByMeasuredTemplateDocument} measuredTemplateDoc  The template being tested.
-     * @param {object} [options]                                Options to configure how collision is calculated.
-     * @param {number} [options.tolerance]                      Percentage of overlap needed to be considered inside the template.
-     * @param {string} [options.targetingMode]                  Type of collision detection method to use.
-     * @param {boolean} [options.percentateOutput]              Whether to return a boolean representing the collision result or ratio of
-     *                                                          the collision intersection area.
-     * @param {boolean} [options.considerTemplateRatio]         Whether to account for the ratio of the intersection and template areas.
-     * @param {string} [options.tokenCollisionShape]            What shape type to use for the token's collision area.
-     * @returns {boolean|number}                                Whether the token is inside the template or the ratio of the collision
-     *                                                          intersection area.
+     * @see {@link ByMeasuredTemplateDocument#collidesToken}
      */
     collidesTemplate(measuredTemplateDoc, options) {
         if (measuredTemplateDoc instanceof ByMeasuredTemplateDocument) {
@@ -175,12 +164,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
 
     /**
      * Find all templates that this token is contained within.
-     * @param {object} [options]                            Options to configure how collision is calculated.
-     * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
-     * @param {string} [options.targetingMode]              Type of collision detection method to use.
-     * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
-     * @param {string} [options.tokenCollisionShape]        What shape type to use for the token's collision area.
-     * @returns {ByMeasuredTemplateDocument[]}              Array of all templates that contain the token.
+     * @see {@link ByMeasuredTemplateDocument#getTokens}
      */
     getTemplates(options) {
         options.percentateOutput = false;
