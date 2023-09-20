@@ -10,9 +10,10 @@
 Boneyard Template Tools extends the `TokenDocument` and `MeasuredTemplateDocument` classes to add new functionality for detecting collisions between tokens and templates.
 
 - [Token-Template Collision Detection](#token-template-collision-detection)
-  - [Document Instance Methods](#document-instance-methods)
-  - [Collision Methods](#collision-methods)
-  - [Token Collision Shapes](#token-collision-shapes)
+   - [Document Instance Methods](#document-instance-methods)
+   - [Collision Methods](#collision-methods)
+   - [Token Collision Shapes](#token-collision-shapes)
+
 - [Settings](#settings)
 - [TODO](#todo)
 
@@ -37,6 +38,7 @@ const tokenCollides = templateDoc.collidesToken(tokenDoc);
 
 // get all tokens that collide with this template
 const tokensArray = templateDoc.getTokens();
+
 ```
 
 ### Document Instance Methods
@@ -60,6 +62,7 @@ const tokensArray = templateDoc.getTokens();
      *                                                      intersection area.
      */
     collidesToken(tokenDoc, options)
+
 ```
 
 `getTokens` tests all tokens in the current scene and returns an array of documents of all the tokens that are considered to collide with the template. The array will be empty if no tokens collide with the template. As this requires a definitive answer for whether or not a token collides with the template, the `options.percentageOutput` field is always set to false regardless of whether or not it is declared in the options argument.
@@ -77,6 +80,7 @@ const tokensArray = templateDoc.getTokens();
      * @returns {ByTokenDocument[]}                         Array of all tokens contained within the template.
      */
     getTokens(options)
+
 ```
 
 `collidesTemplates` is a convenience method provided by the token document class. It is identical to calling the argument template's `collidesToken` method and passing the token as an argument.
@@ -89,6 +93,7 @@ const tokensArray = templateDoc.getTokens();
      *                                  intersection area.
      */
     collidesTemplate(measuredTemplateDoc, options)
+
 ```
 
 `getTemplates` is the token document's version of the template document's `getTokens` method. It behaves in the same manner but returns an array of documents of all the templates in the scene that collide with the token.
@@ -100,6 +105,7 @@ const tokensArray = templateDoc.getTokens();
      * @returns {ByTokenDocument[]}     Array of all templates that contain the token.
      */
     getTemplates(options)
+
 ```
 
 ### Collision Methods
@@ -112,6 +118,7 @@ Boneyard.Template_Tools.TARGETING_MODES = {
     GRID_SPACES_POINTS: 'GRID_SPACES_POINTS',
     AREA_INTERSECTION: 'AREA_INTERSECTION'
 };
+
 ```
 
 `POINTS_CENTER` will generate a single point at the center of the token and test if that point is within the template. This point may not be grid aligned if the token itself is either not aligned to the grid or if the token's dimensions are not cleanly divisible by the grid size.
@@ -148,7 +155,7 @@ All modules settings are global and define the default behavior of collision det
 
 **Return Collision Ratio** sets whether collision methods should return the collision ratio instead of a boolean. This ratio can be useful when one would want to do different things depending on how much the token overlaps with the template.
 
-**Consider Intersection and Template Ratio** sets whether the `AREA_INTERSECTION` collision method should also account for both the ratio of the intersection and token areas and the intersection and template areas. This may be desired for cases where the area of the token is close to or greater than the area of the template. In such cases, the ratio of the intersection and token areas might be very small despite most of the template overlapping with the token. This option requests the collision methods to also calculate the ratio of the intersection and template areas, and return that if it would be greater than the intersection and token area ratio. This can be useful for where one would want a token to be considered to collide with a smaller template that mostly or completely overlaps with it.
+__Consider Intersection and Template Ratio__ sets whether the `AREA_INTERSECTION` collision method should also account for both the ratio of the intersection and token areas and the intersection and template areas. This may be desired for cases where the area of the token is close to or greater than the area of the template. In such cases, the ratio of the intersection and token areas might be very small despite most of the template overlapping with the token. This option requests the collision methods to also calculate the ratio of the intersection and template areas, and return that if it would be greater than the intersection and token area ratio. This can be useful for where one would want a token to be considered to collide with a smaller template that mostly or completely overlaps with it.
 
 ## TODO
 
@@ -158,3 +165,4 @@ All modules settings are global and define the default behavior of collision det
 - [ ] Create a new template subclass that represents a set operation on two or more templates.
 - [ ] Add functionality to live preview placing a template on the grid.
 - [ ] Expand collision methods to allow for template-template collision and token-token collision.
+- [ ] Add methods to give a template a function to run on all tokens that the template contains. Worth investigating if there are other useful automation tools I can provide for templates.
