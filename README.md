@@ -137,3 +137,6 @@ This example shows how the different representations of a token affects which gr
 - [x] ~~Add proper module settings to set the default targeting mode.~~
 - [x] ~~Either add new targeting modes or update the existing modes to handle targeting more accurately to the targeting mode descriptions. Any token space should actually calculate center points of grid spaces even if the token isn't properly aligned to them. Token region should actually check if the regions overlap rather than the simpler workaround of generating a dense field of points.~~
 - [ ] Provide more token collision shape options. Ellipse seems like a given, potentially more irregular shapes. Also worth investigating a way to set a token to have a specific collision shape instead of using one shape representation for all collisions.
+- [ ] Create a new template subclass that represents a set operation on two or more templates.
+- [ ] Add functionality to live preview placing a template on the grid.
+- [ ] Expand collision methods to allow for template-template collision and token-token collision.
