@@ -13,7 +13,7 @@ Boneyard Template Tools extends the `TokenDocument` and `MeasuredTemplateDocumen
   - [Document Instance Methods](#document-instance-methods)
   - [Collision Methods](#collision-methods)
   - [Token Collision Shapes](#token-collision-shapes)
-  - [Settings](#settings)
+- [Settings](#settings)
 - [TODO](#todo)
 
 ## Token-Template Collision Detection
