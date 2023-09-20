@@ -8,4 +8,4 @@ Complete rewrite of the original module.
   - Center point collision mostly unchanged.
   - Grid spaces collision now correctly generates points representing the center of grid spaces even if the token isn't aligned to the grid, and works on non-square grids.
   - Area intersection collision implemented. A rectangle or circle polygon approximation of the token's area on the grid is generated and intersected with the polygon representation of the template's shape, with the area of the resulting intersection being used to determine whether the token and template collide.
-  - Before any collision detection is perfomed, methods first check if document bounding boxes overlap.
+  - Before any collision detection is performed, methods first check if document bounding boxes overlap.
