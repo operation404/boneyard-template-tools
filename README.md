@@ -10,8 +10,9 @@
 Boneyard Template Tools extends the `TokenDocument` and `MeasuredTemplateDocument` classes to add new functionality for detecting collisions between tokens and templates.
 
 - [Token-Template Collision Detection](#token-template-collision-detection)
-  - [Targeting Modes](#targeting-modes)
-  - [Token Region Targeting Edge Case](#token-region-targeting-edge-case)
+  - [Document Instance Methods](#document-instance-methods)
+  - [Collision Methods](#collision-methods)
+  - [Token Collision Shapes](#token-collision-shapes)
 - [TODO](#todo)
 
 ## Token-Template Collision Detection
@@ -37,7 +38,7 @@ const tokenCollides = templateDoc.collidesToken(tokenDoc);
 const tokensArray = templateDoc.getTokens();
 ```
 
-## Document Instance Methods
+### Document Instance Methods
 
 `collidesToken` is the method which implements all collision detection logic, and is ultimately called by all other collision methods provided by this module. All of the options fields are optional and will use the default values as defined in the module settings if no explicit values are passed. This method can be configured to return either a boolean representing a collision based on a certain tolerance or a ratio of the intersection's area to the token's or template's area. The boolean result is useful for simplifying collision results to a binary option, but the ratio can be used if one wishes to have different outcomes based on how much overlap there is with the token and template.
 
@@ -97,7 +98,7 @@ const tokensArray = templateDoc.getTokens();
     getTemplates(options)
 ```
 
-## Collision Methods
+### Collision Methods
 
 There are 3 provided styles of token collision detection: center point, occupied grid spaces, and area intersection. The first two options generate a set of points and tests whether any of them are contained within a template. The last option generates a polygon representation of the token's area on the grid and then performs an intersection with the template. The list of collision styles can be accessed through `Boneyard.Template_Tools.COLLISION_METHOD`.
 
@@ -119,9 +120,20 @@ Boneyard.Template_Tools.TARGETING_MODES = {
 
 This example shows the collision styles using some example tokens of a lionfolk warrior, a worg, and an angel and assuming the smallest possible tolerance value. The point at the center of the lionfolk's token is inside the template, so it would result in a collision when using the `POINTS_CENTER` collision method. The worg's center point isn't inside of the template, but the center of some of the grid spaces that the token occupies are, so it would result in a collision when using the `GRID_SPACES_POINTS` collision method. Neither the center point of the angel or any of the grid spaces the angel occupies are inside of the template. However, the collision box of the angel overlaps with the template, resulting in an intersection with a non-zero area and therefore a collision when using the `AREA_INTERSECTION` collision method.
 
-## Token Collision Shapes
+### Token Collision Shapes
+
+There are 2 provided ways of representing token area on the grid: rectangles and circles. When using a rectangular representation, a rectangle is generated with the same width and height of the token on the grid. When using a circle representation, the center point of the circle is set to the token's center and the radius is half of either the token width or height, whichever is larger. The circle representation uses a polygon approximation for actual collision detection. This should have no tangible effect on collision accuracy in actual play, but is mentioned for clarity. The chosen representation can impact the results of token collision when using the `GRID_SPACES_POINTS` and `AREA_INTERSECTION` collision methods.
+
+<img src="https://github.com/operation404/boneyard-template-tools/blob/master/images/token_shape_area_intersection_example.png?raw=true" width=50%>
+
+In this example, the token's grid area representation as a rectangle is shown in cyan and the representation as a circle is shown in purple. When using the `AREA_INTERSECTION` collision style the rectangle representation would result in a collision but the circle representation would not.
+
+<img src="https://github.com/operation404/boneyard-template-tools/blob/master/images/token_shape_grid_spaces_example.png?raw=true" width=50%>
+
+This example shows how the different representations of a token affects which grid spaces a token occupies with the `AREA_INTERSECTION` collision style. When representing the token's grid area as a rectangle, all of the points displayed would be contained within that rectangle and so the grid spaces they belong to are considered to be occupied by the token. When using the circle representation, the center points of the grid spaces at the corners of the token aren't contained by the circle representing the token's area on the grid. These points are marked in orange and their respective grid spaces are not considered occupied by the token, whereas the spaces represented by the cyan points would be.
 
 ## TODO
 
 - [x] ~~Add proper module settings to set the default targeting mode.~~
 - [x] ~~Either add new targeting modes or update the existing modes to handle targeting more accurately to the targeting mode descriptions. Any token space should actually calculate center points of grid spaces even if the token isn't properly aligned to them. Token region should actually check if the regions overlap rather than the simpler workaround of generating a dense field of points.~~
+- [ ] Provide more token collision shape options. Ellipse seems like a given, potentially more irregular shapes. Also worth investigating a way to set a token to have a specific collision shape instead of using one shape representation for all collisions.
