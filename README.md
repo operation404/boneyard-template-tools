@@ -120,7 +120,7 @@ Boneyard.Template_Tools.TARGETING_MODES = {
 
 `AREA_INTERSECTION` will create a PIXI Polygon representing the area the token occupies on the grid. This polygon is then intersected with the template. If the two shapes overlap at all, the resulting intersection will have a non-zero area. The ratio of intersection area to the token polygon's area (or the template's, depending on configuration) is used to determine collision.
 
-<img src="https://github.com/operation404/boneyard-template-tools/blob/master/images/collision_styles_example.png?raw=true" width=50%>
+<img src="https://github.com/operation404/boneyard-template-tools/blob/master/images/collision_styles_example.png?raw=true" width=60%>
 
 This example shows the collision styles using some example tokens of a lionfolk warrior, a worg, and an angel and assuming the smallest possible tolerance value. The point at the center of the lionfolk's token is inside the template, so it would result in a collision when using the `POINTS_CENTER` collision method. The worg's center point isn't inside of the template, but the center of some of the grid spaces that the token occupies are, so it would result in a collision when using the `GRID_SPACES_POINTS` collision method. Neither the center point of the angel or any of the grid spaces the angel occupies are inside of the template. However, the collision box of the angel overlaps with the template, resulting in an intersection with a non-zero area and therefore a collision when using the `AREA_INTERSECTION` collision method.
 
@@ -128,11 +128,11 @@ This example shows the collision styles using some example tokens of a lionfolk 
 
 There are 2 provided ways of representing token area on the grid: rectangles and circles. When using a rectangular representation, a rectangle is generated with the same width and height of the token on the grid. When using a circle representation, the center point of the circle is set to the token's center and the radius is half of either the token width or height, whichever is larger. The circle representation uses a polygon approximation for actual collision detection. This should have no tangible effect on collision accuracy in actual play, but is mentioned for clarity. The chosen representation can impact the results of token collision when using the `GRID_SPACES_POINTS` and `AREA_INTERSECTION` collision methods.
 
-<img src="https://github.com/operation404/boneyard-template-tools/blob/master/images/token_shape_area_intersection_example.png?raw=true" width=50%>
+<img src="https://github.com/operation404/boneyard-template-tools/blob/master/images/token_shape_area_intersection_example.png?raw=true" width=40%>
 
 In this example, the token's grid area representation as a rectangle is shown in cyan and the representation as a circle is shown in purple. When using the `AREA_INTERSECTION` collision style the rectangle representation would result in a collision but the circle representation would not.
 
-<img src="https://github.com/operation404/boneyard-template-tools/blob/master/images/token_shape_grid_spaces_example.png?raw=true" width=50%>
+<img src="https://github.com/operation404/boneyard-template-tools/blob/master/images/token_shape_grid_spaces_example.png?raw=true" width=40%>
 
 This example shows how the different representations of a token affects which grid spaces a token occupies with the `AREA_INTERSECTION` collision style. When representing the token's grid area as a rectangle, all of the points displayed would be contained within that rectangle and so the grid spaces they belong to are considered to be occupied by the token. When using the circle representation, the center points of the grid spaces at the corners of the token aren't contained by the circle representing the token's area on the grid. These points are marked in orange and their respective grid spaces are not considered occupied by the token, whereas the spaces represented by the cyan points would be.
 
