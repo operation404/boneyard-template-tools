@@ -189,7 +189,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @param {object} [options]                            Options to configure how collision is calculated.
      * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
      * @param {string} [options.collisionMethod]            Type of collision detection method to use.
-     * @param {boolean} [options.percentateOutput]          Whether to return a boolean representing the collision result or ratio of
+     * @param {boolean} [options.percentageOutput]          Whether to return a boolean representing the collision result or ratio of
      *                                                      the collision intersection area.
      * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
      * @param {string} [options.tokenCollisionShape]        What shape type to use for the token's collision area.
@@ -200,7 +200,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         const {
             tolerance = ByMeasuredTemplateDocument._defaultTolerance,
             collisionMethod = ByMeasuredTemplateDocument._defaultCollisionMethod,
-            percentateOutput = ByMeasuredTemplateDocument._defaultPercentageOutput,
+            percentageOutput = ByMeasuredTemplateDocument._defaultPercentageOutput,
         } = options;
 
         // Check for invalid input errors
@@ -239,13 +239,13 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
             }
         }
 
-        return percentateOutput ? collisionRatio : collisionRatio >= tolerance;
+        return percentageOutput ? collisionRatio : collisionRatio >= tolerance;
     }
 
     /**
      * Find all tokens that are contained within this template.
      * As a definitive answer is needed for whether a token collides with a template in order to populate the array,
-     * the percentateOutput option is always set to false regardless of any default or explicitly declared value.
+     * the options.percentageOutput field is always set to false regardless of any default or explicitly declared value.
      * @param {object} [options]                            Options to configure how collision is calculated.
      * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
      * @param {string} [options.collisionMethod]            Type of collision detection method to use.

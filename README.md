@@ -51,7 +51,7 @@ const tokensArray = templateDoc.getTokens();
      * @param {object} [options]                            Options to configure how collision is calculated.
      * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
      * @param {string} [options.collisionMethod]            Type of collision detection method to use.
-     * @param {boolean} [options.percentateOutput]          Whether to return a boolean representing the collision result or ratio of
+     * @param {boolean} [options.percentageOutput]          Whether to return a boolean representing the collision result or ratio of
      *                                                      the collision intersection area.
      * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
      * @param {string} [options.tokenCollisionShape]        What shape type to use for the token's collision area.
@@ -61,13 +61,13 @@ const tokensArray = templateDoc.getTokens();
     collidesToken(tokenDoc, options)
 ```
 
-`getTokens` tests all tokens in the current scene and returns an array of documents of all the tokens that are considered to collide with the template. The array will be empty if no tokens collide with the template. As this requires a definitive answer for whether or not a token collides with the template, the `options.percentateOutput` field is always set to false regardless of whether or not it is declared in the options argument.
+`getTokens` tests all tokens in the current scene and returns an array of documents of all the tokens that are considered to collide with the template. The array will be empty if no tokens collide with the template. As this requires a definitive answer for whether or not a token collides with the template, the `options.percentageOutput` field is always set to false regardless of whether or not it is declared in the options argument.
 
 ```js
     /**
      * Find all tokens that are contained within this template.
      * As a definitive answer is needed for whether a token collides with a template in order to populate the array,
-     * the options.percentateOutput field is always set to false regardless of any default or explicitly declared value.
+     * the options.percentageOutput field is always set to false regardless of any default or explicitly declared value.
      * @param {object} [options]                            Options to configure how collision is calculated.
      * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
      * @param {string} [options.collisionMethod]            Type of collision detection method to use.
