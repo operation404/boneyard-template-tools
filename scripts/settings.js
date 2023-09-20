@@ -3,14 +3,14 @@ import { ByMeasuredTemplateDocument } from './core classes/ByMeasuredTemplateDoc
 import { ByTokenDocument } from './core classes/ByTokenDocument.js';
 
 export function registerSettings() {
-    game.settings.register(CONST.MODULE, CONST.SETTINGS.TARGETING_MODE, {
-        name: `SETTINGS.NAME.${CONST.SETTINGS.TARGETING_MODE}`,
-        hint: `SETTINGS.HINT.${CONST.SETTINGS.TARGETING_MODE}`,
+    game.settings.register(CONST.MODULE, CONST.SETTINGS.COLLISION_METHOD, {
+        name: `SETTINGS.NAME.${CONST.SETTINGS.COLLISION_METHOD}`,
+        hint: `SETTINGS.HINT.${CONST.SETTINGS.COLLISION_METHOD}`,
         scope: 'world',
         config: true,
         type: String,
-        default: CONST.TARGETING_MODE.POINTS_SPACES,
-        choices: Object.fromEntries(Object.keys(CONST.TARGETING_MODE).map((key) => [key, `SETTINGS.CHOICES.${key}`])),
+        default: CONST.COLLISION_METHOD.POINTS_SPACES,
+        choices: Object.fromEntries(Object.keys(CONST.COLLISION_METHOD).map((key) => [key, `SETTINGS.CHOICES.${key}`])),
         onChange: (value) => {
             ByMeasuredTemplateDocument._defaultTargetingMode = value;
         },

@@ -6,7 +6,7 @@ import { ByTokenDocument } from './scripts/core classes/ByTokenDocument.js';
 Hooks.once('init', () => {
     window.Boneyard = window.Boneyard ?? {};
     window.Boneyard.TemplateTools = {
-        targetingModes: CONST.TARGETING_MODE,
+        collisionMethods: CONST.COLLISION_METHOD,
         collisionShapes: CONST.TOKEN_COLLISION_SHAPE,
     };
     registerSettings();

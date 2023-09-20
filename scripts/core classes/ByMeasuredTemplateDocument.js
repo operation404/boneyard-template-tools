@@ -10,9 +10,9 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      */
     static _init() {
         ByMeasuredTemplateDocument._overrideMeasuredTemplateDocument();
-        ByMeasuredTemplateDocument._defaultTargetingMode = game.settings.get(
+        ByMeasuredTemplateDocument._defaultCollisionMethod = game.settings.get(
             CONST.MODULE,
-            CONST.SETTINGS.TARGETING_MODE
+            CONST.SETTINGS.COLLISION_METHOD
         );
         ByMeasuredTemplateDocument._defaultTolerance = game.settings.get(CONST.MODULE, CONST.SETTINGS.TOLERANCE);
         ByMeasuredTemplateDocument._defaultPercentageOutput = game.settings.get(
@@ -36,7 +36,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     /**
      * The targeting mode to use when no explicit mode is given.
      */
-    static _defaultTargetingMode;
+    static _defaultCollisionMethod;
 
     /**
      * The tolerance to use when no explicit tolerance is given.
@@ -188,7 +188,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @param {ByTokenDocument} tokenDoc                    The token being tested.
      * @param {object} [options]                            Options to configure how collision is calculated.
      * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
-     * @param {string} [options.targetingMode]              Type of collision detection method to use.
+     * @param {string} [options.collisionMethod]            Type of collision detection method to use.
      * @param {boolean} [options.percentateOutput]          Whether to return a boolean representing the collision result or ratio of
      *                                                      the collision intersection area.
      * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
@@ -196,10 +196,10 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @returns {boolean|number}                            Whether the token is inside the template or the ratio of the collision
      *                                                      intersection area.
      */
-    containsToken(tokenDoc, options = {}) {
+    collidesToken(tokenDoc, options = {}) {
         const {
             tolerance = ByMeasuredTemplateDocument._defaultTolerance,
-            targetingMode = ByMeasuredTemplateDocument._defaultTargetingMode,
+            collisionMethod = ByMeasuredTemplateDocument._defaultCollisionMethod,
             percentateOutput = ByMeasuredTemplateDocument._defaultPercentageOutput,
         } = options;
 
@@ -213,9 +213,9 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
                 const msg = `Argument tolerance must be greater than or equal to 0: ${tolerance}`;
                 return console.error(msg, tolerance);
             }
-            if (CONST.TARGETING_MODE[targetingMode] === undefined) {
-                const msg = `Invalid targeting mode: ${targetingMode}`;
-                return console.error(msg, targetingMode);
+            if (CONST.COLLISION_METHOD[collisionMethod] === undefined) {
+                const msg = `Invalid targeting mode: ${collisionMethod}`;
+                return console.error(msg, collisionMethod);
             }
             if (this.parent !== tokenDoc.parent) {
                 const msg = `Argument tokenDoc not on same scene as measured template.`;
@@ -226,14 +226,14 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         // Test for token-template collision
         let collisionRatio = 0;
         if (this._boundsOverlap(tokenDoc)) {
-            switch (targetingMode) {
-                case CONST.TARGETING_MODE.POINTS_CENTER:
+            switch (collisionMethod) {
+                case CONST.COLLISION_METHOD.POINTS_CENTER:
                     collisionRatio = this._containedPoints([tokenDoc._centerPoint()], options);
                     break;
-                case CONST.TARGETING_MODE.GRID_SPACES_POINTS:
+                case CONST.COLLISION_METHOD.GRID_SPACES_POINTS:
                     collisionRatio = this._containedPoints(tokenDoc._gridSpacesPoints(options), options);
                     break;
-                case CONST.TARGETING_MODE.AREA_INTERSECTION:
+                case CONST.COLLISION_METHOD.AREA_INTERSECTION:
                     collisionRatio = this._polyIntersection(tokenDoc._shape(options).toPolygon(), options);
                     break;
             }
@@ -243,16 +243,16 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     }
 
     /**
-     * Find all tokens that are considered to be contained within this template.
+     * Find all tokens that are contained within this template.
      * @param {object} [options]                            Options to configure how collision is calculated.
      * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
-     * @param {string} [options.targetingMode]              Type of collision detection method to use.
+     * @param {string} [options.collisionMethod]            Type of collision detection method to use.
      * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
      * @param {string} [options.tokenCollisionShape]        What shape type to use for the token's collision area.
      * @returns {ByTokenDocument[]}                         Array of all tokens contained within the template.
      */
     getTokens(options = {}) {
         options.percentateOutput = false;
-        return this.parent.tokens.filter((token) => this.containsToken(token, options));
+        return this.parent.tokens.filter((token) => this.collidesToken(token, options));
     }
 }

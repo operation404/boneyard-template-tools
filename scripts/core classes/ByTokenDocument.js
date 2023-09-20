@@ -164,9 +164,9 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      * @returns {boolean|number}                                Whether the token is inside the template or the ratio of the collision
      *                                                          intersection area.
      */
-    inTemplate(measuredTemplateDoc, options) {
+    collidesTemplate(measuredTemplateDoc, options) {
         if (measuredTemplateDoc instanceof ByMeasuredTemplateDocument) {
-            return measuredTemplateDoc.containsToken(this, options);
+            return measuredTemplateDoc.collidesToken(this, options);
         } else {
             const msg = `Argument measuredTemplateDoc not instance of ByMeasuredTemplateDocument.`;
             return console.error(msg, measuredTemplateDoc);
@@ -184,6 +184,6 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      */
     getTemplates(options) {
         options.percentateOutput = false;
-        return this.parent.templates.filter((template) => this.inTemplate(template, options));
+        return this.parent.templates.filter((template) => this.collidesTemplate(template, options));
     }
 }
