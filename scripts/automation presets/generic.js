@@ -67,6 +67,8 @@ export function updateDocuments(updateTuples) {
 
 // --------------------------------------------------------------
 
+function parseAndResolveAction(document, action) {}
+
 /**
  * @class
  * @abstract
@@ -157,5 +159,7 @@ class Comparison extends Action {
             attributeValue = attributeValue?.[pathToken];
         });
         if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
+        if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
+        if (Comparison.operations[operation](attributeValue, value)) parseAndResolveAction(document, passAction);
     }
 }
