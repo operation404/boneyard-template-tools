@@ -1,20 +1,3 @@
-/*
-
-Actions can be either
-
-Effect 
-
-Conditional
-
-condition {
-    option 1: effect
-    option 2: condition {
-        option 1: effect
-        option 2: effect
-    }
-}
-
-*/
 
 /**
  * @class
@@ -50,6 +33,8 @@ class Action {
 class Conditional extends Action {
     static options = {
         savingThrow: ['physical', 'evasion', 'mental'],
+        attributes: ['hd', 'hp'],
+        operations: ['=', '!=', '>', '<', '>=', '<='],
     };
 
     /**
@@ -72,17 +57,17 @@ class Conditional extends Action {
 
     /**
      * @param {object} data
-     * @param {string} data.type
+     * @param {string} data.save
      * @param {number} [data.modifier]
      * @param {Action|Action[]} [data.pass]
      * @param {Action|Action[]} [data.fail]
      * @returns {object}
      */
-    static #savingThrow({ type, modifier, pass, fail }) {
-        if (!Conditional.options.savingThrow.includes(type)) throw `Invalid save type.`;
+    static #savingThrow({ save, modifier, pass, fail }) {
+        if (!Conditional.options.savingThrow.includes(save)) throw `Invalid save type.`;
         if (modifier && !Number.isInteger(modifier)) throw `Modifier must be integer.`;
         if (!pass && !fail) throw `Conditional must perform at least one action.`;
-        return { type, modifier, pass, fail };
+        return { save, modifier, pass, fail };
     }
 
     /**
@@ -90,22 +75,37 @@ class Conditional extends Action {
      * list of them. Hardcode a list in? I'd need to add ways to specify custom
      * skills if so.
      * @param {object} data
-     * @param {string} data.type
+     * @param {string} data.skill
      * @param {number} data.difficulty
      * @param {number} [data.modifier]
      * @param {Action|Action[]} [data.pass]
      * @param {Action|Action[]} [data.fail]
      * @returns {object}
      */
-    static #skillCheck({ type, difficulty, modifier, pass, fail }) {
-        if (typeof type !== 'string') throw `Type must be string.`;
+    static #skillCheck({ skill, difficulty, modifier, pass, fail }) {
+        if (typeof skill !== 'string') throw `Type must be string.`;
         if (!Number.isInteger(difficulty)) throw `Difficulty must be integer.`;
         if (modifier && !Number.isInteger(modifier)) throw `Modifier must be integer.`;
         if (!pass && !fail) throw `Conditional must perform at least one action.`;
-        return { type, difficulty, modifier, pass, fail };
+        return { skill, difficulty, modifier, pass, fail };
     }
 
-    static #comparison({ attribute, type, value, pass, fail }) {}
+    /**
+     * @param {object} data
+     * @param {string} data.attribute
+     * @param {string} data.operation
+     * @param {number} data.value
+     * @param {Action|Action[]} [data.pass]
+     * @param {Action|Action[]} [data.fail]
+     * @returns {object}
+     */
+    static #comparison({ attribute, operation, value, pass, fail }) {
+        if (!Conditional.options.attributes.includes(attribute)) throw `Invalid attribute type.`;
+        if (!Conditional.options.operations.includes(operation)) throw `Invalid operation type.`;
+        if (Number.isNaN(value)) throw `Value must be number.`;
+        if (!pass && !fail) throw `Conditional must perform at least one action.`;
+        return { attribute, operation, value, pass, fail };
+    }
 
     /**
      * @param {string} type
