@@ -1,4 +1,3 @@
-
 /**
  * @class
  * @property {string} action
@@ -172,3 +171,28 @@ class Effect extends Action {
         this.data = data;
     }
 }
+
+/**
+ * @param {Action|Action[]} action
+ */
+function runAction(action) {
+    
+}
+
+/*
+
+TODO
+I think this definition of actions is a decent one, but probably a little
+too complicated. I think the broad definition of actions should probably
+go inside of the generic file too, as should the main handler function.
+
+Then, in the system files, custom actions can be implemented as well
+as the functions to resolve them.
+
+Also, comparison operations can be made even more generic if they
+instead take a full attribute path in, that way it's system agnostic.
+
+Then, systems can implement shortcut versions if they want that are easier
+to set up as well as more specialized.
+
+*/
