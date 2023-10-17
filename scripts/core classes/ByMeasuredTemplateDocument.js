@@ -1,7 +1,13 @@
 import * as CONST from '../constants.js';
 import { ByTokenDocument } from './ByTokenDocument.js';
 
-/** @inheritdoc */
+/**
+ * @classdesc   An extension of the client-side Measured Template document that implements
+ *              collision detection. If the system extends the MeasuredTemplateDocument class,
+ *              this class will extend the system subclass.
+ * @class
+ * @extends MeasuredTemplateDocument
+ */
 export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.documentClass {
     // -------------------- Private Class Fields --------------------
 
@@ -254,7 +260,28 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @returns {ByTokenDocument[]}                         Array of all tokens contained within the template.
      */
     getTokens(options = {}) {
-        options.percentateOutput = false;
+        options.percentageOutput = false;
         return this.parent.tokens.filter((token) => this.collidesToken(token, options));
+    }
+
+    /**
+     * Update user targets to the tokens colliding with the template.
+     */
+    targetTokens() {
+        game.user.updateTokenTargets(this.getTokens().map((t) => t.id));
+    }
+
+    /**
+     * Function to execute on each token colliding with the template.
+     * @callback forEachTokenCallback
+     * @param {ByTokenDocument} token   The current token passed to the callback.
+     */
+
+    /**
+     * Run the passed callback on each token colliding with the template.
+     * @param {forEachTokenCallback} func
+     */
+    forEachToken(func) {
+        for (const token of this.getTokens) func(token);
     }
 }

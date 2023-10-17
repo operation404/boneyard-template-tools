@@ -1,7 +1,13 @@
 import { ByMeasuredTemplateDocument } from './ByMeasuredTemplateDocument.js';
 import * as CONST from '../constants.js';
 
-/** @inheritdoc */
+/**
+ * @classdesc   An extension of the client-side Token document that implements
+ *              collision detection. If the system extends the TokenDocument class,
+ *              this class will extend the system subclass.
+ * @class
+ * @extends TokenDocument
+ */
 export class ByTokenDocument extends CONFIG.Token.documentClass {
     // -------------------- Private Class Fields --------------------
 
@@ -170,7 +176,7 @@ export class ByTokenDocument extends CONFIG.Token.documentClass {
      * @returns {ByTokenDocument[]}     Array of all templates that contain the token.
      */
     getTemplates(options) {
-        options.percentateOutput = false;
+        options.percentageOutput = false;
         return this.parent.templates.filter((template) => this.collidesTemplate(template, options));
     }
 }
