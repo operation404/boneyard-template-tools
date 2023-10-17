@@ -68,4 +68,13 @@ export function registerSettings() {
             ByMeasuredTemplateDocument._defaultConsiderTemplateRatio = value;
         },
     });
+
+    game.settings.register(CONST.MODULE, CONST.SETTINGS.UPDATE_REQUIRES_OWNERSHIP, {
+        name: `SETTINGS.NAME.${CONST.SETTINGS.UPDATE_REQUIRES_OWNERSHIP}`,
+        hint: `SETTINGS.HINT.${CONST.SETTINGS.UPDATE_REQUIRES_OWNERSHIP}`,
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: true,
+    });
 }

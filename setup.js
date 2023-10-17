@@ -13,3 +13,6 @@ Hooks.once('init', () => {
     ByMeasuredTemplateDocument._init();
     ByTokenDocument._init();
 });
+
+// TODO need to set up the socket handler function
+//game.socket.on(CONST.SOCKET, () => {});
