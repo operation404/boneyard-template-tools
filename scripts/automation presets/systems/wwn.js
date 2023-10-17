@@ -4,7 +4,7 @@ Actions can be either
 
 Effect 
 
-Condition
+Conditional
 
 condition {
     option 1: effect
@@ -33,8 +33,8 @@ class Action {
         switch (action) {
             case 'effect':
                 return Effect.create(type, data);
-            case 'condition':
-                return Condition.create(type, data);
+            case 'conditional':
+                return Conditional.create(type, data);
             default:
                 throw `Invalid Action type.`;
         }
@@ -47,21 +47,26 @@ class Action {
     }
 }
 
-class Condition extends Action {
+class Conditional extends Action {
     static options = {
         savingThrow: ['physical', 'evasion', 'mental'],
     };
 
+    /**
+     * @param {string} type
+     * @param {object} data
+     * @returns {Conditional}
+     */
     static create(type, data) {
         switch (type) {
             case 'savingThrow':
-                return new Condition(type, Condition.#savingThrow(data));
+                return new Conditional(type, Conditional.#savingThrow(data));
             case 'skillCheck':
-                return new Condition(type, Condition.#skillCheck(data));
+                return new Conditional(type, Conditional.#skillCheck(data));
             case 'comparison':
-                return new Condition(type, Condition.#comparison(data));
+                return new Conditional(type, Conditional.#comparison(data));
             default:
-                throw `Invalid Effect Type.`;
+                throw `Invalid conditional type.`;
         }
     }
 
@@ -71,32 +76,41 @@ class Condition extends Action {
      * @param {number} [data.modifier]
      * @param {Action|Action[]} [data.pass]
      * @param {Action|Action[]} [data.fail]
-     * @returns {Action}
+     * @returns {object}
      */
     static #savingThrow({ type, modifier, pass, fail }) {
-        if (!Condition.options.savingThrow.includes(type)) throw `Invalid save type.`;
-        if (!pass && !fail) return;
-        return new Condition('save', {
-            type: type,
-            modifier: modifier,
-            pass: pass,
-            fail: fail,
-        });
+        if (!Conditional.options.savingThrow.includes(type)) throw `Invalid save type.`;
+        if (modifier && !Number.isInteger(modifier)) throw `Modifier must be integer.`;
+        if (!pass && !fail) throw `Conditional must perform at least one action.`;
+        return { type, modifier, pass, fail };
     }
 
     /**
+     * TODO skills can be added dynamically to sheets so there's no fixed
+     * list of them. Hardcode a list in? I'd need to add ways to specify custom
+     * skills if so.
      * @param {object} data
      * @param {string} data.type
-     * @param {number} difficulty
+     * @param {number} data.difficulty
      * @param {number} [data.modifier]
      * @param {Action|Action[]} [data.pass]
      * @param {Action|Action[]} [data.fail]
-     * @returns {Action}
+     * @returns {object}
      */
-    static #skillCheck() {}
+    static #skillCheck({ type, difficulty, modifier, pass, fail }) {
+        if (typeof type !== 'string') throw `Type must be string.`;
+        if (!Number.isInteger(difficulty)) throw `Difficulty must be integer.`;
+        if (modifier && !Number.isInteger(modifier)) throw `Modifier must be integer.`;
+        if (!pass && !fail) throw `Conditional must perform at least one action.`;
+        return { type, difficulty, modifier, pass, fail };
+    }
 
-    static #comparison() {}
+    static #comparison({ attribute, type, value, pass, fail }) {}
 
+    /**
+     * @param {string} type
+     * @param {object} data
+     */
     constructor(type, data) {
         this.action = 'condition';
         this.type = type;
