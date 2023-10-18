@@ -1,0 +1,65 @@
+import { Action } from '../generic.js';
+
+export const systemId = 'dnd5e';
+export const actions = {
+    damage: {
+        create: (data) => new Damage(data),
+        resolve: Damage.resolve,
+        options: { extraDamageTypes: Damage.extraDamageTypes },
+    },
+};
+
+class Damage extends Action {
+    static extraDamageTypes = ['healing'];
+
+    /**
+     * @param {object} data
+     * @param {string} data.damageType
+     * @param {number} data.value
+     */
+    constructor(data) {
+        Damage.validateData(data);
+        this.type = 'Damage';
+        this.data = data;
+    }
+
+    /**
+     * @param {object} data
+     * @param {string} data.damageType
+     * @param {number} data.value
+     * @throws 'damageType' invalid.
+     * @throws 'value' must be integer.
+     */
+    static validateData({ damageType, value }) {
+        if (!(CONFIG.DND5E.damageTypes[damageType] || Damage.extraDamageTypes.includes(damageType)))
+            throw `'damageType' invalid.`;
+        if (!Number.isInteger(value)) throw `'value' must be integer.`;
+    }
+
+    /**
+     * @param {ActorDocument} actor
+     * @param {object} data
+     * @param {string} data.damageType
+     * @param {number} data.value
+     */
+    static resolve(actor, { damageType, value }) {
+        const { di: damageImmunities, dr: damageResistances, dv: damageVulnerabilities } = actor.system.traits;
+        let multiplier = 1;
+        if (damageType === 'healing') {
+            multiplier = -1;
+        } else if (damageResistances.value.has(damageType)) {
+            multiplier = 0.5;
+        } else if (damageImmunities.value.has(damageType)) {
+            multiplier = 0;
+        } else if (damageVulnerabilities.value.has(damageType)) {
+            multiplier = 2;
+        }
+        actor.applyDamage(value, multiplier);
+    }
+}
+
+class SavingThrow extends Action {}
+
+class AbilityCheck extends Action {}
+
+class CreatureType extends Action {}
