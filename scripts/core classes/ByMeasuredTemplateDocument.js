@@ -284,4 +284,8 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     forEachToken(func) {
         for (const token of this.getTokens) func(token);
     }
+
+    performActionOnTokens() {
+        
+    }
 }

@@ -69,6 +69,19 @@ export function updateDocuments(updateTuples) {
 
 function parseAndResolveAction(document, action) {}
 
+export const actions = {
+    comparison: {
+        create: (data) => new Comparison(data),
+        resolve: Comparison.resolve,
+        operations: Object.keys(Comparison.operations),
+    },
+    updateDoc: {
+        create: (data) => new UpdateDoc(data),
+        resolve: UpdateDoc.resolve,
+        operations: Object.keys(UpdateDoc.operations),
+    },
+};
+
 /**
  * @class
  * @abstract
