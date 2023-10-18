@@ -12,7 +12,7 @@ export function registerSettings() {
         default: CONST.COLLISION_METHOD.POINTS_SPACES,
         choices: Object.fromEntries(Object.keys(CONST.COLLISION_METHOD).map((key) => [key, `SETTINGS.CHOICES.${key}`])),
         onChange: (value) => {
-            ByMeasuredTemplateDocument._defaultTargetingMode = value;
+            ByMeasuredTemplateDocument._defaultCollisionMethod = value;
         },
     });
 

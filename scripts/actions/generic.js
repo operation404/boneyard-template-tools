@@ -15,7 +15,7 @@ export class Action {
      * @param {object} data
      */
     constructor(data) {
-        throw `Cannot instantiate abstract class.`;
+        if (this.constructor.name === 'Action') throw `Cannot instantiate abstract class.`;
     }
 
     /**
@@ -23,7 +23,7 @@ export class Action {
      * @abstract
      * @param {object} data
      */
-    static validateData() {
+    static validateData(data) {
         throw `Cannot call abstract method.`;
     }
 
@@ -64,6 +64,7 @@ class Comparison extends Action {
     constructor(data) {
         data.passActions = Array.isArray(data.passActions) ? data.passActions : [data.passActions];
         Comparison.validateData(data);
+        super();
         this.type = 'Comparison';
         this.data = data;
     }
@@ -125,6 +126,7 @@ class UpdateDoc extends Action {
     constructor(data) {
         data.updates = Array.isArray(data.updates) ? data.updates : [data.updates];
         UpdateDoc.validateData(data);
+        super();
         this.type = 'UpdateDoc';
         this.data = data;
     }

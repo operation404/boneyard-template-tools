@@ -12,6 +12,7 @@ class Damage extends Action {
      */
     constructor(data) {
         Damage.validateData(data);
+        super();
         this.type = 'Damage';
         this.data = data;
     }
