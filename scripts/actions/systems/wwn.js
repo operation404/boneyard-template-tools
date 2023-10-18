@@ -1,5 +1,11 @@
 import { Action } from '../generic.js';
 
+export const systemId = 'wwn';
+
+// TODO 
+// Need to revisit this and properly implement for wwn version
+// that is compatible with foundry v10+, my fork is v9 only
+
 /**
  * @class
  * @extends Action
