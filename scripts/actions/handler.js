@@ -1,5 +1,7 @@
-import { actions } from './generic.js';
+import { actions as genericActions, Action } from './generic.js';
 import * as WWN from './systems/wwn.js';
+
+let actionMap;
 
 /**
  * @returns {object}    The creation methods and options for available preset actions.
@@ -7,13 +9,17 @@ import * as WWN from './systems/wwn.js';
 export function initActions() {
     switch (game.system.id) {
         case WWN.systemId:
-            actions = { ...actions, ...WWN.actions };
+            actionMap = { ...genericActions, ...WWN.actions };
+            break;
+        default:
+            actionMap = genericActions;
             break;
     }
+
     const actionsAPI = Object.fromEntries(
-        Object.entries(actions).map(([k, v]) => [k, { create: v.create, options: v.options }])
+        Object.entries(actionMap).map(([k, v]) => [k, { create: v.create, options: v.options }])
     );
-    actionsAPI.resolveHandler = resolveHandler;
+    actionsAPI.resolveActions = resolveActions;
     return actionsAPI;
 }
 
@@ -21,10 +27,10 @@ export function initActions() {
 // as a GM.
 /**
  * @param {Document} document
- * @param {Action} action
+ * @param {Action|Action[]} actions
  */
-export function resolveHandler(document, action) {
-    (Array.isArray(action) ? action : [action]).forEach(({ type, data }) => {
-        actions[type].resolve(document, data);
+export function resolveActions(document, actions) {
+    (Array.isArray(actions) ? actions : [actions]).forEach(({ type, data }) => {
+        actionMap[type].resolve(document, data);
     });
 }

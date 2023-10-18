@@ -17,6 +17,7 @@ export class Action {
     }
 
     /**
+     * Validate the action data, throwing an error for any invalid data.
      * @abstract
      * @param {object} data
      */
@@ -25,6 +26,7 @@ export class Action {
     }
 
     /**
+     * Execute a single action with the provided data.
      * @abstract
      * @param {Document} document
      * @param {object} data
@@ -128,6 +130,7 @@ class UpdateDoc extends Action {
 
     /**
      * TODO not sure if value should be required to be an integer.
+     * TODO this also isn't right, data isn't an array, updates is.
      * @param {object[]} data
      * @param {string} data[].attributePath
      * @param {string} data[].method

@@ -69,9 +69,9 @@ export function registerSettings() {
         },
     });
 
-    game.settings.register(CONST.MODULE, CONST.SETTINGS.UPDATE_REQUIRES_OWNERSHIP, {
-        name: `SETTINGS.NAME.${CONST.SETTINGS.UPDATE_REQUIRES_OWNERSHIP}`,
-        hint: `SETTINGS.HINT.${CONST.SETTINGS.UPDATE_REQUIRES_OWNERSHIP}`,
+    game.settings.register(CONST.MODULE, CONST.SETTINGS.PLAYERS_CAN_USE_ACTIONS, {
+        name: `SETTINGS.NAME.${CONST.SETTINGS.PLAYERS_CAN_USE_ACTIONS}`,
+        hint: `SETTINGS.HINT.${CONST.SETTINGS.PLAYERS_CAN_USE_ACTIONS}`,
         scope: 'world',
         config: true,
         type: Boolean,
