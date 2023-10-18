@@ -2,7 +2,7 @@ import * as CONST from './scripts/constants.js';
 import { registerSettings } from './scripts/settings.js';
 import { ByMeasuredTemplateDocument } from './scripts/core classes/ByMeasuredTemplateDocument.js';
 import { ByTokenDocument } from './scripts/core classes/ByTokenDocument.js';
-import { initActions } from './scripts/actions/generic.js';
+import { initActions } from './scripts/actions/handler.js';
 
 Hooks.once('init', () => {
     registerSettings();

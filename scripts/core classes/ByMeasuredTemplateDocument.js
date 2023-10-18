@@ -1,6 +1,6 @@
 import * as CONST from '../constants.js';
 import { ByTokenDocument } from './ByTokenDocument.js';
-import { resolveHandler } from '../actions/generic.js';
+import { resolveHandler } from '../actions/handler.js';
 
 /**
  * @classdesc   An extension of the client-side Measured Template document that implements
