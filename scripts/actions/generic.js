@@ -1,44 +1,5 @@
-import * as CONST from '../../const.js';
+import * as CONST from '../constants.js';
 import * as WWN from './systems/wwn.js';
-
-let actions = {
-    comparison: {
-        create: (data) => new Comparison(data),
-        resolve: Comparison.resolve,
-        options: { operations: Object.keys(Comparison.operations) },
-    },
-    updateDoc: {
-        create: (data) => new UpdateDoc(data),
-        resolve: UpdateDoc.resolve,
-        options: { operations: Object.keys(UpdateDoc.operations) },
-    },
-};
-
-/**
- * @returns {object}    The creation methods and options for available preset actions.
- */
-export function initActions() {
-    switch (game.system.id) {
-        case WWN.systemId:
-            actions = { ...actions, ...WWN.actions };
-            break;
-    }
-    return Object.fromEntries(Object.entries(actions).map(([k, v]) => [k, { create: v.create, options: v.options }]));
-}
-
-// TODO need to do some checking here to see if this needs to be done
-// as a GM.
-/**
- * @param {Document} document
- * @param {Action} action
- */
-export function resolve(document, action) {
-    (Array.isArray(action) ? action : [action]).forEach(({ type, data }) => {
-        actions[type].resolve(document, data);
-    });
-}
-
-// --------------------------------------------------------------
 
 /**
  * @class
@@ -142,7 +103,7 @@ class Comparison extends Action {
         });
         if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
         if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
-        if (Comparison.operations[operation](attributeValue, value)) parseAndResolveAction(document, passAction);
+        if (Comparison.operations[operation](attributeValue, value)) resolveHandler(document, passAction);
     }
 }
 
@@ -202,4 +163,43 @@ class UpdateDoc extends Action {
         });
         document.update(Object.fromEntries(updateEntries));
     }
+}
+
+// ------------------------------------------------------
+
+let actions = {
+    comparison: {
+        create: (data) => new Comparison(data),
+        resolve: Comparison.resolve,
+        options: { operations: Object.keys(Comparison.operations) },
+    },
+    updateDoc: {
+        create: (data) => new UpdateDoc(data),
+        resolve: UpdateDoc.resolve,
+        options: { operations: Object.keys(UpdateDoc.operations) },
+    },
+};
+
+/**
+ * @returns {object}    The creation methods and options for available preset actions.
+ */
+export function initActions() {
+    switch (game.system.id) {
+        case WWN.systemId:
+            actions = { ...actions, ...WWN.actions };
+            break;
+    }
+    return Object.fromEntries(Object.entries(actions).map(([k, v]) => [k, { create: v.create, options: v.options }]));
+}
+
+// TODO need to do some checking here to see if this needs to be done
+// as a GM.
+/**
+ * @param {Document} document
+ * @param {Action} action
+ */
+export function resolveHandler(document, action) {
+    (Array.isArray(action) ? action : [action]).forEach(({ type, data }) => {
+        actions[type].resolve(document, data);
+    });
 }

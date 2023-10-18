@@ -1,6 +1,6 @@
 import * as CONST from '../constants.js';
 import { ByTokenDocument } from './ByTokenDocument.js';
-import { resolve } from '../actions/generic.js';
+import { resolveHandler } from '../actions/generic.js';
 
 /**
  * @classdesc   An extension of the client-side Measured Template document that implements
@@ -290,6 +290,6 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @param {Action|Action[]} action
      */
     actionOnTokens(action) {
-        this.getTokens().forEach((token) => resolve(token, action));
+        this.getTokens().forEach((token) => resolveHandler(token, action));
     }
 }
