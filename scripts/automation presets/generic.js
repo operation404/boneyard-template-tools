@@ -14,6 +14,9 @@ let actions = {
     },
 };
 
+/**
+ * @returns {object}    The creation methods and options for available preset actions.
+ */
 export function initActions() {
     switch (game.system.id) {
         case WWN.systemId:
@@ -24,11 +27,14 @@ export function initActions() {
 }
 
 /**
- *
  * @param {Document} document
  * @param {Action} action
  */
-export function resolve(document, action) {}
+export function resolve(document, action) {
+    (Array.isArray(action) ? action : [action]).forEach(({ type, data }) => {
+        actions[type].resolve(document, data);
+    });
+}
 
 // --------------------------------------------------------------
 
