@@ -31,6 +31,8 @@ class Damage extends Action {
     }
 
     /**
+     * Apply damage or healing to the actor, accounting for immunities, resistances,
+     * and vulnerabilities.
      * @param {ActorDocument} actor
      * @param {object} data
      * @param {string} data.damageType
