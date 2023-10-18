@@ -1,5 +1,6 @@
 import { actions as genericActions, Action } from './generic.js';
 import * as WWN from './systems/wwn.js';
+import * as DND5E from './systems/dnd5e.js';
 
 let actionMap;
 
@@ -10,6 +11,9 @@ export function initActions() {
     switch (game.system.id) {
         case WWN.systemId:
             actionMap = { ...genericActions, ...WWN.actions };
+            break;
+        case DND5E.systemId:
+            actionMap = { ...genericActions, ...DND5E.actions };
             break;
         default:
             actionMap = genericActions;
