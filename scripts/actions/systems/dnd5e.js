@@ -1,13 +1,6 @@
 import { Action } from '../generic.js';
 
 export const systemId = 'dnd5e';
-export const actions = {
-    damage: {
-        create: (data) => new Damage(data),
-        resolve: Damage.resolve,
-        options: { extraDamageTypes: Damage.extraDamageTypes },
-    },
-};
 
 class Damage extends Action {
     static extraDamageTypes = ['healing'];
@@ -63,3 +56,11 @@ class SavingThrow extends Action {}
 class AbilityCheck extends Action {}
 
 class CreatureType extends Action {}
+
+export const actions = {
+    damage: {
+        create: (data) => new Damage(data),
+        resolve: Damage.resolve,
+        options: { extraDamageTypes: Damage.extraDamageTypes },
+    },
+};

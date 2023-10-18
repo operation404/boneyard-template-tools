@@ -1,7 +1,6 @@
 import { Action } from '../generic.js';
 
 export const systemId = 'wwn';
-export const actions = {};
 
 // TODO
 // Need to revisit this and properly implement for wwn version
@@ -50,3 +49,5 @@ class ChangeHP extends Action {
         const hp = actor.attributes.hp.value;
     }
 }
+
+export const actions = {};
