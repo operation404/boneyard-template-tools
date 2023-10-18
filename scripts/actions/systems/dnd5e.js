@@ -59,7 +59,7 @@ class AbilityCheck extends Action {}
 class CreatureType extends Action {}
 
 export const actions = {
-    damage: {
+    Damage: {
         create: (data) => new Damage(data),
         resolve: Damage.resolve,
         options: { extraDamageTypes: Damage.extraDamageTypes },

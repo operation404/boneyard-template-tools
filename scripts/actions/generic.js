@@ -172,12 +172,12 @@ class UpdateDoc extends Action {
 }
 
 export const actions = {
-    comparison: {
+    Comparison: {
         create: (data) => new Comparison(data),
         resolve: Comparison.resolve,
         options: { operations: Object.keys(Comparison.operations) },
     },
-    updateDoc: {
+    UpdateDoc: {
         create: (data) => new UpdateDoc(data),
         resolve: UpdateDoc.resolve,
         options: { operations: Object.keys(UpdateDoc.operations) },
