@@ -1,4 +1,4 @@
-import * as CONST from '../const.js';
+import * as CONST from '../../const.js';
 import * as WWN from './systems/wwn.js';
 
 let actions = {
@@ -26,6 +26,8 @@ export function initActions() {
     return Object.fromEntries(Object.entries(actions).map(([k, v]) => [k, { create: v.create, options: v.options }]));
 }
 
+// TODO need to do some checking here to see if this needs to be done
+// as a GM.
 /**
  * @param {Document} document
  * @param {Action} action
