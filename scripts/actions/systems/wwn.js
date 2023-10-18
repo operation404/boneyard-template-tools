@@ -15,11 +15,31 @@ class ChangeHP extends Action {
     /**
      * @param {object} data
      * @param {string} data.method
-     * @param {string} data.value
+     * @param {number} data.value
      */
-    constructor(data) {}
+    constructor(data) {
+        ChangeHP.validateData(data);
+        this.type = 'ChangeHP';
+        this.data = data;
+    }
 
-    static validateData() {}
+    /**
+     * @param {object} data
+     * @param {string} data.method
+     * @param {number} data.value
+     */
+    static validateData({ method, value }) {
+        if (!Object.keys(ChangeHP.operations).includes(method)) throw `'method' invalid.`;
+        if (!Number.isInteger(value)) throw `'value' must be integer.`;
+    }
 
-    static resolve() {}
+    /**
+     * @param {ActorDocument} actor
+     * @param {object} data
+     * @param {string} data.method
+     * @param {number} data.value
+     */
+    static resolve(actor, data) {
+        const hp = actor.attributes.hp.value;
+    }
 }
