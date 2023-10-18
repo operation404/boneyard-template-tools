@@ -59,10 +59,10 @@ class Comparison extends Action {
      * @param {string} data.operation
      * @param {string} data.attributePath
      * @param {!*} data.value
-     * @param {Action|Action[]} data.passAction
+     * @param {Action|Action[]} data.passActions
      */
     constructor(data) {
-        data.passAction = Array.isArray(data.passAction) ? data.passAction : [data.passAction];
+        data.passActions = Array.isArray(data.passActions) ? data.passActions : [data.passActions];
         Comparison.validateData(data);
         this.type = 'Comparison';
         this.data = data;
@@ -73,19 +73,18 @@ class Comparison extends Action {
      * @param {string} data.operation
      * @param {string} data.attributePath
      * @param {!*} data.value
-     * @param {Action[]} data.passAction
+     * @param {Action[]} data.passActions
      * @throws 'operation' invalid.
      * @throws 'attributePath' must be string.
      * @throws 'value' must be non-null
      * @throws 'passAction' must be instance(s) of Action.
      */
-    static validateData({ operation, attributePath, value, passAction }) {
+    static validateData({ operation, attributePath, value, passActions }) {
         if (!Object.keys(Comparison.operations).includes(operation)) throw `'operation' invalid.`;
-        if (!Comparison.options.operations.includes(operation)) throw `'operation' invalid type.`;
         if (typeof attributePath !== 'string') throw `'attributePath' must be string.`;
         if (value === undefined || value === null) throw `'value' must be non-null`;
-        passAction.forEach((a) => {
-            if (!(a instanceof Action)) throw `'passAction' must be instance(s) of Action.`;
+        passActions.forEach((a) => {
+            if (!(a instanceof Action)) throw `'passActions' must be instances of Action.`;
         });
     }
 
@@ -95,16 +94,16 @@ class Comparison extends Action {
      * @param {string} data.operation
      * @param {string} data.attributePath
      * @param {!*} data.value
-     * @param {Action[]} data.passAction
+     * @param {Action[]} data.passActions
+     * @throws 'attributePath' does not exist or its value is undefined.
+     * @throws Attribute value and 'value' parameter not same type.
      */
-    static resolve(document, { operation, attributePath, value, passAction }) {
+    static resolve(document, { operation, attributePath, value, passActions }) {
         let attributeValue = document;
-        attributePath.split('.').forEach((pathToken) => {
-            attributeValue = attributeValue?.[pathToken];
-        });
+        attributePath.split('.').forEach((pathToken) => (attributeValue = attributeValue?.[pathToken]));
         if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
         if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
-        if (Comparison.operations[operation](attributeValue, value)) resolveActions(document, passAction);
+        if (Comparison.operations[operation](attributeValue, value)) resolveActions(document, passActions);
     }
 }
 
