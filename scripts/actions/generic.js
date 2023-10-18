@@ -1,3 +1,5 @@
+import { resolveActions } from './handler.js';
+
 /**
  * @class
  * @abstract
@@ -102,7 +104,7 @@ class Comparison extends Action {
         });
         if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
         if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
-        if (Comparison.operations[operation](attributeValue, value)) resolveHandler(document, passAction);
+        if (Comparison.operations[operation](attributeValue, value)) resolveActions(document, passAction);
     }
 }
 
@@ -134,9 +136,12 @@ class UpdateDoc extends Action {
      * @param {string} data.updates[].attributePath
      * @param {string} data.updates[].method
      * @param {!*} data.updates[].value
+     * @throws 'attributePath' must be string.
+     * @throws 'method' invalid.
+     * @throws 'value' must be non-null.
      */
-    static validateData(data) {
-        data.updates.forEach(({ attributePath, method, value }) => {
+    static validateData({ updates }) {
+        updates.forEach(({ attributePath, method, value }) => {
             if (typeof attributePath !== 'string') throw `'attributePath' must be string.`;
             if (!Object.keys(UpdateDoc.operations).includes(method)) throw `'method' invalid.`;
             if (value === undefined || value === null) throw `'value' must be non-null.`;
@@ -150,9 +155,11 @@ class UpdateDoc extends Action {
      * @param {string} data.updates[].attributePath
      * @param {string} data.updates[].method
      * @param {!*} data.updates[].value
+     * @throws 'attributePath' does not exist or its value is undefined.
+     * @throws Attribute value and 'value' parameter not same type.
      */
-    static resolve(document, data) {
-        const updateEntries = data.updates.map(({ attributePath, method, value }) => {
+    static resolve(document, { updates }) {
+        const updateEntries = updates.map(({ attributePath, method, value }) => {
             let attributeValue = document;
             attributePath.split('.').forEach((pathToken) => (attributeValue = attributeValue?.[pathToken]));
             if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
