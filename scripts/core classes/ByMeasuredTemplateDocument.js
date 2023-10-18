@@ -292,4 +292,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     actionOnTokens(action) {
         this.getTokens().forEach((token) => resolveHandler(token, action));
     }
+
+    /**
+     * @param {Action|Action[]} action
+     */
+    actionOnTokenActors(action) {
+        this.getTokens().forEach((token) => resolveHandler(token.actor, action));
+    }
 }
