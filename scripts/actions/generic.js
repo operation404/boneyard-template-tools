@@ -129,34 +129,32 @@ class UpdateDoc extends Action {
     }
 
     /**
-     * TODO not sure if value should be required to be an integer.
-     * TODO this also isn't right, data isn't an array, updates is.
-     * @param {object[]} data
-     * @param {string} data[].attributePath
-     * @param {string} data[].method
-     * @param {number} data[].value
+     * @param {object} data
+     * @param {object[]} data.updates
+     * @param {string} data.updates[].attributePath
+     * @param {string} data.updates[].method
+     * @param {!*} data.updates[].value
      */
     static validateData(data) {
-        data.forEach(({ attributePath, method, value }) => {
+        data.updates.forEach(({ attributePath, method, value }) => {
             if (typeof attributePath !== 'string') throw `'attributePath' must be string.`;
             if (!Object.keys(UpdateDoc.operations).includes(method)) throw `'method' invalid.`;
-            if (Number.isNaN(value)) throw `'value' must be number.`;
+            if (value === undefined || value === null) throw `'value' must be non-null.`;
         });
     }
 
     /**
      * @param {Document} document
-     * @param {object[]} data
-     * @param {string} data[].attributePath
-     * @param {string} data[].method
-     * @param {number} data[].value
+     * @param {object} data
+     * @param {object[]} data.updates
+     * @param {string} data.updates[].attributePath
+     * @param {string} data.updates[].method
+     * @param {!*} data.updates[].value
      */
     static resolve(document, data) {
-        const updateEntries = data.map(({ attributePath, method, value }) => {
+        const updateEntries = data.updates.map(({ attributePath, method, value }) => {
             let attributeValue = document;
-            attributePath.split('.').forEach((pathToken) => {
-                attributeValue = attributeValue?.[pathToken];
-            });
+            attributePath.split('.').forEach((pathToken) => (attributeValue = attributeValue?.[pathToken]));
             if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
             if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
             return [attributePath, UpdateDoc.operations[method](attributeValue, value)];
