@@ -74,12 +74,10 @@ function parseAndResolveAction(document, action) {}
  * @abstract
  * @property {string} type
  * @property {object} data
- * @property {boolean} needGM
  */
 class Action {
     type;
     data;
-    needGM;
 
     /**
      * @abstract
@@ -99,13 +97,20 @@ class Action {
 
     /**
      * @abstract
-     * @param {Action} action
+     * @param {Document} document
+     * @param {object} data
      */
-    static resolve(action) {
+    static resolve(document, data) {
         throw `Cannot call abstract method.`;
     }
 }
 
+/**
+ * @class
+ * @extends Action
+ * @classdesc       Action that compares an attribute of a document to a provided
+ *                  value, resolving additional actions if the comparison is true.
+ */
 class Comparison extends Action {
     static operations = {
         '=': (a, b) => a === b,
@@ -116,12 +121,18 @@ class Comparison extends Action {
         '<=': (a, b) => a <= b,
     };
 
+    /**
+     * @param {object} data
+     * @param {string} data.operation
+     * @param {string} data.attributePath
+     * @param {!*} data.value
+     * @param {Action|Action[]} data.passAction
+     */
     constructor(data) {
         data.passAction = Array.isArray(data.passAction) ? data.passAction : [data.passAction];
         Comparison.validateData(data);
         this.type = 'Comparison';
         this.data = data;
-        this.needGM = data.passAction.some((a) => a.needGM);
     }
 
     /**
@@ -162,4 +173,37 @@ class Comparison extends Action {
         if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
         if (Comparison.operations[operation](attributeValue, value)) parseAndResolveAction(document, passAction);
     }
+}
+
+/**
+ * @class
+ * @extends Action
+ * @classdesc       Action that updates a document with the provided values.
+ */
+class UpdateDoc extends Action {
+    static operations = {
+        replace: (orig, val) => val,
+        add: (orig, val) => orig + val,
+    };
+
+    /**
+     * @param {object} data
+     * @param {object|object[]} data.updates
+     */
+    constructor(data) {
+        data.updates = Array.isArray(data.updates) ? data.updates : [data.updates];
+        UpdateDoc.validateData(data);
+        this.type = 'UpdateDoc';
+        this.data = data;
+    }
+
+    /**
+     * @param {object[]} data
+     * @param {string} data[].attributePath
+     * @param {string} data[].method
+     * @param {number} data[].value
+     */
+    static validateData(data) {}
+
+    static resolve(document, data) {}
 }
