@@ -34,7 +34,15 @@ export function initActions() {
  * @param {Action|Action[]} actions
  */
 export function resolveActions(document, actions) {
+    if (game.user.isGM) {
+    } else {
+        if (game.settings.get(CONST.MODULE, CONST.SETTINGS.PLAYERS_CAN_USE_ACTIONS)) {
+        } else throw `Setting allowing players to use preset Actions is false.`;
+    }
+
     (Array.isArray(actions) ? actions : [actions]).forEach(({ type, data }) => {
         actionMap[type].resolve(document, data);
     });
 }
+
+function _resolveParse() {}
