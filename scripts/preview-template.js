@@ -129,6 +129,7 @@ class PreviewTemplate extends MeasuredTemplate {
     async draw() {
         super._draw();
         this.controlIcon.destroy();
+        //this.refresh();
         if (this.id) this.activateListeners();
     }
 
@@ -176,8 +177,15 @@ class PreviewTemplate extends MeasuredTemplate {
         return text;
     }
 
-    /** @override */
     refresh() {
+        this.renderFlags.set({   
+            refresh: true,         
+        });
+        return this;
+    }
+
+    /** @override */
+    refresh22() {
         if (!this.template) return;
         let d = canvas.dimensions;
         const document = this.document;
@@ -255,6 +263,8 @@ class PreviewTemplate extends MeasuredTemplate {
         if (this.activeHandlers) {
             this.clearHandlers();
         }
+
+        window.a = this;
 
         //END WARPGATE
         return this;
