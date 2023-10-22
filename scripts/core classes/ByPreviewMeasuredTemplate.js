@@ -54,7 +54,8 @@ export async function previewTemplatePlacement(config, callbacks) {
         token.control({ releaseOthers: false });
     }
 
-    return template.toObject();
+    return template;
+    //return template.toObject();
 }
 
 class PreviewTemplate extends MeasuredTemplate {
