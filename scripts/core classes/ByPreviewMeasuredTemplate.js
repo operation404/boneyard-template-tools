@@ -28,36 +28,6 @@ hidden: BooleanField
 flags: ObjectField
  */
 
-async function previewTemplatePlacement(config, callbacks) {
-    mergeObject(config, PreviewTemplate.defaults, { overwrite: false });
-
-    // Remember controlled tokens to restore control after preview.
-    let controlled = [];
-    if (config.rememberControlled) {
-        controlled = canvas.tokens.controlled;
-    }
-
-    // If initial location not given, use mouse position.
-    if (!config.hasOwnProperty('x') && !config.hasOwnProperty('y')) {
-        // v This is identical to 'canvas.mousePosition'
-        // canvas.app.renderer.events.pointer.getLocalPosition(canvas.app.stage)
-        let mouseLoc = canvas.mousePosition;
-        mouseLoc = PreviewTemplate.getSnappedPosition(mouseLoc, config.interval);
-        config.x = mouseLoc.x;
-        config.y = mouseLoc.y;
-    }
-
-    const template = new PreviewTemplate(config, callbacks);
-    await template.drawPreview();
-
-    for (const token of controlled) {
-        token.control({ releaseOthers: false });
-    }
-
-    return template;
-    //return template.toObject();
-}
-
 class PreviewTemplateOld extends MeasuredTemplate {
     static defaults = {
         size: 1,
@@ -477,6 +447,12 @@ export class PreviewTemplate extends MeasuredTemplate {
         const templateDoc = new cls(templateData, { parent: canvas.scene });
         const templateObj = new PreviewTemplate(templateDoc);
 
+        {
+            // Merge extra preview settings into MeasuredTemplate object
+            let { interval, lockPosition, lockSize, lockRotation } = config;
+            mergeObject(templateObj, { interval, lockPosition, lockSize, lockRotation }, { overwrite: false });
+        }
+
         await templateObj.drawPreview();
 
         controlled.forEach((token) => token.control({ releaseOthers: false }));
@@ -556,7 +532,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         if (now - this.#moveTime <= 20) return;
 
         const center = event.data.getLocalPosition(this.layer);
-        const interval = canvas.grid.type === CONST.GRID_TYPES.GRIDLESS ? 0 : 2;
+        const interval = canvas.grid.type === CONST.GRID_TYPES.GRIDLESS ? 0 : this.interval;
         const snapped = canvas.grid.getSnappedPosition(center.x, center.y, interval);
 
         this.document.updateSource({ x: snapped.x, y: snapped.y });
