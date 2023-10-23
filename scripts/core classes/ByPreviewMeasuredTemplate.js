@@ -130,7 +130,7 @@ class PreviewTemplate extends MeasuredTemplate {
     async draw() {
         super._draw();
         this.controlIcon.destroy();
-        //this.refresh();
+        this.refresh();
         if (this.id) this.activateListeners();
     }
 
