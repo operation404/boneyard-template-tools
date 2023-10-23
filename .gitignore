@@ -2,3 +2,4 @@ images/*.psd
 *.bat
 *.code-workspace
 preview macro test.js
+scripts/core classes/ByPreviewMeasuredTemplate copy.js

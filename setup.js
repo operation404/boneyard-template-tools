@@ -3,7 +3,8 @@ import { registerSettings } from './scripts/settings.js';
 import { ByMeasuredTemplateDocument } from './scripts/core classes/ByMeasuredTemplateDocument.js';
 import { ByTokenDocument } from './scripts/core classes/ByTokenDocument.js';
 import { initActions } from './scripts/actions/handler.js';
-import { previewTemplatePlacement } from './scripts/core classes/ByPreviewMeasuredTemplate.js';
+//import { previewTemplatePlacement } from './scripts/core classes/ByPreviewMeasuredTemplate.js';
+import { PreviewTemplate } from './scripts/core classes/ByPreviewMeasuredTemplate.js';
 
 Hooks.once('init', () => {
     registerSettings();
@@ -14,7 +15,7 @@ Hooks.once('init', () => {
         collisionMethods: CONST.COLLISION_METHOD,
         collisionShapes: CONST.TOKEN_COLLISION_SHAPE,
         actions: initActions(),
-        preview: previewTemplatePlacement,
+        preview: PreviewTemplate.createPreview,
     };
 });
 
