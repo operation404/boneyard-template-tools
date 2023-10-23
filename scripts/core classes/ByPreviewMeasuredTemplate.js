@@ -449,7 +449,7 @@ export class PreviewTemplate extends MeasuredTemplate {
 
         {
             // Merge extra preview settings into MeasuredTemplate object
-            let { interval, lockPosition, lockSize, lockRotation } = config;
+            let { interval, lockPosition, lockSize, lockRotation } = templateData;
             mergeObject(templateObj, { interval, lockPosition, lockSize, lockRotation }, { overwrite: false });
         }
 
