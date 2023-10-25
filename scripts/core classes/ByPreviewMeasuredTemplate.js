@@ -1,16 +1,3 @@
-/*  
-Specific thanks to trioderegion (github.com/trioderegion)
-
-Their warpgate module served as a frequent reference for how to
-alter the behavior of MeasuredTemplates for the purpose of
-creating a simple preview. Their module's Crosshair functionality
-provides much of the functionality this module's previewer does,
-but does considerably more as well.
-
-There is also code from the core packages as well as the D&D5E
-system that is used and modified here.
-*/
-
 /**
  * A helper class for previewing and adjusting MeasuredTemplates before creating them.
  */
