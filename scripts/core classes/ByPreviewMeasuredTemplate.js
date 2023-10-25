@@ -119,26 +119,20 @@ export class PreviewTemplate extends MeasuredTemplate {
         }
 
         mergeObject(config, PreviewTemplate.#configDefaults(templateData, config), { overwrite: false });
+        // Validate and check for redundancy
         {
             let { lockPosition, lockSize, lockRotation } = config;
-            {
-                // Validate and check for redundancy
-                if (typeof lockPosition === 'object') {
-                    if (lockPosition.max === 0) config.lockPosition = true;
-                    lockPosition.origin = { x: templateData.x, y: templateData.y };
-                }
-                if (typeof lockSize === 'object' && lockSize.min === lockSize.max) {
-                    config.lockSize = true;
-                }
-                if (typeof lockRotation === 'object' && (lockRotation.max - lockRotation.min) % 360 === 0) {
-                    config.lockRotation = true;
-                }
+            if (typeof lockPosition === 'object') {
+                if (lockPosition.max === 0) config.lockPosition = true;
+                lockPosition.origin = { x: templateData.x, y: templateData.y };
+            }
+            if (typeof lockSize === 'object' && lockSize.min === lockSize.max) {
+                config.lockSize = true;
+            }
+            if (typeof lockRotation === 'object' && (lockRotation.max - lockRotation.min) % 360 === 0) {
+                config.lockRotation = true;
             }
         }
-
-        // TODO
-        // Update the starting values based on the constraints given in config.
-        // Ex: rotation must be between 90 and 180, starting is 0. Set it to 90.
 
         // Remember controlled tokens to restore control after preview.
         const controlled = config.rememberControlled ? canvas.tokens.controlled : null;
@@ -148,8 +142,8 @@ export class PreviewTemplate extends MeasuredTemplate {
         const templateObj = new PreviewTemplate(templateDoc);
         mergeObject(templateObj, config, { overwrite: false });
 
+        // Update starting values based on config constraints
         {
-            // Update starting values based on config constraints
             const { x, y } = templateDoc;
             templateDoc.updateSource({
                 ...templateObj._updatePosition({ x, y }),
@@ -301,8 +295,13 @@ export class PreviewTemplate extends MeasuredTemplate {
         // Clamp rotation
         if (typeof this.lockRotation === 'object') {
             const { min, max } = this.lockRotation;
-            if (delta > 0 && direction > max) direction = max;
-            else if (direction < min) direction = min;
+            if (min < max) {
+                if (delta > 0 && direction > max) direction = max;
+                else if (direction < min) direction = min;
+            } else {
+                if (delta > 0 && direction > max && direction < min) direction = max;
+                else if (direction < min && direction > max) direction = min;
+            }
         }
 
         return direction;
