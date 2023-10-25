@@ -281,7 +281,7 @@ export class PreviewTemplate extends MeasuredTemplate {
 
             // Clamp size
             if (typeof this.lockSize === 'object') {
-                const { min, max } = this.lockRotation;
+                const { min, max } = this.lockSize;
                 if (delta > 0 && update.distance > max) update.distance = max;
                 else if (update.distance < min) update.distance = min;
             }
