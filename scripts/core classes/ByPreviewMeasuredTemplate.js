@@ -216,18 +216,18 @@ export class PreviewTemplate extends MeasuredTemplate {
         if (typeof this.lockPosition === 'object') {
             const { origin, min, max } = this.lockPosition;
             let distance = canvas.grid.measureDistance(origin, snapped);
+
             if (distance < min || distance > max) {
-                const ray = new Ray(origin, snapped);
+                const ray = new Ray(origin, center);
                 const rayLen = (ray.distance / canvas.dimensions.size) * canvas.dimensions.distance;
                 let scalar = (distance < min ? min : max) / rayLen;
                 snapped = ray.project(scalar);
                 snapped = canvas.grid.getSnappedPosition(snapped.x, snapped.y, this.interval);
                 distance = canvas.grid.measureDistance(origin, snapped);
+
+                // If first scaled snap pos still not in range, adjust scalar by one interval unit length
                 if (distance < min || distance > max) {
-                    scalar =
-                        (distance < min
-                            ? min + (1 / this.interval) * canvas.dimensions.distance
-                            : max - (1 / this.interval) * canvas.dimensions.distance) / rayLen;
+                    scalar += (((distance < min ? 1 : -1) / this.interval) * canvas.dimensions.distance) / rayLen;
                     snapped = ray.project(scalar);
                     snapped = canvas.grid.getSnappedPosition(snapped.x, snapped.y, this.interval);
                     distance = canvas.grid.measureDistance(origin, snapped);
