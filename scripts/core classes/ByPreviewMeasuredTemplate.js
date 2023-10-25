@@ -276,7 +276,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         // Resize template
         else if (this.lockSize !== true && event.ctrlKey) {
             const amount = (event.shiftKey ? 0.5 : 1) * canvas.dimensions.distance;
-            const delta = amount * Math.sign(event.deltaY);
+            const delta = -amount * Math.sign(event.deltaY);
             update.distance = this.document.distance + delta;
 
             // Clamp size
