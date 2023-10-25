@@ -212,18 +212,26 @@ export class PreviewTemplate extends MeasuredTemplate {
         const center = event.data.getLocalPosition(this.layer);
         let snapped = canvas.grid.getSnappedPosition(center.x, center.y, this.interval);
 
-        // Apply clamping if specified
+        // Apply clamping if configured
         if (typeof this.lockPosition === 'object') {
             const { origin, min, max } = this.lockPosition;
-            const distance = canvas.grid.measureDistance(origin, snapped);
-            if (distance < min) {
+            let distance = canvas.grid.measureDistance(origin, snapped);
+            if (distance < min || distance > max) {
                 const ray = new Ray(origin, snapped);
                 const rayLen = (ray.distance / canvas.dimensions.size) * canvas.dimensions.distance;
-                snapped = ray.project(min / rayLen);
-            } else if (distance > max) {
-                const ray = new Ray(origin, snapped);
-                const rayLen = (ray.distance / canvas.dimensions.size) * canvas.dimensions.distance;
-                snapped = ray.project(max / rayLen);
+                let scalar = (distance < min ? min : max) / rayLen;
+                snapped = ray.project(scalar);
+                snapped = canvas.grid.getSnappedPosition(snapped.x, snapped.y, this.interval);
+                distance = canvas.grid.measureDistance(origin, snapped);
+                if (distance < min || distance > max) {
+                    scalar =
+                        (distance < min
+                            ? min + (1 / this.interval) * canvas.dimensions.distance
+                            : max - (1 / this.interval) * canvas.dimensions.distance) / rayLen;
+                    snapped = ray.project(scalar);
+                    snapped = canvas.grid.getSnappedPosition(snapped.x, snapped.y, this.interval);
+                    distance = canvas.grid.measureDistance(origin, snapped);
+                }
             }
         }
 
