@@ -402,17 +402,8 @@ export class PreviewTemplate extends MeasuredTemplate {
      */
     #events;
 
-    static #getDefaults() {
+    static #templateDefaults() {
         return {
-            // Preview specific defaults
-            tag: 'previewTemplate',
-            interval: 2,
-            lockPosition: false,
-            lockSize: true,
-            lockRotation: false,
-            rememberControlled: false,
-
-            // Measured template document defaults
             direction: 0,
             distance: canvas.dimensions.distance,
             width: canvas.dimensions.distance,
@@ -422,15 +413,33 @@ export class PreviewTemplate extends MeasuredTemplate {
         };
     }
 
+    static #configDefaults() {
+        return {
+            tag: 'previewTemplate',
+            interval:
+                canvas.grid.type === CONST.GRID_TYPES.GRIDLESS
+                    ? 0
+                    : canvas.grid.type === CONST.GRID_TYPES.SQUARE
+                    ? 2
+                    : 5,
+            lockPosition: false,
+            lockSize: true,
+            lockRotation: false,
+            rememberControlled: false,
+            callbacks: {},
+        };
+    }
+
     /**
      *
      * @param {Object} templateData
-     * @param {Object} callbacks
+     * @param {Object} config
      * @returns {PreviewTemplate|null}
      */
-    static async createPreview(templateData, callbacks) {
+    static async createPreview(templateData, config) {
         if (!templateData.hasOwnProperty('t')) return null;
-        mergeObject(templateData, PreviewTemplate.#getDefaults(), { overwrite: false });
+        mergeObject(templateData, PreviewTemplate.#templateDefaults(), { overwrite: false });
+        mergeObject(config, PreviewTemplate.#configDefaults(), { overwrite: false });
 
         if (!templateData.hasOwnProperty('x') || !templateData.hasOwnProperty('y')) {
             // canvas.app.renderer.events.pointer.getLocalPosition(canvas.app.stage)
@@ -441,21 +450,17 @@ export class PreviewTemplate extends MeasuredTemplate {
         }
 
         // Remember controlled tokens to restore control after preview.
-        const controlled = templateData.rememberControlled ? canvas.tokens.controlled : [];
+        const controlled = config.rememberControlled ? canvas.tokens.controlled : null;
 
         const cls = CONFIG.MeasuredTemplate.documentClass;
-        const templateDoc = new cls(templateData, { parent: canvas.scene });
+        const templateDoc = new cls(templateData, { parent: canvas.scene }); // Constructor modifies passed templateData obj
         const templateObj = new PreviewTemplate(templateDoc);
-
-        {
-            // Merge extra preview settings into MeasuredTemplate object
-            let { interval, lockPosition, lockSize, lockRotation } = templateData;
-            mergeObject(templateObj, { interval, lockPosition, lockSize, lockRotation }, { overwrite: false });
-        }
+        mergeObject(templateObj, config, { overwrite: false });
 
         await templateObj.drawPreview();
 
-        controlled.forEach((token) => token.control({ releaseOthers: false }));
+        // Return control of tokens if saved
+        controlled?.forEach((token) => token.control({ releaseOthers: false }));
 
         return templateObj;
     }
