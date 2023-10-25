@@ -77,7 +77,6 @@ export class PreviewTemplate extends MeasuredTemplate {
             lockPosition:
                 typeof config.lockPosition === 'object'
                     ? {
-                          origin: { x: templateData.x, y: templateData.y },
                           min: 0,
                           max: 0,
                           // TODO restricted angle support
@@ -110,6 +109,7 @@ export class PreviewTemplate extends MeasuredTemplate {
      */
     static async createPreview(templateData, config) {
         if (!templateData.hasOwnProperty('t')) return null;
+
         mergeObject(templateData, PreviewTemplate.#templateDefaults(), { overwrite: false });
         if (!templateData.hasOwnProperty('x') || !templateData.hasOwnProperty('y')) {
             // canvas.app.renderer.events.pointer.getLocalPosition(canvas.app.stage) is identical to 'canvas.mousePosition'
@@ -117,18 +117,22 @@ export class PreviewTemplate extends MeasuredTemplate {
             templateData.x = mouseLoc.x;
             templateData.y = mouseLoc.y;
         }
+
         mergeObject(config, PreviewTemplate.#configDefaults(templateData, config), { overwrite: false });
         {
-            // Check for redundancy
             let { lockPosition, lockSize, lockRotation } = config;
-            if (typeof lockPosition === 'object' && lockPosition.max === 0) {
-                config.lockPosition = true;
-            }
-            if (typeof lockSize === 'object' && lockSize.min === lockSize.max) {
-                config.lockSize = true;
-            }
-            if (typeof lockRotation === 'object' && (lockRotation.max - lockRotation.min) % 360 === 0) {
-                config.lockRotation = true;
+            {
+                // Validate and check for redundancy
+                if (typeof lockPosition === 'object') {
+                    if (lockPosition.max === 0) config.lockPosition = true;
+                    lockPosition.origin = { x: templateData.x, y: templateData.y };
+                }
+                if (typeof lockSize === 'object' && lockSize.min === lockSize.max) {
+                    config.lockSize = true;
+                }
+                if (typeof lockRotation === 'object' && (lockRotation.max - lockRotation.min) % 360 === 0) {
+                    config.lockRotation = true;
+                }
             }
         }
 
@@ -143,6 +147,16 @@ export class PreviewTemplate extends MeasuredTemplate {
         const templateDoc = new cls(templateData, { parent: canvas.scene }); // Constructor modifies passed templateData obj
         const templateObj = new PreviewTemplate(templateDoc);
         mergeObject(templateObj, config, { overwrite: false });
+
+        {
+            // Update starting values based on config constraints
+            const { x, y } = templateDoc;
+            templateDoc.updateSource({
+                ...templateObj._updatePosition({ x, y }),
+                direction: templateObj._updateRotation(0),
+                distance: templateObj._updateSize(0),
+            });
+        }
 
         await templateObj.drawPreview();
 
@@ -219,7 +233,15 @@ export class PreviewTemplate extends MeasuredTemplate {
         if (now - this.#moveTime <= 20) return;
 
         const center = event.data.getLocalPosition(this.layer);
-        let snapped = canvas.grid.getSnappedPosition(center.x, center.y, this.interval);
+        const update = this._updatePosition(center);
+
+        this.document.updateSource(update);
+        this.refresh();
+        this.#moveTime = now;
+    }
+
+    _updatePosition({ x, y }) {
+        let snapped = canvas.grid.getSnappedPosition(x, y, this.interval);
 
         // Clamp position
         if (typeof this.lockPosition === 'object') {
@@ -228,7 +250,7 @@ export class PreviewTemplate extends MeasuredTemplate {
 
             // If snapped pos not in range, try new position along same ray from origin
             if (distance < min || distance > max) {
-                const ray = new Ray(origin, center);
+                const ray = new Ray(origin, { x, y });
                 const rayLen = (ray.distance / canvas.dimensions.size) * canvas.dimensions.distance;
                 let scalar = (distance < min ? min : max) / rayLen;
                 snapped = ray.project(scalar);
@@ -240,14 +262,11 @@ export class PreviewTemplate extends MeasuredTemplate {
                     scalar += (((distance < min ? 1 : -1) / this.interval) * canvas.dimensions.distance) / rayLen;
                     snapped = ray.project(scalar);
                     snapped = canvas.grid.getSnappedPosition(snapped.x, snapped.y, this.interval);
-                    distance = canvas.grid.measureDistance(origin, snapped);
                 }
             }
         }
 
-        this.document.updateSource({ x: snapped.x, y: snapped.y });
-        this.refresh();
-        this.#moveTime = now;
+        return snapped;
     }
 
     /**
@@ -263,32 +282,43 @@ export class PreviewTemplate extends MeasuredTemplate {
         if (this.lockRotation !== true && !event.ctrlKey) {
             const rotateDeg = event.shiftKey ? 5 : canvas.grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
             const delta = rotateDeg * Math.sign(event.deltaY);
-            update.direction = this.document.direction + delta;
-
-            // Clamp rotation
-            if (typeof this.lockRotation === 'object') {
-                const { min, max } = this.lockRotation;
-                if (delta > 0 && update.direction > max) update.direction = max;
-                else if (update.direction < min) update.direction = min;
-            }
+            update.direction = this._updateRotation(delta);
         }
-
         // Resize template
         else if (this.lockSize !== true && event.ctrlKey) {
             const amount = (event.shiftKey ? 0.5 : 1) * canvas.dimensions.distance;
             const delta = -amount * Math.sign(event.deltaY);
-            update.distance = this.document.distance + delta;
-
-            // Clamp size
-            if (typeof this.lockSize === 'object') {
-                const { min, max } = this.lockSize;
-                if (delta > 0 && update.distance > max) update.distance = max;
-                else if (update.distance < min) update.distance = min;
-            }
+            update.distance = this._updateSize(delta);
         }
 
         this.document.updateSource(update);
         this.refresh();
+    }
+
+    _updateRotation(delta) {
+        let direction = this.document.direction + delta;
+
+        // Clamp rotation
+        if (typeof this.lockRotation === 'object') {
+            const { min, max } = this.lockRotation;
+            if (delta > 0 && direction > max) direction = max;
+            else if (direction < min) direction = min;
+        }
+
+        return direction;
+    }
+
+    _updateSize(delta) {
+        let distance = this.document.distance + delta;
+
+        // Clamp size
+        if (typeof this.lockSize === 'object') {
+            const { min, max } = this.lockSize;
+            if (delta > 0 && distance > max) distance = max;
+            else if (distance < min) distance = min;
+        }
+
+        return distance;
     }
 
     /**
