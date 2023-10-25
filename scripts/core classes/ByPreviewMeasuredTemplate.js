@@ -62,7 +62,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         };
     }
 
-    static #configDefaults(templateData) {
+    static #configDefaults(templateData, config) {
         return {
             tag: 'previewTemplate',
             // Larger the interval, the more legal positions between grid units
@@ -74,28 +74,29 @@ export class PreviewTemplate extends MeasuredTemplate {
                     : canvas.grid.type === CONST.GRID_TYPES.SQUARE
                     ? 2
                     : 5,
-            lockPosition: false,
-            /*
-            lockPosition: {
-                origin: { x: templateData.x, y: templateData.y },
-                min: 0,
-                max: canvas.dimensions.distance,
-            },
-            */
-            lockSize: true,
-            /*
-            lockSize: {
-                min: templateData.distance,
-                max: templateData.distance,
-            },
-            */
-            lockRotation: false,
-            /*
-            lockRotation: {
-                min: 0,
-                max: 360
-            },
-            */
+            lockPosition:
+                typeof config.lockPosition === 'object'
+                    ? {
+                          origin: { x: templateData.x, y: templateData.y },
+                          min: 0,
+                          max: 0,
+                          // TODO restricted angle support
+                      }
+                    : false,
+            lockSize:
+                typeof config.lockSize === 'object'
+                    ? {
+                          min: templateData.distance,
+                          max: templateData.distance,
+                      }
+                    : true,
+            lockRotation:
+                typeof config.lockSize === 'object'
+                    ? {
+                          min: 0,
+                          max: 0,
+                      }
+                    : false,
             rememberControlled: false,
             callbacks: {},
         };
@@ -116,7 +117,17 @@ export class PreviewTemplate extends MeasuredTemplate {
             templateData.x = mouseLoc.x;
             templateData.y = mouseLoc.y;
         }
-        mergeObject(config, PreviewTemplate.#configDefaults(templateData), { overwrite: false });
+        mergeObject(config, PreviewTemplate.#configDefaults(templateData, config), { overwrite: false });
+        {
+            // Check for redundancy
+            let { lockSize, lockRotation } = config;
+            if (typeof lockSize === 'object' && lockSize.min === lockSize.max) {
+                config.lockSize = true;
+            }
+            if (typeof lockRotation === 'object' && (lockRotation.max - lockRotation.min) % 360 === 0) {
+                config.lockRotation = true;
+            }
+        }
 
         // Remember controlled tokens to restore control after preview.
         const controlled = config.rememberControlled ? canvas.tokens.controlled : null;
