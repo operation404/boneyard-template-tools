@@ -132,6 +132,10 @@ export class PreviewTemplate extends MeasuredTemplate {
             }
         }
 
+        // TODO
+        // Update the starting values based on the constraints given in config.
+        // Ex: rotation must be between 90 and 180, starting is 0. Set it to 90.
+
         // Remember controlled tokens to restore control after preview.
         const controlled = config.rememberControlled ? canvas.tokens.controlled : null;
 
@@ -217,11 +221,12 @@ export class PreviewTemplate extends MeasuredTemplate {
         const center = event.data.getLocalPosition(this.layer);
         let snapped = canvas.grid.getSnappedPosition(center.x, center.y, this.interval);
 
-        // Apply clamping if configured
+        // Clamp position
         if (typeof this.lockPosition === 'object') {
             const { origin, min, max } = this.lockPosition;
             let distance = canvas.grid.measureDistance(origin, snapped);
 
+            // If snapped pos not in range, try new position along same ray from origin
             if (distance < min || distance > max) {
                 const ray = new Ray(origin, center);
                 const rayLen = (ray.distance / canvas.dimensions.size) * canvas.dimensions.distance;
@@ -252,9 +257,36 @@ export class PreviewTemplate extends MeasuredTemplate {
     _onRotatePlacement(event) {
         if (event.ctrlKey) event.preventDefault(); // Avoid zooming the browser window
         event.stopPropagation();
-        const delta = canvas.grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
-        const snap = event.shiftKey ? delta : 5;
-        const update = { direction: this.document.direction + snap * Math.sign(event.deltaY) };
+        const update = {};
+
+        // Rotate template
+        if (this.lockRotation !== true && !event.ctrlKey) {
+            const rotateDeg = event.shiftKey ? 5 : canvas.grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
+            const delta = rotateDeg * Math.sign(event.deltaY);
+            update.direction = this.document.direction + delta;
+
+            // Clamp rotation
+            if (typeof this.lockRotation === 'object') {
+                const { min, max } = this.lockRotation;
+                if (delta > 0 && update.direction > max) update.direction = max;
+                else if (update.direction < min) update.direction = min;
+            }
+        }
+
+        // Resize template
+        else if (this.lockSize !== true && event.ctrlKey) {
+            const amount = (event.shiftKey ? 0.5 : 1) * canvas.dimensions.distance;
+            const delta = amount * Math.sign(event.deltaY);
+            update.distance = this.document.distance + delta;
+
+            // Clamp size
+            if (typeof this.lockSize === 'object') {
+                const { min, max } = this.lockRotation;
+                if (delta > 0 && update.distance > max) update.distance = max;
+                else if (update.distance < min) update.distance = min;
+            }
+        }
+
         this.document.updateSource(update);
         this.refresh();
     }
