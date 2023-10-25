@@ -313,9 +313,6 @@ export class PreviewTemplate extends MeasuredTemplate {
      */
     async _onConfirmPlacement(event) {
         await this._finishPlacement(event);
-        const interval = canvas.grid.type === CONST.GRID_TYPES.GRIDLESS ? 0 : 2;
-        const destination = canvas.grid.getSnappedPosition(this.document.x, this.document.y, interval);
-        this.document.updateSource(destination);
         this.#events.resolve(canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [this.document.toObject()]));
     }
 
