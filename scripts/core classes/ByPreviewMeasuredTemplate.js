@@ -120,7 +120,10 @@ export class PreviewTemplate extends MeasuredTemplate {
         mergeObject(config, PreviewTemplate.#configDefaults(templateData, config), { overwrite: false });
         {
             // Check for redundancy
-            let { lockSize, lockRotation } = config;
+            let { lockPosition, lockSize, lockRotation } = config;
+            if (typeof lockPosition === 'object' && lockPosition.max === 0) {
+                config.lockPosition = true;
+            }
             if (typeof lockSize === 'object' && lockSize.min === lockSize.max) {
                 config.lockSize = true;
             }
@@ -157,6 +160,8 @@ export class PreviewTemplate extends MeasuredTemplate {
         this.draw();
         this.layer.activate();
         this.layer.preview.addChild(this);
+
+        // TODO draw some guides here to show max distance the template can be moved
 
         // Activate interactivity
         return this.activatePreviewListeners();
