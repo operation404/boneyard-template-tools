@@ -210,7 +210,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         if (now - this.#moveTime <= 20) return;
 
         const center = event.data.getLocalPosition(this.layer);
-        const snapped = canvas.grid.getSnappedPosition(center.x, center.y, this.interval);
+        let snapped = canvas.grid.getSnappedPosition(center.x, center.y, this.interval);
 
         // Apply clamping if specified
         if (typeof this.lockPosition === 'object') {
