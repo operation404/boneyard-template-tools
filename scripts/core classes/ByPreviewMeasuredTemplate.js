@@ -186,11 +186,11 @@ export class PreviewTemplate extends MeasuredTemplate {
             const x = origin.x - this.document.x;
             const y = origin.y - this.document.y;
 
-            t.lineStyle(this._borderThickness, 0x000000)
-                .beginFill(0x000000, 0.0)
+            t.lineStyle(this._borderThickness, 0x000000, 0.5)
+                .beginFill(0x00ff00, 0.1)
                 .drawCircle(x, y, max * canvas.dimensions.distancePixels);
 
-            if (min > 0) t.drawCircle(x, y, min * canvas.dimensions.distancePixels);
+            if (min > 0) t.beginFill(0xff0033, 0.1).drawCircle(x, y, min * canvas.dimensions.distancePixels);
 
             t.endFill();
         }
@@ -271,7 +271,7 @@ export class PreviewTemplate extends MeasuredTemplate {
 
                 const rayLen = (ray.distance / canvas.dimensions.size) * canvas.dimensions.distance;
                 let scalar = (distance < min ? min : max) / rayLen;
-                
+
                 snapped = ray.project(scalar);
                 snapped = canvas.grid.getSnappedPosition(snapped.x, snapped.y, this.interval);
                 distance = canvas.grid.measureDistance(origin, snapped);
