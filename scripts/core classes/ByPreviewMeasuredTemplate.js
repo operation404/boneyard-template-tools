@@ -61,28 +61,24 @@ export class PreviewTemplate extends MeasuredTemplate {
                     : canvas.grid.type === CONST.GRID_TYPES.SQUARE
                     ? 2
                     : 5,
+            // If a lock is ever set to true, restriction is ignored if passed
             lockPosition: false,
-            restrictPosition: config.lockPosition
-                ? {
-                      min: 0,
-                      max: 0,
-                      // TODO restricted angle support
-                  }
-                : null,
+            restrictPosition: {
+                min: 0,
+                max: 0,
+                // TODO restricted angle support
+                // other shapes besides circles? Could do actual pixi shapes
+            },
             lockSize: true,
-            restrictSize: config.lockSize
-                ? {
-                      min: templateData.distance,
-                      max: templateData.distance,
-                  }
-                : null,
+            restrictSize: {
+                min: templateData.distance,
+                max: templateData.distance,
+            },
             lockRotation: false,
-            restrictRotation: config.lockRotation
-                ? {
-                      min: 0,
-                      max: 0,
-                  }
-                : null,
+            restrictRotation: {
+                min: 0,
+                max: 0,
+            },
             rememberControlled: false,
             callbacks: {},
         };
@@ -91,9 +87,6 @@ export class PreviewTemplate extends MeasuredTemplate {
     /*
 
     TODO
-    I feel like there's a better way to format the template config. Maybe I should split
-    up hard locks from restrictions instead of doing all this testing for "is bool" "is object".
-    Really want to make sure that the config options are as straight forward as possible.
 
     Also, for the template itself, the shape is a simple pixi graphics object.
     If I make a pixi container and put multiple shapes in it, I should be able
@@ -121,7 +114,7 @@ export class PreviewTemplate extends MeasuredTemplate {
             templateData.y = mouseLoc.y;
         }
         mergeObject(config, PreviewTemplate.#configDefaults(templateData, config), { overwrite: false });
-        
+
         // Validate and check for redundancy
         {
             let { lockPosition, lockSize, lockRotation, restrictPosition, restrictRotation, restrictSize } = config;
