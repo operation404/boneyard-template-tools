@@ -261,9 +261,17 @@ export class PreviewTemplate extends MeasuredTemplate {
 
             // If snapped pos not in range, try new position along same ray from origin
             if (distance < min || distance > max) {
-                const ray = new Ray(origin, { x, y });
+
+                // Check if new position is same as origin
+                // If so, shift new position 1 to the right to avoid a ray of length 0
+                const ray =
+                    origin.x === x && origin.y === y
+                        ? new Ray(origin, { x: origin.x + 1, y })
+                        : new Ray(origin, { x, y });
+
                 const rayLen = (ray.distance / canvas.dimensions.size) * canvas.dimensions.distance;
                 let scalar = (distance < min ? min : max) / rayLen;
+                
                 snapped = ray.project(scalar);
                 snapped = canvas.grid.getSnappedPosition(snapped.x, snapped.y, this.interval);
                 distance = canvas.grid.measureDistance(origin, snapped);
