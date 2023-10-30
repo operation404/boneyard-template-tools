@@ -183,8 +183,8 @@ export class PreviewTemplate extends MeasuredTemplate {
         if (typeof this.lockPosition === 'object') {
             const t = this.placementBounds.clear();
             const { origin, min, max } = this.lockPosition;
-            const x = this.document.x - origin.x;
-            const y = this.document.y - origin.y;
+            const x = origin.x - this.document.x;
+            const y = origin.y - this.document.y;
 
             t.lineStyle(this._borderThickness, 0x000000)
                 .beginFill(0x000000, 0.0)
