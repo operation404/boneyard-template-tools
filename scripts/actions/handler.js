@@ -22,16 +22,24 @@ export function initActions() {
             break;
     }
 
-    const actionsAPI = Object.fromEntries(
-        Object.entries(actionMap).map(([k, v]) => [k, { create: v.create, options: v.options }])
-    );
-    actionsAPI.resolveActions = resolveActions;
+    const actionsAPI = {
+        options: Object.fromEntries(Object.entries(actionMap).map(([k, v]) => [k, v.options])),
+        types: Object.fromEntries(Object.keys(actionMap).map((k) => [k, k])),
+        create: createAction,
+        resolve: resolveActions,
+    };
     return actionsAPI;
 }
 
+function createAction(type, data) {
+    const action = actionMap[type];
+    if (!action) throw `Invalid Action type.`;
+    return action.create(data);
+}
+
 /**
- * @param {Document|string} document    The Document itself or its UUID.
- * @param {Action|Action[]} actions
+ * @param {Document|string} document    A document or the UUID of a document.
+ * @param {Action|Action[]} actions     The actions to perform on the document.
  */
 export async function resolveActions(document, actions) {
     if (typeof document === 'string') {
@@ -48,6 +56,10 @@ export async function resolveActions(document, actions) {
     }
 }
 
+/**
+ * @param {Document|string} document    A document or the UUID of a document.
+ * @param {Action|Action[]} actions     The actions to perform on the document.
+ */
 export function _resolveParse(document, actions) {
     (Array.isArray(actions) ? actions : [actions]).forEach(({ type, data }) => {
         actionMap[type].resolve(document, data);
