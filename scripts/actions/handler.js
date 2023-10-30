@@ -29,7 +29,7 @@ export function initActions() {
 }
 
 /**
- * @param {Document} document
+ * @param {Document|string} document    The Document itself or its UUID.
  * @param {Action|Action[]} actions
  */
 export function resolveActions(document, actions) {

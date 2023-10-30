@@ -3,7 +3,9 @@ import { resolveActions } from './actions/handler';
 
 export let socket;
 
-Hooks.once('socketlib.ready', () => {
-    socket = socketlib.registerModule(CONST.MODULE);
-    socket.register('resolveActions', resolveActions);
-});
+export function initSocket() {
+    Hooks.once('socketlib.ready', () => {
+        socket = socketlib.registerModule(CONST.MODULE);
+        socket.register('resolveActions', resolveActions);
+    });
+}

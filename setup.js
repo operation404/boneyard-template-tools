@@ -4,11 +4,14 @@ import { ByMeasuredTemplateDocument } from './scripts/core classes/ByMeasuredTem
 import { ByTokenDocument } from './scripts/core classes/ByTokenDocument.js';
 import { initActions } from './scripts/actions/handler.js';
 import { PreviewTemplate } from './scripts/core classes/ByPreviewMeasuredTemplate.js';
+import { initSocket } from './scripts/socket.js';
 
 Hooks.once('init', () => {
     registerSettings();
     ByMeasuredTemplateDocument._init();
     ByTokenDocument._init();
+    
+
     window.Boneyard = window.Boneyard ?? {};
     window.Boneyard.TemplateTools = {
         collisionMethods: CONST.COLLISION_METHOD,
@@ -17,5 +20,4 @@ Hooks.once('init', () => {
         preview: PreviewTemplate.createPreview,
     };
 });
-
-
+initSocket();
