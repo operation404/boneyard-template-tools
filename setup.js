@@ -3,7 +3,6 @@ import { registerSettings } from './scripts/settings.js';
 import { ByMeasuredTemplateDocument } from './scripts/core classes/ByMeasuredTemplateDocument.js';
 import { ByTokenDocument } from './scripts/core classes/ByTokenDocument.js';
 import { initActions } from './scripts/actions/handler.js';
-//import { previewTemplatePlacement } from './scripts/core classes/ByPreviewMeasuredTemplate.js';
 import { PreviewTemplate } from './scripts/core classes/ByPreviewMeasuredTemplate.js';
 
 Hooks.once('init', () => {
@@ -19,5 +18,4 @@ Hooks.once('init', () => {
     };
 });
 
-// TODO need to set up the socket handler function
-//game.socket.on(CONST.SOCKET, () => {});
+

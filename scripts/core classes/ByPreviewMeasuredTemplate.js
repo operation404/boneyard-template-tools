@@ -20,25 +20,24 @@ export class PreviewTemplate extends MeasuredTemplate {
      */
     #events;
 
-    /*
-    Standard MeasuredTemplate schema:
-        _id: DocumentIdField
-        user: ForeignDocumentField
-        t: StringField
-        x: NumberField
-        y: NumberField
-        distance: NumberField
-        direction: AngleField
-        angle: AngleField
-        width: NumberField
-        borderColor: ColorField
-        fillColor: ColorField
-        texture: FilePathField
-        hidden: BooleanField
-        flags: ObjectField
-    */
-
     static #templateDefaults() {
+        /*
+        Standard MeasuredTemplate schema:
+            _id: DocumentIdField
+            user: ForeignDocumentField
+            t: StringField
+            x: NumberField
+            y: NumberField
+            distance: NumberField
+            direction: AngleField
+            angle: AngleField
+            width: NumberField
+            borderColor: ColorField
+            fillColor: ColorField
+            texture: FilePathField
+            hidden: BooleanField
+            flags: ObjectField
+        */
         return {
             direction: 0,
             distance: canvas.dimensions.distance,
@@ -49,7 +48,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         };
     }
 
-    static #configDefaults(templateData, config) {
+    static #configDefaults(templateData) {
         return {
             tag: 'previewTemplate',
             // Larger the interval, the more legal positions between grid units
@@ -103,7 +102,7 @@ export class PreviewTemplate extends MeasuredTemplate {
      * @param {Object} config
      * @returns {PreviewTemplate|null}
      */
-    static async createPreview(templateData, config) {
+    static async createPreview(templateData) {
         if (!templateData.hasOwnProperty('t')) return null;
 
         mergeObject(templateData, PreviewTemplate.#templateDefaults(), { overwrite: false });
@@ -205,6 +204,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         if (this.restrictPosition) {
             const t = this.placementBounds.clear();
             const { origin, min, max } = this.restrictPosition;
+            
             // Shift origin of bounds circles so they don't move with the template
             const x = origin.x - this.document.x;
             const y = origin.y - this.document.y;

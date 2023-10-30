@@ -19,7 +19,16 @@
     ],
     "relationships": {
         "systems": [],
-        "requires": []
+        "requires": [
+            {
+                "id": "socketlib",
+                "type": "module",
+                "manifest": "https://raw.githubusercontent.com/manuelVo/foundryvtt-socketlib/master/module.json",
+                "compatibility": {
+                    "verified": "1.0.13"
+                }
+            }
+        ]
     },
     "esmodules": ["setup.js"],
     "scripts": [],

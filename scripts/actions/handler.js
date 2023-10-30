@@ -1,3 +1,4 @@
+import { socket } from '../socket.js';
 import { actions as genericActions, Action } from './generic.js';
 import * as WWN from './systems/wwn.js';
 import * as DND5E from './systems/dnd5e.js';
@@ -27,22 +28,27 @@ export function initActions() {
     return actionsAPI;
 }
 
-// TODO need to do some checking here to see if this needs to be done
-// as a GM.
 /**
  * @param {Document} document
  * @param {Action|Action[]} actions
  */
 export function resolveActions(document, actions) {
-    if (game.user.isGM) {
-    } else {
-        if (game.settings.get(CONST.MODULE, CONST.SETTINGS.PLAYERS_CAN_USE_ACTIONS)) {
-        } else throw `Setting allowing players to use preset Actions is false.`;
+    if (typeof document === 'string') {
+        document = fromUuid(document);
+        if (document === undefined) throw `Invalid Document UUID.`;
     }
 
+    if (game.user.isGM) {
+        _resolveParse(document, actions);
+    } else {
+        if (game.settings.get(CONST.MODULE, CONST.SETTINGS.PLAYERS_CAN_USE_ACTIONS)) {
+            socket.executeAsGM('resolveActions', document.uuid, actions);
+        } else throw `Setting allowing players to use Preset Actions is false.`;
+    }
+}
+
+export function _resolveParse(document, actions) {
     (Array.isArray(actions) ? actions : [actions]).forEach(({ type, data }) => {
         actionMap[type].resolve(document, data);
     });
 }
-
-function _resolveParse() {}

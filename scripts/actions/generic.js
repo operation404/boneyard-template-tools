@@ -1,4 +1,4 @@
-import { resolveActions } from './handler.js';
+import { _resolveParse } from './handler.js';
 
 /**
  * @class
@@ -104,7 +104,7 @@ class Comparison extends Action {
         attributePath.split('.').forEach((pathToken) => (attributeValue = attributeValue?.[pathToken]));
         if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
         if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
-        if (Comparison.operations[operation](attributeValue, value)) resolveActions(document, passActions);
+        if (Comparison.operations[operation](attributeValue, value)) _resolveParse(document, passActions);
     }
 }
 
