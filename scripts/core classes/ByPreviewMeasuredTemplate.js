@@ -110,7 +110,10 @@ export class PreviewTemplate extends MeasuredTemplate {
         {
             let { lockPosition, lockSize, lockRotation } = config;
             if (typeof lockPosition === 'object') {
-                if (lockPosition.max === 0) config.lockPosition = true;
+                if (lockPosition.max <= 0) config.lockPosition = true;
+                lockPosition.min = Math.max(lockPosition.min, 0);
+                if (lockPosition.min + canvas.dimensions.distance > lockPosition.max)
+                    lockPosition.min = lockPosition.max - canvas.dimensions.distance;
                 lockPosition.origin = { x: templateData.x, y: templateData.y };
             }
             if (typeof lockSize === 'object' && lockSize.min === lockSize.max) {
@@ -160,10 +163,35 @@ export class PreviewTemplate extends MeasuredTemplate {
         this.layer.activate();
         this.layer.preview.addChild(this);
 
-        // TODO draw some guides here to show max distance the template can be moved
-
         // Activate interactivity
         return this.activatePreviewListeners();
+    }
+
+    /** @override */
+    async _draw() {
+        super._draw();
+
+        // Template placement bounds
+        this.placementBounds = typeof this.lockPosition === 'object' ? new PIXI.Graphics() : null;
+    }
+
+    /** @override */
+    async _refreshTemplate() {
+        super._refreshTemplate();
+
+        // Draw the bounds for where the template is allowed to be placed.
+        if (typeof this.lockPosition === 'object') {
+            const t = this.placementBounds.clear();
+            const { min, max } = this.lockPosition;
+
+            t.lineStyle(this._borderThickness, 0x000000)
+                .beginFill(0x000000, 0.0)
+                .drawCircle(0, 0, max * canvas.dimensions.distancePixels);
+
+            if (min > 0) t.drawCircle(0, 0, min * canvas.dimensions.distancePixels);
+
+            t.endFill();
+        }
     }
 
     /**
