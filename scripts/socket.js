@@ -1,5 +1,5 @@
-import * as CONST from './constants';
-import { resolveActions } from './actions/handler';
+import * as CONST from './constants.js';
+import { resolveActions } from './actions/handler.js';
 
 export let socket;
 

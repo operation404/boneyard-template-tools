@@ -1,3 +1,4 @@
+import * as CONST from '../constants.js';
 import { socket } from '../socket.js';
 import { actions as genericActions, Action } from './generic.js';
 import * as WWN from './systems/wwn.js';

@@ -11,7 +11,6 @@ Hooks.once('init', () => {
     ByMeasuredTemplateDocument._init();
     ByTokenDocument._init();
     
-
     window.Boneyard = window.Boneyard ?? {};
     window.Boneyard.TemplateTools = {
         collisionMethods: CONST.COLLISION_METHOD,
@@ -20,4 +19,5 @@ Hooks.once('init', () => {
         preview: PreviewTemplate.createPreview,
     };
 });
+
 initSocket();
