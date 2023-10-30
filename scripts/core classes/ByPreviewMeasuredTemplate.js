@@ -172,7 +172,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         super._draw();
 
         // Template placement bounds
-        this.placementBounds = typeof this.lockPosition === 'object' ? new PIXI.Graphics() : null;
+        this.placementBounds = typeof this.lockPosition === 'object' ? this.addChild(new PIXI.Graphics()) : null;
     }
 
     /** @override */
@@ -182,13 +182,15 @@ export class PreviewTemplate extends MeasuredTemplate {
         // Draw the bounds for where the template is allowed to be placed.
         if (typeof this.lockPosition === 'object') {
             const t = this.placementBounds.clear();
-            const { min, max } = this.lockPosition;
+            const { origin, min, max } = this.lockPosition;
+            const x = this.document.x - origin.x;
+            const y = this.document.y - origin.y;
 
             t.lineStyle(this._borderThickness, 0x000000)
                 .beginFill(0x000000, 0.0)
-                .drawCircle(0, 0, max * canvas.dimensions.distancePixels);
+                .drawCircle(x, y, max * canvas.dimensions.distancePixels);
 
-            if (min > 0) t.drawCircle(0, 0, min * canvas.dimensions.distancePixels);
+            if (min > 0) t.drawCircle(x, y, min * canvas.dimensions.distancePixels);
 
             t.endFill();
         }
