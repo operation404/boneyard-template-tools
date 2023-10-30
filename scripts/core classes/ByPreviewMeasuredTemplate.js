@@ -172,7 +172,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         super._draw();
 
         // Template placement bounds
-        this.placementBounds = typeof this.lockPosition === 'object' ? this.addChild(new PIXI.Graphics()) : null;
+        if (typeof this.lockPosition === 'object') this.placementBounds = this.addChild(new PIXI.Graphics());
     }
 
     /** @override */
@@ -183,6 +183,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         if (typeof this.lockPosition === 'object') {
             const t = this.placementBounds.clear();
             const { origin, min, max } = this.lockPosition;
+            // Shift origin of bounds circles so they don't move with the template
             const x = origin.x - this.document.x;
             const y = origin.y - this.document.y;
 
@@ -261,7 +262,6 @@ export class PreviewTemplate extends MeasuredTemplate {
 
             // If snapped pos not in range, try new position along same ray from origin
             if (distance < min || distance > max) {
-
                 // Check if new position is same as origin
                 // If so, shift new position 1 to the right to avoid a ray of length 0
                 const ray =
