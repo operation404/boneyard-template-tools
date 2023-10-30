@@ -61,32 +61,48 @@ export class PreviewTemplate extends MeasuredTemplate {
                     : canvas.grid.type === CONST.GRID_TYPES.SQUARE
                     ? 2
                     : 5,
-            lockPosition:
-                typeof config.lockPosition === 'object'
-                    ? {
-                          min: 0,
-                          max: 0,
-                          // TODO restricted angle support
-                      }
-                    : false,
-            lockSize:
-                typeof config.lockSize === 'object'
-                    ? {
-                          min: templateData.distance,
-                          max: templateData.distance,
-                      }
-                    : true,
-            lockRotation:
-                typeof config.lockSize === 'object'
-                    ? {
-                          min: 0,
-                          max: 0,
-                      }
-                    : false,
+            lockPosition: false,
+            restrictPosition: config.lockPosition
+                ? {
+                      min: 0,
+                      max: 0,
+                      // TODO restricted angle support
+                  }
+                : null,
+            lockSize: true,
+            restrictSize: config.lockSize
+                ? {
+                      min: templateData.distance,
+                      max: templateData.distance,
+                  }
+                : null,
+            lockRotation: false,
+            restrictRotation: config.lockRotation
+                ? {
+                      min: 0,
+                      max: 0,
+                  }
+                : null,
             rememberControlled: false,
             callbacks: {},
         };
     }
+
+    /*
+
+    TODO
+    I feel like there's a better way to format the template config. Maybe I should split
+    up hard locks from restrictions instead of doing all this testing for "is bool" "is object".
+    Really want to make sure that the config options are as straight forward as possible.
+
+    Also, for the template itself, the shape is a simple pixi graphics object.
+    If I make a pixi container and put multiple shapes in it, I should be able
+    to make custom composite templates. The container seems to test all children for stuff like
+    a point being inside of it - even if it doesn't, I could easily override the method
+    and make it do that.
+    So like 3 overlapping circles all as one template. 
+
+    */
 
     /**
      *
@@ -104,23 +120,36 @@ export class PreviewTemplate extends MeasuredTemplate {
             templateData.x = mouseLoc.x;
             templateData.y = mouseLoc.y;
         }
-
         mergeObject(config, PreviewTemplate.#configDefaults(templateData, config), { overwrite: false });
+        
         // Validate and check for redundancy
         {
-            let { lockPosition, lockSize, lockRotation } = config;
-            if (typeof lockPosition === 'object') {
-                if (lockPosition.max <= 0) config.lockPosition = true;
-                lockPosition.min = Math.max(lockPosition.min, 0);
-                if (lockPosition.min + canvas.dimensions.distance > lockPosition.max)
-                    lockPosition.min = lockPosition.max - canvas.dimensions.distance;
-                lockPosition.origin = { x: templateData.x, y: templateData.y };
+            let { lockPosition, lockSize, lockRotation, restrictPosition, restrictRotation, restrictSize } = config;
+
+            // Position
+            if (lockPosition && restrictPosition) config.restrictPosition = null;
+            if (config.restrictPosition) {
+                if (restrictPosition.max <= 0) {
+                    config.lockPosition = true;
+                    config.restrictPosition = null;
+                } else {
+                    restrictPosition.min = Math.clamped(restrictPosition.min, 0, restrictPosition.max);
+                    restrictPosition.origin = { x: templateData.x, y: templateData.y };
+                }
             }
-            if (typeof lockSize === 'object' && lockSize.min === lockSize.max) {
+
+            // Size
+            if (lockSize && restrictSize) config.restrictSize = null;
+            if (config.restrictSize && restrictSize.min === restrictSize.max) {
                 config.lockSize = true;
+                config.restrictSize = null;
             }
-            if (typeof lockRotation === 'object' && (lockRotation.max - lockRotation.min) % 360 === 0) {
+
+            // Rotation
+            if (lockRotation && restrictRotation) config.restrictRotation = null;
+            if (config.restrictRotation && (restrictRotation.max - restrictRotation.min) % 360 === 0) {
                 config.lockRotation = true;
+                config.restrictRotation = null;
             }
         }
 
@@ -172,7 +201,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         super._draw();
 
         // Template placement bounds
-        if (typeof this.lockPosition === 'object') this.placementBounds = this.addChild(new PIXI.Graphics());
+        if (this.restrictPosition) this.placementBounds = this.addChild(new PIXI.Graphics());
     }
 
     /** @override */
@@ -180,9 +209,9 @@ export class PreviewTemplate extends MeasuredTemplate {
         super._refreshTemplate();
 
         // Draw the bounds for where the template is allowed to be placed.
-        if (typeof this.lockPosition === 'object') {
+        if (this.restrictPosition) {
             const t = this.placementBounds.clear();
-            const { origin, min, max } = this.lockPosition;
+            const { origin, min, max } = this.restrictPosition;
             // Shift origin of bounds circles so they don't move with the template
             const x = origin.x - this.document.x;
             const y = origin.y - this.document.y;
@@ -239,7 +268,7 @@ export class PreviewTemplate extends MeasuredTemplate {
      */
     _onMovePlacement(event) {
         event.stopPropagation();
-        if (this.lockPosition === true) return;
+        if (this.lockPosition) return;
 
         const now = Date.now(); // Apply a 20ms throttle
         if (now - this.#moveTime <= 20) return;
@@ -256,8 +285,8 @@ export class PreviewTemplate extends MeasuredTemplate {
         let snapped = canvas.grid.getSnappedPosition(x, y, this.interval);
 
         // Clamp position
-        if (typeof this.lockPosition === 'object') {
-            const { origin, min, max } = this.lockPosition;
+        if (this.restrictPosition) {
+            const { origin, min, max } = this.restrictPosition;
             let distance = canvas.grid.measureDistance(origin, snapped);
 
             // If snapped pos not in range, try new position along same ray from origin
@@ -298,13 +327,13 @@ export class PreviewTemplate extends MeasuredTemplate {
         const update = {};
 
         // Rotate template
-        if (this.lockRotation !== true && !event.ctrlKey) {
+        if (!this.lockRotation && !event.ctrlKey) {
             const rotateDeg = event.shiftKey ? 5 : canvas.grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
             const delta = rotateDeg * Math.sign(event.deltaY);
             update.direction = this._updateRotation(delta);
         }
         // Resize template
-        else if (this.lockSize !== true && event.ctrlKey) {
+        else if (!this.lockSize && event.ctrlKey) {
             const amount = (event.shiftKey ? 0.5 : 1) * canvas.dimensions.distance;
             const delta = -amount * Math.sign(event.deltaY);
             update.distance = this._updateSize(delta);
@@ -318,8 +347,8 @@ export class PreviewTemplate extends MeasuredTemplate {
         let direction = this.document.direction + delta;
 
         // Clamp rotation
-        if (typeof this.lockRotation === 'object') {
-            const { min, max } = this.lockRotation;
+        if (this.restrictRotation) {
+            const { min, max } = this.restrictRotation;
             if (min < max) {
                 if (delta > 0 && direction > max) direction = max;
                 else if (direction < min) direction = min;
@@ -336,8 +365,8 @@ export class PreviewTemplate extends MeasuredTemplate {
         let distance = this.document.distance + delta;
 
         // Clamp size
-        if (typeof this.lockSize === 'object') {
-            const { min, max } = this.lockSize;
+        if (this.restrictSize) {
+            const { min, max } = this.restrictSize;
             if (delta > 0 && distance > max) distance = max;
             else if (distance < min) distance = min;
         }
