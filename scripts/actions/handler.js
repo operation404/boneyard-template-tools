@@ -33,9 +33,9 @@ export function initActions() {
  * @param {Document|string} document    The Document itself or its UUID.
  * @param {Action|Action[]} actions
  */
-export function resolveActions(document, actions) {
+export async function resolveActions(document, actions) {
     if (typeof document === 'string') {
-        document = fromUuid(document);
+        document = await fromUuid(document);
         if (document === undefined) throw `Invalid Document UUID.`;
     }
 
