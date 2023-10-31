@@ -3,16 +3,14 @@ import { Action } from '../generic.js';
 export const systemId = 'dnd5e';
 
 class Damage extends Action {
-    static options = {
-        extraDamageTypes: ['healing'],
-    };
+    static options = {};
 
     /**
      * @param {object} data
      * @param {string} data.damageType
      * @param {number} data.value
      */
-    constructor(data) {        
+    constructor(data) {
         super(data);
         this.constructor.validateData(data);
         this.type = this.constructor.name;
@@ -27,9 +25,25 @@ class Damage extends Action {
      * @throws 'value' must be integer.
      */
     static validateData({ damageType, value }) {
-        if (!(CONFIG.DND5E.damageTypes[damageType] || this.options.extraDamageTypes.includes(damageType)))
-            throw `'damageType' invalid.`;
+        if (!CONFIG.DND5E.damageTypes[damageType]) throw `'damageType' invalid.`;
         if (!Number.isInteger(value)) throw `'value' must be integer.`;
+    }
+
+    /**
+     * Determine the damage type's multiplier for the actor.
+     * @param {ActorDocument} actor
+     * @param {string} damageType
+     */
+    static _getMultiplier(actor, damageType) {
+        const { di: damageImmunities, dr: damageResistances, dv: damageVulnerabilities } = actor.system.traits;
+        if (damageResistances.value.has(damageType)) {
+            return 0.5;
+        } else if (damageImmunities.value.has(damageType)) {
+            return 0;
+        } else if (damageVulnerabilities.value.has(damageType)) {
+            return 2;
+        }
+        return 1;
     }
 
     /**
@@ -41,30 +55,19 @@ class Damage extends Action {
      * @param {number} data.value
      */
     static resolve(actor, { damageType, value }) {
-        const { di: damageImmunities, dr: damageResistances, dv: damageVulnerabilities } = actor.system.traits;
-        let multiplier = 1;
-        if (damageType === 'healing') {
-            multiplier = -1;
-        } else if (damageResistances.value.has(damageType)) {
-            multiplier = 0.5;
-        } else if (damageImmunities.value.has(damageType)) {
-            multiplier = 0;
-        } else if (damageVulnerabilities.value.has(damageType)) {
-            multiplier = 2;
-        }
-        actor.applyDamage(value, multiplier);
+        actor.applyDamage(value, this._getMultiplier(actor, damageType));
     }
 }
 
 class Healing extends Damage {
-    /**
-     * @param {object} data
-     * @param {number} data.value
-     */
-    constructor(data) {
-        data.damageType = 'healing';
-        super(data);
-        this.type = this.constructor.name;
+    /** @override */
+    static validateData({ value }) {
+        if (!Number.isInteger(value)) throw `'value' must be integer.`;
+    }
+
+    /** @override */
+    static _getMultiplier() {
+        return -1;
     }
 }
 
