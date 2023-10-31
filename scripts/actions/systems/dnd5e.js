@@ -12,9 +12,9 @@ class Damage extends Action {
      * @param {string} data.damageType
      * @param {number} data.value
      */
-    constructor(data) {
-        this.constructor.validateData(data);
+    constructor(data) {        
         super(data);
+        this.constructor.validateData(data);
         this.type = this.constructor.name;
         this.data = data;
     }
@@ -56,6 +56,17 @@ class Damage extends Action {
     }
 }
 
+class Healing extends Damage {
+    /**
+     * @param {object} data
+     * @param {number} data.value
+     */
+    constructor(data) {
+        data.damageType = 'healing';
+        super(data);
+        this.type = this.constructor.name;
+    }
+}
 
 class SavingThrow extends Action {}
 
