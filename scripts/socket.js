@@ -16,7 +16,7 @@ export function initSocket() {
 }
 
 export function registerSocketFunc(func) {
-    const register = (func) => socket.register(func.name, func);
-    if (socket) register(socket);
-    else Hooks.once(socketReady, () => register(func));
+    const register = () => socket.register(func.name, func);
+    if (socket) register();
+    else Hooks.once(socketReady, register);
 }
