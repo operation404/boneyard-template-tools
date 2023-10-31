@@ -102,7 +102,7 @@ export class PreviewTemplate extends MeasuredTemplate {
      * @param {Object} config
      * @returns {PreviewTemplate|null}
      */
-    static async createPreview(templateData) {
+    static async createPreview(templateData, config) {
         if (!templateData.hasOwnProperty('t')) return null;
 
         mergeObject(templateData, PreviewTemplate.#templateDefaults(), { overwrite: false });
@@ -204,7 +204,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         if (this.restrictPosition) {
             const t = this.placementBounds.clear();
             const { origin, min, max } = this.restrictPosition;
-            
+
             // Shift origin of bounds circles so they don't move with the template
             const x = origin.x - this.document.x;
             const y = origin.y - this.document.y;
@@ -273,6 +273,12 @@ export class PreviewTemplate extends MeasuredTemplate {
         this.refresh();
         this.#moveTime = now;
     }
+
+    // TODO
+    // Remember last valid position. If new position isn't valid, go back to last
+    // valid position.
+    // Also when placing, only create template if final position is valid, just
+    // one more check just in case.
 
     _updatePosition({ x, y }) {
         let snapped = canvas.grid.getSnappedPosition(x, y, this.interval);
