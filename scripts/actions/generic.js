@@ -46,13 +46,15 @@ export class Action {
  *                  value, resolving additional actions if the comparison is true.
  */
 class Comparison extends Action {
-    static operations = {
-        '=': (a, b) => a === b,
-        '!=': (a, b) => a !== b,
-        '>': (a, b) => a > b,
-        '<': (a, b) => a < b,
-        '>=': (a, b) => a >= b,
-        '<=': (a, b) => a <= b,
+    static options = {
+        operations: {
+            '=': (a, b) => a === b,
+            '!=': (a, b) => a !== b,
+            '>': (a, b) => a > b,
+            '<': (a, b) => a < b,
+            '>=': (a, b) => a >= b,
+            '<=': (a, b) => a <= b,
+        },
     };
 
     /**
@@ -82,7 +84,7 @@ class Comparison extends Action {
      * @throws 'passAction' must be instance(s) of Action.
      */
     static validateData({ operation, attributePath, value, passActions }) {
-        if (!Object.keys(Comparison.operations).includes(operation)) throw `'operation' invalid.`;
+        if (!Object.keys(this.options.operations).includes(operation)) throw `'operation' invalid.`;
         if (typeof attributePath !== 'string') throw `'attributePath' must be string.`;
         if (value === undefined || value === null) throw `'value' must be non-null`;
         passActions.forEach((a) => {
@@ -105,7 +107,7 @@ class Comparison extends Action {
         attributePath.split('.').forEach((pathToken) => (attributeValue = attributeValue?.[pathToken]));
         if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
         if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
-        if (Comparison.operations[operation](attributeValue, value)) _resolveParse(document, passActions);
+        if (this.options.operations[operation](attributeValue, value)) _resolveParse(document, passActions);
     }
 }
 
@@ -115,9 +117,11 @@ class Comparison extends Action {
  * @classdesc       Action that updates a document with the provided values.
  */
 class UpdateDoc extends Action {
-    static operations = {
-        replace: (orig, val) => val,
-        add: (orig, val) => orig + val,
+    static options = {
+        operations: {
+            replace: (orig, val) => val,
+            add: (orig, val) => orig + val,
+        },
     };
 
     /**
@@ -145,7 +149,7 @@ class UpdateDoc extends Action {
     static validateData({ updates }) {
         updates.forEach(({ attributePath, method, value }) => {
             if (typeof attributePath !== 'string') throw `'attributePath' must be string.`;
-            if (!Object.keys(UpdateDoc.operations).includes(method)) throw `'method' invalid.`;
+            if (!Object.keys(this.options.operations).includes(method)) throw `'method' invalid.`;
             if (value === undefined || value === null) throw `'value' must be non-null.`;
         });
     }
@@ -166,7 +170,7 @@ class UpdateDoc extends Action {
             attributePath.split('.').forEach((pathToken) => (attributeValue = attributeValue?.[pathToken]));
             if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
             if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
-            return [attributePath, UpdateDoc.operations[method](attributeValue, value)];
+            return [attributePath, this.options.operations[method](attributeValue, value)];
         });
         document.update(Object.fromEntries(updateEntries));
     }

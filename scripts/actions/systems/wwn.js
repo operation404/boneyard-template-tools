@@ -12,10 +12,12 @@ export const systemId = 'wwn';
  * @classdesc       Modify an actor's HP via damage, healing, or replacement.
  */
 class ChangeHP extends Action {
-    static operations = {
-        damage: (hp, val) => hp - val,
-        heal: (hp, val) => hp + val,
-        replace: (hp, val) => val,
+    static options = {
+        operations: {
+            damage: (hp, val) => hp - val,
+            heal: (hp, val) => hp + val,
+            replace: (hp, val) => val,
+        },
     };
 
     /**
@@ -35,7 +37,7 @@ class ChangeHP extends Action {
      * @param {number} data.value
      */
     static validateData({ method, value }) {
-        if (!Object.keys(ChangeHP.operations).includes(method)) throw `'method' invalid.`;
+        if (!Object.keys(this.options.operations).includes(method)) throw `'method' invalid.`;
         if (!Number.isInteger(value)) throw `'value' must be integer.`;
     }
 

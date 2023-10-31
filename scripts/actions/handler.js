@@ -25,7 +25,9 @@ const actionAPI = {
     register: (action) => {
         actionMap[action.name] = action;
         actionAPI.types[action.name] = action.name;
-        actionAPI.options[action.name] = action.options;
+        actionAPI.options[action.name] = Object.fromEntries(
+            Object.entries(action.options).map((key, val) => [key, Object.keys(val)])
+        );
     },
 };
 
