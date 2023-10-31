@@ -3,3 +3,6 @@ images/*.psd
 *.code-workspace
 preview macro test.js
 scripts/core classes/ByPreviewMeasuredTemplate copy.js
+scripts/actions/systems/wwn old.js
+scripts/actions/generic old.js
+test macros/*
