@@ -66,9 +66,9 @@ class Comparison extends Action {
      */
     constructor(data) {
         data.passActions = Array.isArray(data.passActions) ? data.passActions : [data.passActions];
-        Comparison.validateData(data);
-        super();
-        this.type = 'Comparison';
+        this.constructor.validateData(data);
+        super(data);
+        this.type = this.constructor.name;
         this.data = data;
     }
 
@@ -130,9 +130,9 @@ class UpdateDoc extends Action {
      */
     constructor(data) {
         data.updates = Array.isArray(data.updates) ? data.updates : [data.updates];
-        UpdateDoc.validateData(data);
-        super();
-        this.type = 'UpdateDoc';
+        this.constructor.validateData(data);
+        super(data);
+        this.type = this.constructor.name;
         this.data = data;
     }
 

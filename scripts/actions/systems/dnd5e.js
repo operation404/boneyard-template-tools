@@ -13,9 +13,9 @@ class Damage extends Action {
      * @param {number} data.value
      */
     constructor(data) {
-        Damage.validateData(data);
-        super();
-        this.type = 'Damage';
+        this.constructor.validateData(data);
+        super(data);
+        this.type = this.constructor.name;
         this.data = data;
     }
 
@@ -56,10 +56,11 @@ class Damage extends Action {
     }
 }
 
+
 class SavingThrow extends Action {}
 
 class AbilityCheck extends Action {}
 
 class CreatureType extends Action {}
 
-export const actions = [Damage];
+export const actions = [Damage, Healing];

@@ -26,8 +26,9 @@ class ChangeHP extends Action {
      * @param {number} data.value
      */
     constructor(data) {
-        ChangeHP.validateData(data);
-        this.type = 'ChangeHP';
+        this.constructor.validateData(data);
+        super(data);
+        this.type = this.constructor.name;
         this.data = data;
     }
 
