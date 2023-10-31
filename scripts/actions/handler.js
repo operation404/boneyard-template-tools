@@ -1,15 +1,18 @@
 import * as CONST from '../constants.js';
-import { socket } from '../socket.js';
+import { socket, registerSocketFunc } from '../socket.js';
 import { actions as genericActions, Action } from './generic.js';
 import * as WWN from './systems/wwn.js';
 import * as DND5E from './systems/dnd5e.js';
 
 let actionMap;
+let actionAPI;
 
 /**
  * @returns {object}    The creation methods and options for available preset actions.
  */
 export function initActions() {
+    registerSocketFunc(resolveActions);
+
     switch (game.system.id) {
         case WWN.systemId:
             actionMap = { ...genericActions, ...WWN.actions };
@@ -22,20 +25,24 @@ export function initActions() {
             break;
     }
 
-    const actionsAPI = {
+    actionAPI = {
         options: Object.fromEntries(Object.entries(actionMap).map(([k, v]) => [k, v.options])),
         types: Object.fromEntries(Object.keys(actionMap).map((k) => [k, k])),
-        create: createAction,
+        create: (type, data) => {
+            const action = actionMap[type];
+            if (!action) throw `Invalid Action type.`;
+            return action.create(data);
+        },
         resolve: resolveActions,
+        register: (action) => {
+            // add to actionmap, add to types, add to options
+            // also move assigning actionAPI further up
+        },
     };
-    return actionsAPI;
+    return actionAPI;
 }
 
-function createAction(type, data) {
-    const action = actionMap[type];
-    if (!action) throw `Invalid Action type.`;
-    return action.create(data);
-}
+export function registerAction(action) {}
 
 /**
  * @param {Document|string} document    A document or the UUID of a document.
@@ -51,7 +58,7 @@ export async function resolveActions(document, actions) {
         _resolveParse(document, actions);
     } else {
         if (game.settings.get(CONST.MODULE, CONST.SETTINGS.PLAYERS_CAN_USE_ACTIONS)) {
-            socket.executeAsGM('resolveActions', document.uuid, actions);
+            socket.executeAsGM(resolveActions.name, document.uuid, actions);
         } else throw `Setting allowing players to use Preset Actions is false.`;
     }
 }

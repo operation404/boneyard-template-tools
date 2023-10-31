@@ -1,11 +1,22 @@
 import * as CONST from './constants.js';
-import { resolveActions } from './actions/handler.js';
 
+/*
+TODO is it worth handling sockets myself for more practice?
+Or just keep using socketlib for simplicity sake
+*/
 export let socket;
+
+const socketReady = `${CONST.MODULE}.socketReady`;
 
 export function initSocket() {
     Hooks.once('socketlib.ready', () => {
         socket = socketlib.registerModule(CONST.MODULE);
-        socket.register('resolveActions', resolveActions);
+        Hooks.callAll(socketReady);
     });
+}
+
+export function registerSocketFunc(func) {
+    const register = (func) => socket.register(func.name, func);
+    if (socket) register(socket);
+    else Hooks.once(socketReady, () => register(func));
 }
