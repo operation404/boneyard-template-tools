@@ -5,7 +5,7 @@ import * as WWN from './systems/wwn.js';
 import * as DND5E from './systems/dnd5e.js';
 
 const actionMap = {};
-const actionAPI = {
+export const actionAPI = {
     options: {},
     types: {},
     resolve: resolveActions,
@@ -26,14 +26,11 @@ const actionAPI = {
         actionMap[action.name] = action;
         actionAPI.types[action.name] = action.name;
         actionAPI.options[action.name] = Object.fromEntries(
-            Object.entries(action.options).map((key, val) => [key, Object.keys(val)])
+            Object.entries(action.options).map(([key, val]) => [key, Array.isArray(val) ? val : Object.keys(val)])
         );
     },
 };
 
-/**
- * @returns {object}    The creation methods and options for available preset actions.
- */
 export function initActions() {
     registerSocketFunc(resolveActions);
 
@@ -44,8 +41,6 @@ export function initActions() {
         ...genericActions,
         ...(Object.fromEntries(systems.map((s) => [s.systemId, s.actions]))[game.system.id] ?? []),
     ].forEach((action) => actionAPI.register(action));
-
-    return actionAPI;
 }
 
 /**

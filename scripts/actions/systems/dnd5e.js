@@ -3,7 +3,9 @@ import { Action } from '../generic.js';
 export const systemId = 'dnd5e';
 
 class Damage extends Action {
-    static extraDamageTypes = ['healing'];
+    static options = {
+        extraDamageTypes: ['healing'],
+    };
 
     /**
      * @param {object} data
@@ -25,7 +27,7 @@ class Damage extends Action {
      * @throws 'value' must be integer.
      */
     static validateData({ damageType, value }) {
-        if (!(CONFIG.DND5E.damageTypes[damageType] || Damage.extraDamageTypes.includes(damageType)))
+        if (!(CONFIG.DND5E.damageTypes[damageType] || this.options.extraDamageTypes.includes(damageType)))
             throw `'damageType' invalid.`;
         if (!Number.isInteger(value)) throw `'value' must be integer.`;
     }
