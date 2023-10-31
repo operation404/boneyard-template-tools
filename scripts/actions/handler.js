@@ -4,8 +4,30 @@ import { actions as genericActions, Action } from './generic.js';
 import * as WWN from './systems/wwn.js';
 import * as DND5E from './systems/dnd5e.js';
 
-let actionMap;
-let actionAPI;
+const actionMap = {};
+const actionAPI = {
+    options: {},
+    types: {},
+    resolve: resolveActions,
+    /**
+     * @param {string} type
+     * @param {object} data
+     * @returns {Action}
+     */
+    create: (type, data) => {
+        const action = actionMap[type];
+        if (!action) throw `Invalid Action type.`;
+        return new action(data);
+    },
+    /**
+     * @param {Action} action
+     */
+    register: (action) => {
+        actionMap[action.name] = action;
+        actionAPI.types[action.name] = action.name;
+        actionAPI.options[action.name] = action.options;
+    },
+};
 
 /**
  * @returns {object}    The creation methods and options for available preset actions.
@@ -13,42 +35,22 @@ let actionAPI;
 export function initActions() {
     registerSocketFunc(resolveActions);
 
-    switch (game.system.id) {
-        case WWN.systemId:
-            actionMap = { ...genericActions, ...WWN.actions };
-            break;
-        case DND5E.systemId:
-            actionMap = { ...genericActions, ...DND5E.actions };
-            break;
-        default:
-            actionMap = genericActions;
-            break;
-    }
+    // Register all generic actions and system specific actions if the current
+    // system is one that's supported.
+    const systems = [DND5E, WWN];
+    [
+        ...genericActions,
+        ...(Object.fromEntries(systems.map((s) => [s.systemId, s.actions]))[game.system.id] ?? []),
+    ].forEach((action) => actionAPI.register(action));
 
-    actionAPI = {
-        options: Object.fromEntries(Object.entries(actionMap).map(([k, v]) => [k, v.options])),
-        types: Object.fromEntries(Object.keys(actionMap).map((k) => [k, k])),
-        create: (type, data) => {
-            const action = actionMap[type];
-            if (!action) throw `Invalid Action type.`;
-            return action.create(data);
-        },
-        resolve: resolveActions,
-        register: (action) => {
-            // add to actionmap, add to types, add to options
-            // also move assigning actionAPI further up
-        },
-    };
     return actionAPI;
 }
-
-export function registerAction(action) {}
 
 /**
  * @param {Document|string} document    A document or the UUID of a document.
  * @param {Action|Action[]} actions     The actions to perform on the document.
  */
-export async function resolveActions(document, actions) {
+async function resolveActions(document, actions) {
     if (typeof document === 'string') {
         document = await fromUuid(document);
         if (document === undefined) throw `Invalid Document UUID.`;

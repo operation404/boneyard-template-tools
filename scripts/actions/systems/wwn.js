@@ -50,4 +50,4 @@ class ChangeHP extends Action {
     }
 }
 
-export const actions = {};
+export const actions = [];

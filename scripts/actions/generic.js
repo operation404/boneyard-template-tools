@@ -7,6 +7,7 @@ import { _resolveParse } from './handler.js';
  * @property {object} data
  */
 export class Action {
+    static options;
     type;
     data;
 
@@ -171,15 +172,4 @@ class UpdateDoc extends Action {
     }
 }
 
-export const actions = {
-    Comparison: {
-        create: (data) => new Comparison(data),
-        resolve: Comparison.resolve,
-        options: { operations: Object.keys(Comparison.operations) },
-    },
-    UpdateDoc: {
-        create: (data) => new UpdateDoc(data),
-        resolve: UpdateDoc.resolve,
-        options: { operations: Object.keys(UpdateDoc.operations) },
-    },
-};
+export const actions = [Comparison, UpdateDoc];
