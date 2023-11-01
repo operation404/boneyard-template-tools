@@ -19,7 +19,7 @@ class Damage extends Action {
      * @param {object} data
      * @param {string} data.damageType
      * @param {number} data.value
-     * @param {boolean} [data.print]
+     * @param {boolean} data.print
      * @throws 'damageType' invalid.
      * @throws 'value' must be integer.
      * @throws 'print' must be boolean.
@@ -54,8 +54,9 @@ class Damage extends Action {
      * @param {object} data
      * @param {string} data.damageType
      * @param {number} data.value
+     * @param {boolean} data.print
      */
-    static resolve(actor, { damageType, value }) {
+    static resolve(actor, { damageType, value, print }) {
         actor.applyDamage(value, this._getMultiplier(actor, damageType));
     }
 }
@@ -73,7 +74,7 @@ class Healing extends Damage {
     /**
      * @param {object} data
      * @param {number} data.value
-     * @param {boolean} [data.print]
+     * @param {boolean} data.print
      * @throws 'value' must be integer.
      * @throws 'print' must be boolean.
      */
@@ -110,11 +111,11 @@ class SavingThrow extends Action {
     /**
      * @param {object} data
      * @param {string} data.save
-     * @param {number} [data.bonus]
+     * @param {number} data.bonus
      * @param {number} data.dc
      * @param {Action[]} data.passActions
-     * @param {Action[]} [data.failActions]
-     * @param {boolean} [data.print]
+     * @param {Action[]} data.failActions
+     * @param {boolean} data.print
      * @throws 'save' invalid.
      * @throws 'bonus' must be integer.
      * @throws 'dc' must be integer.
@@ -150,6 +151,18 @@ class SavingThrow extends Action {
         return saveRoll.total >= dc;
     }
 
+    /**
+     * Make a saving throw for the actor and resolve actions based on whether
+     * the save passed or failed.
+     * @param {ActorDocument} actor
+     * @param {object} data
+     * @param {string} data.save
+     * @param {number} data.bonus
+     * @param {number} data.dc
+     * @param {Action[]} data.passActions
+     * @param {Action[]} data.failActions
+     * @param {boolean} data.print
+     */
     static async resolve(actor, { save, bonus, dc, passActions, failActions, print }) {
         if (await this._makeSave(actor, save, bonus, dc, print)) _resolveParse(actor, passActions);
         else _resolveParse(actor, failActions);

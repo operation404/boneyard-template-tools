@@ -81,7 +81,7 @@ class Comparison extends Action {
      * @param {string} data.attributePath
      * @param {!*} data.value
      * @param {Action[]} data.trueActions
-     * @param {Action[]} [data.falseActions]
+     * @param {Action[]} data.falseActions
      * @throws 'operation' invalid.
      * @throws 'attributePath' must be string.
      * @throws 'value' must be non-null
@@ -107,7 +107,7 @@ class Comparison extends Action {
      * @param {string} data.attributePath
      * @param {!*} data.value
      * @param {Action[]} data.trueActions
-     * @param {Action[]} [data.falseActions]
+     * @param {Action[]} data.falseActions
      * @throws 'attributePath' does not exist or its value is undefined.
      * @throws Attribute value and 'value' parameter not same type.
      */
