@@ -20,5 +20,5 @@
     "SETTINGS.HINT.CONSIDER_TEMPLATE_RATIO": "In cases where the template's area is smaller than the token's, the template might mostly or completely overlap with the token, but as the token is larger the ratio of the intersection's area to the token's area may still be small and result in the token not being contained in the template. This setting requires the collision methods to also evaluate the ratio of the intersection's area to the template's area and use it if the result would be larger than the ratio between the intersection and token areas. This is useful in cases where you would still want a token to be considered contained within a template that completely overlaps with it even if the token is larger than the template and so can't be contained within it normally.",
 
     "SETTINGS.NAME.PLAYERS_CAN_USE_ACTIONS": "Allow Players to use Preset Actions",
-    "SETTINGS.HINT.PLAYERS_CAN_USE_ACTIONS": "Preset Actions can modify documents not controlled by the Player. This setting can be disabled to prevent non-Gamemasters from using Actions."
+    "SETTINGS.HINT.PLAYERS_CAN_USE_ACTIONS": "Preset actions can modify documents not controlled by the player. This setting can be disabled to prevent non-gamemasters from using actions."
 }
