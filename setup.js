@@ -17,7 +17,7 @@ Hooks.once('init', () => {
         collisionMethods: CONST.COLLISION_METHOD,
         collisionShapes: CONST.TOKEN_COLLISION_SHAPE,
         actions: actionAPI,
-        preview: PreviewTemplate.createPreview,
+        preview: PreviewTemplate.createPreview.bind(PreviewTemplate),
     };
 });
 

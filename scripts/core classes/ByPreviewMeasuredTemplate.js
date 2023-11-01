@@ -163,7 +163,7 @@ export class PreviewTemplate extends MeasuredTemplate {
             });
         }
 
-        await templateObj.drawPreview();
+        templateObj = await templateObj.drawPreview();
 
         // Return control of tokens if saved
         controlled?.forEach((token) => token.control({ releaseOthers: false }));
@@ -221,7 +221,7 @@ export class PreviewTemplate extends MeasuredTemplate {
 
     /**
      * Activate listeners for the template preview
-     * @returns {Promise}   A promise that resolves with the final measured template if created.
+     * @returns {Promise<MeasuredTemplate|undefined>}   A promise that resolves with the final measured template if created.
      */
     activatePreviewListeners() {
         return new Promise((resolve, reject) => {
