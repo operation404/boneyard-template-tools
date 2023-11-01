@@ -50,7 +50,6 @@ export class PreviewTemplate extends MeasuredTemplate {
 
     static #configDefaults(templateData) {
         return {
-            tag: 'previewTemplate',
             // Larger the interval, the more legal positions between grid units
             // An interval of 2 allows placing on a vertex and halfway to next one
             // An interval of 0.5 would only allow every other vertex
