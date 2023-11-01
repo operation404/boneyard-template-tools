@@ -48,7 +48,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         };
     }
 
-    static #configDefaults(templateData) {
+    static #configDefaults(templateData, config) {
         return {
             // Larger the interval, the more legal positions between grid units
             // An interval of 2 allows placing on a vertex and halfway to next one
@@ -61,22 +61,28 @@ export class PreviewTemplate extends MeasuredTemplate {
                     : 5,
             // If a lock is ever set to true, restriction is ignored if passed
             lockPosition: false,
-            restrictPosition: {
-                min: 0,
-                max: 0,
-                // TODO restricted angle support
-                // other shapes besides circles? Could do actual pixi shapes
-            },
+            restrictPosition: config.restrictPosition
+                ? {
+                      min: 0,
+                      max: 0,
+                      // TODO restricted angle support
+                      // other shapes besides circles? Could do actual pixi shapes
+                  }
+                : null,
             lockSize: true,
-            restrictSize: {
-                min: templateData.distance,
-                max: templateData.distance,
-            },
+            restrictSize: config.restrictSize
+                ? {
+                      min: templateData.distance,
+                      max: templateData.distance,
+                  }
+                : null,
             lockRotation: false,
-            restrictRotation: {
-                min: 0,
-                max: 0,
-            },
+            restrictRotation: config.restrictRotation
+                ? {
+                      min: 0,
+                      max: 0,
+                  }
+                : null,
             rememberControlled: false,
             callbacks: {},
         };
@@ -105,7 +111,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         if (!templateData.hasOwnProperty('t')) return null;
 
         mergeObject(templateData, PreviewTemplate.#templateDefaults(), { overwrite: false });
-        mergeObject(config, PreviewTemplate.#configDefaults(templateData), { overwrite: false });
+        mergeObject(config, PreviewTemplate.#configDefaults(templateData, config), { overwrite: false });
         if (!templateData.hasOwnProperty('x') || !templateData.hasOwnProperty('y')) {
             // canvas.app.renderer.events.pointer.getLocalPosition(canvas.app.stage) is identical to 'canvas.mousePosition'
             let mouseLoc = canvas.mousePosition;
