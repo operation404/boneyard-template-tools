@@ -48,6 +48,12 @@ class Damage extends Action {
     }
 
     /**
+     * @param {ActorDocument} actor
+     * @param {number} hpLost
+     */
+    static _print(actor, hpLost) {}
+
+    /**
      * Apply damage or healing to the actor, accounting for immunities, resistances,
      * and vulnerabilities.
      * @param {ActorDocument} actor
@@ -57,7 +63,9 @@ class Damage extends Action {
      * @param {boolean} data.print
      */
     static resolve(actor, { damageType, value, print }) {
-        actor.applyDamage(value, this._getMultiplier(actor, damageType));
+        const multiplier = this._getMultiplier(actor, damageType);
+        actor.applyDamage(value, multiplier);
+        if (print) this._print(actor, Math.floor(value * multiplier));
     }
 }
 
@@ -147,6 +155,9 @@ class SavingThrow extends Action {
             critical: null,
             fumble: null,
             chatMessage: print,
+            messageData: {
+                speaker: ChatMessage.getSpeaker({ actor }),
+            },
         });
         return saveRoll.total >= dc;
     }
