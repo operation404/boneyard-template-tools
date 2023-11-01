@@ -105,13 +105,13 @@ export class PreviewTemplate extends MeasuredTemplate {
         if (!templateData.hasOwnProperty('t')) return null;
 
         mergeObject(templateData, PreviewTemplate.#templateDefaults(), { overwrite: false });
+        mergeObject(config, PreviewTemplate.#configDefaults(templateData), { overwrite: false });
         if (!templateData.hasOwnProperty('x') || !templateData.hasOwnProperty('y')) {
             // canvas.app.renderer.events.pointer.getLocalPosition(canvas.app.stage) is identical to 'canvas.mousePosition'
-            const mouseLoc = canvas.grid.getSnappedPosition(canvas.mousePosition, templateData.interval);
+            const mouseLoc = canvas.grid.getSnappedPosition(canvas.mousePosition, config.interval);
             templateData.x = mouseLoc.x;
             templateData.y = mouseLoc.y;
         }
-        mergeObject(config, PreviewTemplate.#configDefaults(templateData, config), { overwrite: false });
 
         // Validate and check for redundancy
         {
