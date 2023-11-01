@@ -27,7 +27,6 @@ class ChangeHP extends Action {
      */
     constructor(data) {
         super(data);
-        this.constructor.validateData(data);
     }
 
     /**

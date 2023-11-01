@@ -17,6 +17,7 @@ export class Action {
      */
     constructor(data) {
         if (this.constructor.name === 'Action') throw `Cannot instantiate abstract class.`;
+        this.constructor.validateData(data);
         this.type = this.constructor.name;
         this.data = data;
     }
@@ -72,7 +73,6 @@ class Comparison extends Action {
         if (data.hasOwnProperty('falseActions'))
             data.falseActions = Array.isArray(data.falseActions) ? data.falseActions : [data.falseActions];
         super(data);
-        this.constructor.validateData(data);
     }
 
     /**
@@ -142,7 +142,6 @@ class UpdateDoc extends Action {
     constructor(data) {
         data.updates = Array.isArray(data.updates) ? data.updates : [data.updates];
         super(data);
-        this.constructor.validateData(data);
     }
 
     /**
