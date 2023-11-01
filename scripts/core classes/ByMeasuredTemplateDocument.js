@@ -104,7 +104,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
             r2 = { x: b2.x + b2.width, y: b2.y + b2.height };
 
         // if rectangles have no area, no overlap
-        if (l1.x === r1.x || l1.y === l2.y || l2.x === r2.x || l2.y === r2.y) return false;
+        if (l1.x === r1.x || l1.y === r1.y || l2.x === r2.x || l2.y === r2.y) return false;
 
         // if one rectangle is to the left of the other
         if (l1.x > r2.x || l2.x > r1.x) return false;
