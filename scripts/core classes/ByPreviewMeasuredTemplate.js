@@ -164,6 +164,7 @@ export class PreviewTemplate extends MeasuredTemplate {
         }
 
         templateObj = await templateObj.drawPreview();
+        if (templateObj) templateObj = templateObj[0];
 
         // Return control of tokens if saved
         controlled?.forEach((token) => token.control({ releaseOthers: false }));
