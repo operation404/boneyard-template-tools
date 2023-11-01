@@ -54,7 +54,7 @@ async function resolveActions(document, actions) {
     }
 
     if (game.user.isGM) {
-        _resolveParse(document, actions);
+        await _resolveParse(document, actions);
     } else {
         if (game.settings.get(CONST.MODULE, CONST.SETTINGS.PLAYERS_CAN_USE_ACTIONS)) {
             socket.executeAsGM(resolveActions.name, document.uuid, actions);
@@ -66,8 +66,8 @@ async function resolveActions(document, actions) {
  * @param {Document|string} document    A document or the UUID of a document.
  * @param {Action|Action[]} actions     The actions to perform on the document.
  */
-export function _resolveParse(document, actions) {
-    (Array.isArray(actions) ? actions : [actions]).forEach(({ type, data }) => {
-        actionMap[type].resolve(document, data);
-    });
+export async function _resolveParse(document, actions) {
+    for (const { type, data } of Array.isArray(actions) ? actions : [actions]) {
+        await actionMap[type].resolve(document, data);
+    }
 }

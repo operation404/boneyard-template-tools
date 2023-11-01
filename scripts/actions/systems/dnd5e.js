@@ -52,8 +52,8 @@ class Damage extends Action {
      * @param {number} value
      * @param {string} damageType
      */
-    static _print(actor, value, damageType) {
-        ChatMessage.create({
+    static async _print(actor, value, damageType) {
+        await ChatMessage.create({
             speaker: ChatMessage.getSpeaker({ actor }),
             content: `<span>${actor.name} takes ${value} ${CONFIG.DND5E.damageTypes[damageType]} damage.</span><br>`,
         });
@@ -68,10 +68,10 @@ class Damage extends Action {
      * @param {number} data.value
      * @param {boolean} data.print
      */
-    static resolve(actor, { damageType, value, print }) {
+    static async resolve(actor, { damageType, value, print }) {
         const multiplier = this._getMultiplier(actor, damageType);
         actor.applyDamage(value, multiplier);
-        if (print) this._print(actor, value, damageType);
+        if (print) await this._print(actor, value, damageType);
     }
 }
 
@@ -200,8 +200,8 @@ class SavingThrow extends Action {
      * @param {boolean} data.print
      */
     static async resolve(actor, { save, bonus, dc, passActions, failActions, print }) {
-        if (await this._makeSave(actor, save, bonus, dc, print)) _resolveParse(actor, passActions);
-        else _resolveParse(actor, failActions);
+        if (await this._makeSave(actor, save, bonus, dc, print)) await _resolveParse(actor, passActions);
+        else await _resolveParse(actor, failActions);
     }
 }
 
