@@ -1,4 +1,5 @@
 import { Action } from '../generic.js';
+import { _resolveParse } from '../handler.js';
 
 export const systemId = 'dnd5e';
 
@@ -134,7 +135,25 @@ class SavingThrow extends Action {
         if (typeof print !== 'boolean') throw `'print' must be boolean.`;
     }
 
-    static resolve({ save, bonus, dc, passActions, failActions }) {}
+    // https://github.com/foundryvtt/dnd5e/blob/master/module/dice/dice.mjs
+
+    static async _makeSave(actor, save, bonus, dc, print) {
+        const saveRoll = await actor.rollAbilitySave(save, {
+            fastForward: true,
+            targetValue: dc,
+            parts: ['@bonus'],
+            data: { bonus },
+            critical: null,
+            fumble: null,
+            chatMessage: print,
+        });
+        return saveRoll.total >= dc;
+    }
+
+    static async resolve(actor, { save, bonus, dc, passActions, failActions, print }) {
+        if (await this._makeSave(actor, save, bonus, dc, print)) _resolveParse(actor, passActions);
+        else _resolveParse(actor, failActions);
+    }
 }
 
 class AbilityCheck extends Action {}
