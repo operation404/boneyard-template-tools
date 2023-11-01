@@ -274,46 +274,43 @@ export class PreviewTemplate extends MeasuredTemplate {
         this.#moveTime = now;
     }
 
-    // TODO
-    // Remember last valid position. If new position isn't valid, go back to last
-    // valid position.
-    // Also when placing, only create template if final position is valid, just
-    // one more check just in case.
-
     _updatePosition({ x, y }) {
         let snapped = canvas.grid.getSnappedPosition(x, y, this.interval);
 
         // Clamp position
-        if (this.restrictPosition) {
+        if (this.restrictPosition && !this._validPosition(snapped)) {
             const { origin, min, max } = this.restrictPosition;
-            let distance = canvas.grid.measureDistance(origin, snapped);
 
-            // If snapped pos not in range, try new position along same ray from origin
-            if (distance < min || distance > max) {
-                // Check if new position is same as origin
-                // If so, shift new position 1 to the right to avoid a ray of length 0
-                const ray =
-                    origin.x === x && origin.y === y
-                        ? new Ray(origin, { x: origin.x + 1, y })
-                        : new Ray(origin, { x, y });
+            // If snapped pos not in bounds, try new position along same ray from origin
+            const distance = canvas.grid.measureDistance(origin, snapped);
+            const ray = new Ray(origin, { x, y: y + (origin.x === x && origin.y === y ? 1 : 0) });
+            const rayLen = (ray.distance / canvas.dimensions.size) * canvas.dimensions.distance;
 
-                const rayLen = (ray.distance / canvas.dimensions.size) * canvas.dimensions.distance;
-                let scalar = (distance < min ? min : max) / rayLen;
+            let scalar = (distance < min ? min : max) / rayLen;
+            snapped = ray.project(scalar);
+            snapped = canvas.grid.getSnappedPosition(snapped.x, snapped.y, this.interval);
 
+            // If first scaled snap position not in bounds,
+            // adjust scalar by one interval unit length and try again
+            if (!this._validPosition(snapped)) {
+                scalar += (((distance < min ? 1 : -1) / this.interval) * canvas.dimensions.distance) / rayLen;
                 snapped = ray.project(scalar);
                 snapped = canvas.grid.getSnappedPosition(snapped.x, snapped.y, this.interval);
-                distance = canvas.grid.measureDistance(origin, snapped);
 
-                // If first scaled snap pos still not in range, adjust scalar by one interval unit length
-                if (distance < min || distance > max) {
-                    scalar += (((distance < min ? 1 : -1) / this.interval) * canvas.dimensions.distance) / rayLen;
-                    snapped = ray.project(scalar);
-                    snapped = canvas.grid.getSnappedPosition(snapped.x, snapped.y, this.interval);
-                }
+                // If still not valid, revert to last accepted position.
+                if (!this._validPosition(snapped)) snapped = { x: this.document.x, y: this.document.y };
             }
         }
 
         return snapped;
+    }
+
+    _validPosition(position) {
+        if (!this.restrictPosition) return true;
+
+        const { origin, min, max } = this.restrictPosition;
+        const distance = canvas.grid.measureDistance(origin, position);
+        return distance >= min && distance <= max;
     }
 
     /**
@@ -379,7 +376,9 @@ export class PreviewTemplate extends MeasuredTemplate {
      */
     async _onConfirmPlacement(event) {
         await this._finishPlacement(event);
-        this.#events.resolve(canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [this.document.toObject()]));
+        if (this._validPosition({ x: this.document.x, y: this.document.y }))
+            this.#events.resolve(canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [this.document.toObject()]));
+        else this.#events.reject();
     }
 
     /**
