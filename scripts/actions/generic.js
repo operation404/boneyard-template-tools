@@ -43,7 +43,7 @@ export class Action {
  * @class
  * @extends Action
  * @classdesc       Action that compares an attribute of a document to a provided
- *                  value, resolving additional actions if the comparison is true.
+ *                  value, resolving additional actions based on the result.
  */
 class Comparison extends Action {
     static options = {
@@ -62,10 +62,13 @@ class Comparison extends Action {
      * @param {string} data.operation
      * @param {string} data.attributePath
      * @param {!*} data.value
-     * @param {Action|Action[]} data.passActions
+     * @param {Action|Action[]} data.trueActions
+     * @param {Action|Action[]} [data.falseActions]
      */
     constructor(data) {
-        data.passActions = Array.isArray(data.passActions) ? data.passActions : [data.passActions];
+        data.trueActions = Array.isArray(data.trueActions) ? data.trueActions : [data.trueActions];
+        if (data.hasOwnProperty('falseActions'))
+            data.falseActions = Array.isArray(data.falseActions) ? data.falseActions : [data.falseActions];
         super(data);
         this.constructor.validateData(data);
         this.type = this.constructor.name;
@@ -77,19 +80,25 @@ class Comparison extends Action {
      * @param {string} data.operation
      * @param {string} data.attributePath
      * @param {!*} data.value
-     * @param {Action[]} data.passActions
+     * @param {Action[]} data.trueActions
+     * @param {Action[]} [data.falseActions]
      * @throws 'operation' invalid.
      * @throws 'attributePath' must be string.
      * @throws 'value' must be non-null
-     * @throws 'passAction' must be instance(s) of Action.
+     * @throws 'trueActions' must be instance(s) of Action.
+     * @throws 'falseActions' must be instance(s) of Action.
      */
-    static validateData({ operation, attributePath, value, passActions }) {
+    static validateData({ operation, attributePath, value, trueActions, falseActions }) {
         if (!Object.keys(this.options.operations).includes(operation)) throw `'operation' invalid.`;
         if (typeof attributePath !== 'string') throw `'attributePath' must be string.`;
         if (value === undefined || value === null) throw `'value' must be non-null`;
-        passActions.forEach((a) => {
-            if (!(a instanceof Action)) throw `'passActions' must be instances of Action.`;
+        trueActions.forEach((a) => {
+            if (!(a instanceof Action)) throw `'trueActions' must be instances of Action.`;
         });
+        if (falseActions)
+            falseActions.forEach((a) => {
+                if (!(a instanceof Action)) throw `'falseActions' must be instances of Action.`;
+            });
     }
 
     /**
@@ -98,16 +107,18 @@ class Comparison extends Action {
      * @param {string} data.operation
      * @param {string} data.attributePath
      * @param {!*} data.value
-     * @param {Action[]} data.passActions
+     * @param {Action[]} data.trueActions
+     * @param {Action[]} [data.falseActions]
      * @throws 'attributePath' does not exist or its value is undefined.
      * @throws Attribute value and 'value' parameter not same type.
      */
-    static resolve(document, { operation, attributePath, value, passActions }) {
+    static resolve(document, { operation, attributePath, value, trueActions, falseActions }) {
         let attributeValue = document;
         attributePath.split('.').forEach((pathToken) => (attributeValue = attributeValue?.[pathToken]));
         if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
         if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
-        if (this.options.operations[operation](attributeValue, value)) _resolveParse(document, passActions);
+        if (this.options.operations[operation](attributeValue, value)) _resolveParse(document, trueActions);
+        else if (falseActions) _resolveParse(document, falseActions);
     }
 }
 
