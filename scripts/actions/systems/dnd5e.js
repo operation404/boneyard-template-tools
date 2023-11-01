@@ -92,7 +92,7 @@ class Healing extends Damage {
      * @throws 'value' must be integer.
      * @throws 'print' must be boolean.
      */
-    static validateData({ value }) {
+    static validateData({ value, print }) {
         if (!Number.isInteger(value)) throw `'value' must be integer.`;
         if (typeof print !== 'boolean') throw `'print' must be boolean.`;
     }
@@ -148,7 +148,7 @@ class SavingThrow extends Action {
      * @throws 'failActions' must be instance(s) of Action.
      * @throws 'print' must be boolean.
      */
-    static validateData({ save, bonus, dc, passActions, failActions }) {
+    static validateData({ save, bonus, dc, passActions, failActions, print }) {
         if (!CONFIG.DND5E.abilities.hasOwnProperty(save)) throw `'save' invalid.`;
         if (!Number.isInteger(bonus)) throw `'bonus' must be integer.`;
         if (!Number.isInteger(dc)) throw `'dc' must be integer.`;
