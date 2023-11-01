@@ -7,7 +7,7 @@ import { _resolveParse } from './handler.js';
  * @property {object} data
  */
 export class Action {
-    static options;
+    static options = {};
     type;
     data;
 
@@ -17,6 +17,8 @@ export class Action {
      */
     constructor(data) {
         if (this.constructor.name === 'Action') throw `Cannot instantiate abstract class.`;
+        this.type = this.constructor.name;
+        this.data = data;
     }
 
     /**
@@ -71,8 +73,6 @@ class Comparison extends Action {
             data.falseActions = Array.isArray(data.falseActions) ? data.falseActions : [data.falseActions];
         super(data);
         this.constructor.validateData(data);
-        this.type = this.constructor.name;
-        this.data = data;
     }
 
     /**
@@ -143,8 +143,6 @@ class UpdateDoc extends Action {
         data.updates = Array.isArray(data.updates) ? data.updates : [data.updates];
         super(data);
         this.constructor.validateData(data);
-        this.type = this.constructor.name;
-        this.data = data;
     }
 
     /**

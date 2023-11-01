@@ -3,8 +3,6 @@ import { Action } from '../generic.js';
 export const systemId = 'dnd5e';
 
 class Damage extends Action {
-    static options = {};
-
     /**
      * @param {object} data
      * @param {string} data.damageType
@@ -13,8 +11,6 @@ class Damage extends Action {
     constructor(data) {
         super(data);
         this.constructor.validateData(data);
-        this.type = this.constructor.name;
-        this.data = data;
     }
 
     /**
