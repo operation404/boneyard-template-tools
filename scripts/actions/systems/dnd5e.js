@@ -146,6 +146,14 @@ class SavingThrow extends Action {
 
     // https://github.com/foundryvtt/dnd5e/blob/master/module/dice/dice.mjs
 
+    /**
+     * @param {ActorDocument} actor
+     * @param {string} save
+     * @param {number} bonus
+     * @param {number} dc
+     * @param {boolean} print
+     * @returns {boolean}               Whether the save passed or failed.
+     */
     static async _makeSave(actor, save, bonus, dc, print) {
         const saveRoll = await actor.rollAbilitySave(save, {
             fastForward: true,
