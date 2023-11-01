@@ -209,4 +209,4 @@ class AbilityCheck extends Action {}
 
 class CreatureType extends Action {}
 
-export const actions = [Damage, Healing];
+export const actions = [Damage, Healing, SavingThrow];
