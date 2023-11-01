@@ -70,8 +70,8 @@ class Comparison extends Action {
      */
     constructor(data) {
         data.trueActions = Array.isArray(data.trueActions) ? data.trueActions : [data.trueActions];
-        if (data.hasOwnProperty('falseActions'))
-            data.falseActions = Array.isArray(data.falseActions) ? data.falseActions : [data.falseActions];
+        if (!data.hasOwnProperty('falseActions')) data.falseActions = [];
+        data.falseActions = Array.isArray(data.falseActions) ? data.falseActions : [data.falseActions];
         super(data);
     }
 
@@ -95,10 +95,9 @@ class Comparison extends Action {
         trueActions.forEach((a) => {
             if (!(a instanceof Action)) throw `'trueActions' must be instances of Action.`;
         });
-        if (falseActions)
-            falseActions.forEach((a) => {
-                if (!(a instanceof Action)) throw `'falseActions' must be instances of Action.`;
-            });
+        falseActions.forEach((a) => {
+            if (!(a instanceof Action)) throw `'falseActions' must be instances of Action.`;
+        });
     }
 
     /**
@@ -118,7 +117,7 @@ class Comparison extends Action {
         if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
         if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
         if (this.options.operations[operation](attributeValue, value)) _resolveParse(document, trueActions);
-        else if (falseActions) _resolveParse(document, falseActions);
+        else _resolveParse(document, falseActions);
     }
 }
 
