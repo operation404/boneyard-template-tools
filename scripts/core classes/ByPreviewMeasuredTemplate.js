@@ -108,7 +108,8 @@ export class PreviewTemplate extends MeasuredTemplate {
         mergeObject(config, PreviewTemplate.#configDefaults(templateData), { overwrite: false });
         if (!templateData.hasOwnProperty('x') || !templateData.hasOwnProperty('y')) {
             // canvas.app.renderer.events.pointer.getLocalPosition(canvas.app.stage) is identical to 'canvas.mousePosition'
-            const mouseLoc = canvas.grid.getSnappedPosition(canvas.mousePosition, config.interval);
+            let mouseLoc = canvas.mousePosition;
+            mouseLoc = canvas.grid.getSnappedPosition(mouseLoc.x, mouseLoc.y, config.interval);
             templateData.x = mouseLoc.x;
             templateData.y = mouseLoc.y;
         }
