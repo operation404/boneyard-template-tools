@@ -55,6 +55,14 @@ class Damage extends Action {
 }
 
 class Healing extends Damage {
+    /**
+     * @param {object} data
+     * @param {number} data.value
+     */
+    constructor(data) {
+        super(data);
+    }
+
     /** @override */
     static validateData({ value }) {
         if (!Number.isInteger(value)) throw `'value' must be integer.`;
