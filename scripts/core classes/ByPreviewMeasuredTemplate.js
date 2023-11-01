@@ -150,7 +150,7 @@ export class PreviewTemplate extends MeasuredTemplate {
 
         const cls = CONFIG.MeasuredTemplate.documentClass;
         const templateDoc = new cls(templateData, { parent: canvas.scene }); // Constructor modifies passed templateData obj
-        const templateObj = new PreviewTemplate(templateDoc);
+        let templateObj = new PreviewTemplate(templateDoc);
         mergeObject(templateObj, config, { overwrite: false });
 
         // Update starting values based on config constraints
