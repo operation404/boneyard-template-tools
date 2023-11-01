@@ -49,9 +49,15 @@ class Damage extends Action {
 
     /**
      * @param {ActorDocument} actor
-     * @param {number} hpLost
+     * @param {number} value
+     * @param {string} damageType
      */
-    static _print(actor, hpLost) {}
+    static _print(actor, value, damageType) {
+        ChatMessage.create({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            content: `<span>${actor.name} takes ${value} ${CONFIG.DND5E.damageTypes[damageType]} damage.</span><br>`,
+        });
+    }
 
     /**
      * Apply damage or healing to the actor, accounting for immunities, resistances,
@@ -65,7 +71,7 @@ class Damage extends Action {
     static resolve(actor, { damageType, value, print }) {
         const multiplier = this._getMultiplier(actor, damageType);
         actor.applyDamage(value, multiplier);
-        if (print) this._print(actor, Math.floor(value * multiplier));
+        if (print) this._print(actor, value, damageType);
     }
 }
 
@@ -89,6 +95,17 @@ class Healing extends Damage {
     static validateData({ value }) {
         if (!Number.isInteger(value)) throw `'value' must be integer.`;
         if (typeof print !== 'boolean') throw `'print' must be boolean.`;
+    }
+
+    /**
+     * @param {ActorDocument} actor
+     * @param {number} value
+     */
+    static _print(actor, value) {
+        ChatMessage.create({
+            speaker: ChatMessage.getSpeaker({ actor }),
+            content: `<span>${actor.name} heals ${value} hp.</span><br>`,
+        });
     }
 
     /** @override */
