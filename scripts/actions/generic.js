@@ -1,5 +1,44 @@
 import { _resolveParse } from './handler.js';
 
+export class Validate {
+    static #validators = {
+        isInArray: ([key, val], arr) => {
+            if (!arr.includes(val)) throw `${key} invalid option.`;
+        },
+        isNumber: ([key, val]) => {
+            if (Number.isNaN(val) || typeof val !== 'number') throw `${key} must be a number.`;
+        },
+        isInt: ([key, val]) => {
+            if (!Number.isInteger(val)) throw `${key} must be an integer.`;
+        },
+        isPositive: ([key, val]) => {
+            if (val < 0) throw `${key} must be positive.`;
+        },
+        isClass: ([key, val], cls) => {
+            (Array.isArray(val) ? val : [val]).forEach((c) => {
+                if (!(c instanceof cls)) throw `${key} must be instance(s) of ${cls.name}.`;
+            });
+        },
+        isString: ([key, val]) => {
+            if (typeof val !== 'string') throw `${key} must be a string.`;
+        },
+        isNotNull: ([key, val]) => {
+            if (val === undefined || val === null) throw `${key} must be non-null`;
+        },
+    };
+
+    static #validate(vals, validator, ...args) {
+        Object.entries(vals).forEach((entry) => validator(entry, ...args));
+    }
+
+    static init() {
+        for (const [key, validator] of Object.entries(this.#validators))
+            this[key] = (vals, ...args) => this.#validate(vals, validator, ...args);
+        return this;
+    }
+}
+Validate.init();
+
 /**
  * @class
  * @abstract

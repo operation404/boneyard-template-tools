@@ -1,4 +1,4 @@
-import { Action } from '../generic.js';
+import { Action, Validate } from '../generic.js';
 import { _resolveParse } from '../handler.js';
 
 export const systemId = 'dnd5e';
