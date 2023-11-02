@@ -3,7 +3,7 @@ import { registerSettings } from './scripts/settings.js';
 import { ByMeasuredTemplateDocument } from './scripts/core classes/ByMeasuredTemplateDocument.js';
 import { ByTokenDocument } from './scripts/core classes/ByTokenDocument.js';
 import { initActions, actionAPI } from './scripts/actions/handler.js';
-import { PreviewTemplate } from './scripts/core classes/ByPreviewMeasuredTemplate.js';
+import { PreviewTemplate } from './scripts/core classes/PreviewMeasuredTemplate.js';
 import { initSocket } from './scripts/socket.js';
 
 Hooks.once('init', () => {

@@ -105,13 +105,13 @@ export class PreviewTemplate extends MeasuredTemplate {
      *
      * @param {Object} templateData
      * @param {Object} config
-     * @returns {PreviewTemplate|null}
+     * @returns {MeasuredTemplate|undefined}
      */
     static async createPreview(templateData, config) {
         if (!templateData.hasOwnProperty('t')) return null;
 
-        mergeObject(templateData, PreviewTemplate.#templateDefaults(), { overwrite: false });
-        mergeObject(config, PreviewTemplate.#configDefaults(templateData, config), { overwrite: false });
+        mergeObject(templateData, this.#templateDefaults(), { overwrite: false });
+        mergeObject(config, this.#configDefaults(templateData, config), { overwrite: false });
         if (!templateData.hasOwnProperty('x') || !templateData.hasOwnProperty('y')) {
             // canvas.app.renderer.events.pointer.getLocalPosition(canvas.app.stage) is identical to 'canvas.mousePosition'
             let mouseLoc = canvas.mousePosition;
@@ -156,7 +156,7 @@ export class PreviewTemplate extends MeasuredTemplate {
 
         const cls = CONFIG.MeasuredTemplate.documentClass;
         const templateDoc = new cls(templateData, { parent: canvas.scene }); // Constructor modifies passed templateData obj
-        let templateObj = new PreviewTemplate(templateDoc);
+        const templateObj = new this(templateDoc);
         mergeObject(templateObj, config, { overwrite: false });
 
         // Update starting values based on config constraints
@@ -169,18 +169,15 @@ export class PreviewTemplate extends MeasuredTemplate {
             });
         }
 
-        templateObj = await templateObj.drawPreview();
-        if (templateObj) {
-            templateObj = templateObj[0];
-            // Refresh the shape before returning so that the template
-            // is ready for collision detection even if it isn't drawn yet
-            templateObj.object._applyRenderFlags({ refreshShape: true });
-        }
+        const placedTemplate = await templateObj.drawPreview()?.[0];
+
+        // Manually refresh shape so it can be used for collision even if not drawn yet
+        placedTemplate?.object._applyRenderFlags({ refreshShape: true });
 
         // Return control of tokens if saved
         controlled?.forEach((token) => token.control({ releaseOthers: false }));
 
-        return templateObj;
+        return placedTemplate;
     }
 
     /**
