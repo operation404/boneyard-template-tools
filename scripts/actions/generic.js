@@ -114,6 +114,7 @@ export class Action {
      * Validate the action data, throwing an error for any invalid data.
      * @abstract
      * @param {object} data
+     * @throws Throws an error if any data fields have invalid types or values.
      */
     static validateData(data) {
         throw `Cannot call abstract method.`;
@@ -170,22 +171,12 @@ class Comparison extends Action {
      * @param {!*} data.value
      * @param {Action[]} data.trueActions
      * @param {Action[]} data.falseActions
-     * @throws 'operation' invalid.
-     * @throws 'attributePath' must be string.
-     * @throws 'value' must be non-null
-     * @throws 'trueActions' must be instance(s) of Action.
-     * @throws 'falseActions' must be instance(s) of Action.
      */
     static validateData({ operation, attributePath, value, trueActions, falseActions }) {
-        if (!Object.keys(this.options.operations).includes(operation)) throw `'operation' invalid.`;
-        if (typeof attributePath !== 'string') throw `'attributePath' must be string.`;
-        if (value === undefined || value === null) throw `'value' must be non-null`;
-        trueActions.forEach((a) => {
-            if (!(a instanceof Action)) throw `'trueActions' must be instances of Action.`;
-        });
-        falseActions.forEach((a) => {
-            if (!(a instanceof Action)) throw `'falseActions' must be instances of Action.`;
-        });
+        Validate.isInArray({ operation }, Object.keys(this.options.operations));
+        Validate.isString({ attributePath });
+        Validate.isNotNull({ value });
+        Validate.isClass({ trueActions, falseActions }, Action);
     }
 
     /**
@@ -237,15 +228,12 @@ class UpdateDoc extends Action {
      * @param {string} data.updates[].attributePath
      * @param {string} data.updates[].method
      * @param {!*} data.updates[].value
-     * @throws 'attributePath' must be string.
-     * @throws 'method' invalid.
-     * @throws 'value' must be non-null.
      */
     static validateData({ updates }) {
         updates.forEach(({ attributePath, method, value }) => {
-            if (typeof attributePath !== 'string') throw `'attributePath' must be string.`;
-            if (!Object.keys(this.options.operations).includes(method)) throw `'method' invalid.`;
-            if (value === undefined || value === null) throw `'value' must be non-null.`;
+            Validate.isString({ attributePath });
+            Validate.isInArray({ method }, Object.keys(this.options.operations));
+            Validate.isNotNull({ value });
         });
     }
 
