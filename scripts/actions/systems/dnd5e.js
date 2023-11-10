@@ -125,7 +125,7 @@ class SavingThrow extends Action {
         data.passActions = Array.isArray(data.passActions) ? data.passActions : [data.passActions];
         if (!data.hasOwnProperty('bonus')) data.bonus = 0;
         if (!data.hasOwnProperty('failActions')) data.failActions = [];
-        data.failActions = Array.isArray(data.failActions) ? data.failActions : [data.failActions];
+        else data.failActions = Array.isArray(data.failActions) ? data.failActions : [data.failActions];
         if (!data.hasOwnProperty('print')) data.print = false;
         super(data);
     }
@@ -206,7 +206,7 @@ class AbilityCheck extends Action {
         if (!data.hasOwnProperty('bonus')) data.bonus = 0;
         if (!data.hasOwnProperty('skill')) data.skill = null;
         if (!data.hasOwnProperty('failActions')) data.failActions = [];
-        data.failActions = Array.isArray(data.failActions) ? data.failActions : [data.failActions];
+        else data.failActions = Array.isArray(data.failActions) ? data.failActions : [data.failActions];
         if (!data.hasOwnProperty('print')) data.print = false;
         super(data);
     }

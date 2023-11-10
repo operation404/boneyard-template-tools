@@ -183,7 +183,7 @@ class Comparison extends Action {
     constructor(data) {
         data.trueActions = Array.isArray(data.trueActions) ? data.trueActions : [data.trueActions];
         if (!data.hasOwnProperty('falseActions')) data.falseActions = [];
-        data.falseActions = Array.isArray(data.falseActions) ? data.falseActions : [data.falseActions];
+        else data.falseActions = Array.isArray(data.falseActions) ? data.falseActions : [data.falseActions];
         super(data);
     }
 
