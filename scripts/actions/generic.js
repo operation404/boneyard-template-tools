@@ -231,8 +231,8 @@ class Comparison extends Action {
 class UpdateDoc extends Action {
     static options = {
         operations: {
-            replace: (orig, val) => val,
-            add: (orig, val) => orig + val,
+            replace: (val) => val,
+            add: (val, orig) => orig + val,
         },
     };
 
@@ -276,7 +276,7 @@ class UpdateDoc extends Action {
             attributePath.split('.').forEach((pathToken) => (attributeValue = attributeValue?.[pathToken]));
             if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
             if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
-            return [attributePath, this.options.operations[method](attributeValue, value)];
+            return [attributePath, this.options.operations[method](value, attributeValue)];
         });
         document.update(Object.fromEntries(updateEntries));
     }
