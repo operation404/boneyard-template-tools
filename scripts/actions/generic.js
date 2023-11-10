@@ -90,6 +90,17 @@ export class Validate {
 
     /**
      * @param {object} vals
+     * @throws ${varName} must be a boolean.
+     */
+    static isBoolean(vals) {
+        function validator(varName, val) {
+            if (typeof val !== 'boolean') throw `${varName} must be a boolean.`;
+        }
+        this.#validate(validator, vals);
+    }
+
+    /**
+     * @param {object} vals
      * @throws ${varName} must be non-null.
      */
     static isNotNull(vals) {
