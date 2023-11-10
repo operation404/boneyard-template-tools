@@ -1,4 +1,4 @@
-import { Action, Validate } from '../generic.js';
+import { Action, Validate, Roll } from '../generic.js';
 import { _resolveParse } from '../handler.js';
 
 export const systemId = 'dnd5e';
@@ -190,24 +190,22 @@ class SavingThrow extends Action {
     }
 }
 
-class AbilityCheck extends Action {
+class AbilityCheck extends Roll {
+    static options = {};
+
     /**
      * @param {object} data
      * @param {string} data.check
      * @param {string} [data.skill]
      * @param {number} [data.bonus]
      * @param {number} data.dc
-     * @param {Action|Action[]} data.passActions
-     * @param {Action|Action[]} [data.failActions]
+     * @param {Action|Action[]} data.trueActions
+     * @param {Action|Action[]} [data.falseActions]
      * @param {boolean} [data.print]
      */
     constructor(data) {
-        data.passActions = Array.isArray(data.passActions) ? data.passActions : [data.passActions];
         if (!data.hasOwnProperty('bonus')) data.bonus = 0;
         if (!data.hasOwnProperty('skill')) data.skill = null;
-        if (!data.hasOwnProperty('failActions')) data.failActions = [];
-        else data.failActions = Array.isArray(data.failActions) ? data.failActions : [data.failActions];
-        if (!data.hasOwnProperty('print')) data.print = false;
         super(data);
     }
 
@@ -217,16 +215,22 @@ class AbilityCheck extends Action {
      * @param {string} data.skill
      * @param {number} data.bonus
      * @param {number} data.dc
-     * @param {Action[]} data.passActions
-     * @param {Action[]} data.failActions
+     * @param {Action[]} data.trueActions
+     * @param {Action[]} data.falseActions
      * @param {boolean} data.print
      */
-    static validateData({ check, skill, bonus, dc, passActions, failActions, print }) {
+    static validateData({ check, skill, bonus, dc, trueActions, falseActions, print }) {
         Validate.isObjField({ check }, CONFIG.DND5E.abilities);
         if (skill !== null) Validate.isObjField({ skill }, CONFIG.DND5E.skills);
         Validate.isInteger({ bonus, dc });
-        Validate.isClass({ passActions, failActions }, Action);
+        Validate.isClass({ trueActions, falseActions }, Action);
         Validate.isBoolean({ print });
+    }
+
+    static async _evalRoll(document, { check, skill, bonus, dc, trueActions, falseActions, print }) {
+        if (skill) {
+        } else {
+        }
     }
 }
 
