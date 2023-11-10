@@ -8,6 +8,11 @@ export class Validate {
         });
     }
 
+    /**
+     * @param {object} vals
+     * @param {Array<*>} arr
+     * @throws ${varName} invalid option.
+     */
     static isInArray(vals, arr) {
         function validator(varName, val, arr) {
             if (!arr.includes(val)) throw `${varName} invalid option.`;
@@ -15,6 +20,10 @@ export class Validate {
         this.#validate(validator, vals, arr);
     }
 
+    /**
+     * @param {object} vals
+     * @throws ${varName} must be a number.
+     */
     static isNumber(vals) {
         function validator(varName, val) {
             if (Number.isNaN(val) || typeof val !== 'number') throw `${varName} must be a number.`;
@@ -22,20 +31,33 @@ export class Validate {
         this.#validate(validator, vals);
     }
 
-    static isInt(vals) {
+    /**
+     * @param {object} vals
+     * @throws ${varName} must be an integer.
+     */
+    static isInteger(vals) {
         function validator(varName, val) {
             if (!Number.isInteger(val)) throw `${varName} must be an integer.`;
         }
         this.#validate(validator, vals);
     }
 
+    /**
+     * @param {object} vals
+     * @throws ${varName} must be non-negative.
+     */
     static isNotNegative(vals) {
         function validator(varName, val) {
-            if (val < 0) throw `${varName} must be positive.`;
+            if (val < 0) throw `${varName} must be non-negative.`;
         }
         this.#validate(validator, vals);
     }
 
+    /**
+     * @param {object} vals
+     * @param {object} cls
+     * @throws ${varName} must be instance of ${cls.name}.
+     */
     static isClass(vals, cls) {
         function validator(varName, val, cls) {
             if (!(val instanceof cls)) throw `${varName} must be instance of ${cls.name}.`;
@@ -43,6 +65,10 @@ export class Validate {
         this.#validate(validator, vals, cls);
     }
 
+    /**
+     * @param {object} vals
+     * @throws ${varName} must be a string.
+     */
     static isString(vals) {
         function validator(varName, val) {
             if (typeof val !== 'string') throw `${varName} must be a string.`;
@@ -50,9 +76,13 @@ export class Validate {
         this.#validate(validator, vals);
     }
 
+    /**
+     * @param {object} vals
+     * @throws ${varName} must be non-null.
+     */
     static isNotNull(vals) {
         function validator(varName, val) {
-            if (val === undefined || val === null) throw `${varName} must be non-null`;
+            if (val === undefined || val === null) throw `${varName} must be non-null.`;
         }
         this.#validate(validator, vals);
     }
