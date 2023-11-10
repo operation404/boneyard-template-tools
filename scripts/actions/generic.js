@@ -160,7 +160,7 @@ export class Action {
  * @classdesc       Action that compares an attribute of a document to a provided
  *                  value, resolving additional actions based on the result.
  */
-class Comparison extends Action {
+export class Comparison extends Action {
     static options = {
         operations: {
             '=': (a, b) => a === b,
@@ -228,7 +228,7 @@ class Comparison extends Action {
  * @extends Action
  * @classdesc       Action that updates a document with the provided values.
  */
-class UpdateDoc extends Action {
+export class UpdateDoc extends Action {
     static options = {
         operations: {
             replace: (val) => val,
@@ -282,4 +282,63 @@ class UpdateDoc extends Action {
     }
 }
 
-export const actions = [Comparison, UpdateDoc];
+export class Roll extends Action {
+    static options = {
+        operations: {
+            '=': (a, b) => a === b,
+            '!=': (a, b) => a !== b,
+            '>': (a, b) => a > b,
+            '<': (a, b) => a < b,
+            '>=': (a, b) => a >= b,
+            '<=': (a, b) => a <= b,
+        },
+    };
+
+    /**
+     * @param {object} data
+     * @param {string} data.rollStr
+     * @param {string} data.operation
+     * @param {number} data.value
+     * @param {Action|Action[]} data.trueActions
+     * @param {Action|Action[]} [data.falseActions]
+     * @param {boolean} [data.print]
+     */
+    constructor(data) {
+        data.trueActions = Array.isArray(data.trueActions) ? data.trueActions : [data.trueActions];
+        if (!data.hasOwnProperty('falseActions')) data.falseActions = [];
+        else data.falseActions = Array.isArray(data.falseActions) ? data.falseActions : [data.falseActions];
+        if (!data.hasOwnProperty('print')) data.print = false;
+        super(data);
+    }
+
+    /**
+     * @param {object} data
+     * @param {string} data.rollStr
+     * @param {string} data.operation
+     * @param {number} data.value
+     * @param {Action[]} data.trueActions
+     * @param {Action[]} data.falseActions
+     * @param {boolean} data.print
+     */
+    static validateData({ rollStr, operation, value, trueActions, falseActions, print }) {
+        Validate.isString({ rollStr });
+        Validate.isInArray({ operation }, Object.keys(this.options.operations));
+        Validate.isNumber({ value });
+        Validate.isClass({ trueActions, falseActions }, Action);
+        Validate.isBoolean({ print });
+    }
+
+    static async _evalRoll(document, { rollStr, operation, value, print }) {
+        const roll = await new Roll(rollStr).roll();
+        if (print) roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: document }) });
+        return this.options.operations[operation](roll.total, value);
+    }
+
+    static async resolve(document, data) {
+        const { trueActions, falseActions } = data;
+        if (await this._evalRoll(document, data)) await _resolveParse(document, trueActions);
+        else await _resolveParse(document, falseActions);
+    }
+}
+
+export const actions = [Comparison, UpdateDoc, Roll];
