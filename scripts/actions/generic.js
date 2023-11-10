@@ -1,43 +1,62 @@
 import { _resolveParse } from './handler.js';
 
 export class Validate {
-    static #validators = {
-        isInArray: ([key, val], arr) => {
-            if (!arr.includes(val)) throw `${key} invalid option.`;
-        },
-        isNumber: ([key, val]) => {
-            if (Number.isNaN(val) || typeof val !== 'number') throw `${key} must be a number.`;
-        },
-        isInt: ([key, val]) => {
-            if (!Number.isInteger(val)) throw `${key} must be an integer.`;
-        },
-        isPositive: ([key, val]) => {
-            if (val < 0) throw `${key} must be positive.`;
-        },
-        isClass: ([key, val], cls) => {
-            (Array.isArray(val) ? val : [val]).forEach((c) => {
-                if (!(c instanceof cls)) throw `${key} must be instance(s) of ${cls.name}.`;
-            });
-        },
-        isString: ([key, val]) => {
-            if (typeof val !== 'string') throw `${key} must be a string.`;
-        },
-        isNotNull: ([key, val]) => {
-            if (val === undefined || val === null) throw `${key} must be non-null`;
-        },
-    };
-
-    static #validate(vals, validator, ...args) {
-        Object.entries(vals).forEach((entry) => validator(entry, ...args));
+    static #validate(validator, vals, ...args) {
+        Object.entries(vals).forEach(([varName, val]) => {
+            val = Array.isArray(val) ? val : [val];
+            val.forEach((i) => validator(varName, i, ...args));
+        });
     }
 
-    static init() {
-        for (const [key, validator] of Object.entries(this.#validators))
-            this[key] = (vals, ...args) => this.#validate(vals, validator, ...args);
-        return this;
+    static isInArray(vals, arr) {
+        function validator(varName, val, arr) {
+            if (!arr.includes(val)) throw `${varName} invalid option.`;
+        }
+        this.#validate(validator, vals, arr);
+    }
+
+    static isNumber(vals) {
+        function validator(varName, val) {
+            if (Number.isNaN(val) || typeof val !== 'number') throw `${varName} must be a number.`;
+        }
+        this.#validate(validator, vals);
+    }
+
+    static isInt(vals) {
+        function validator(varName, val) {
+            if (!Number.isInteger(val)) throw `${varName} must be an integer.`;
+        }
+        this.#validate(validator, vals);
+    }
+
+    static isNotNegative(vals) {
+        function validator(varName, val) {
+            if (val < 0) throw `${varName} must be positive.`;
+        }
+        this.#validate(validator, vals);
+    }
+
+    static isClass(vals, cls) {
+        function validator(varName, val, cls) {
+            if (!(val instanceof cls)) throw `${varName} must be instance of ${cls.name}.`;
+        }
+        this.#validate(validator, vals, cls);
+    }
+
+    static isString(vals) {
+        function validator(varName, val) {
+            if (typeof val !== 'string') throw `${varName} must be a string.`;
+        }
+        this.#validate(validator, vals);
+    }
+
+    static isNotNull(vals) {
+        function validator(varName, val) {
+            if (val === undefined || val === null) throw `${varName} must be non-null`;
+        }
+        this.#validate(validator, vals);
     }
 }
-Validate.init();
 
 /**
  * @class
