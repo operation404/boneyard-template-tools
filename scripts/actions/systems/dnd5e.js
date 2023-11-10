@@ -20,14 +20,11 @@ class Damage extends Action {
      * @param {string} data.damageType
      * @param {number} data.value
      * @param {boolean} data.print
-     * @throws 'damageType' invalid.
-     * @throws 'value' must be integer.
-     * @throws 'print' must be boolean.
      */
     static validateData({ damageType, value, print }) {
-        if (!CONFIG.DND5E.damageTypes.hasOwnProperty(damageType)) throw `'damageType' invalid.`;
-        if (!Number.isInteger(value)) throw `'value' must be integer.`;
-        if (typeof print !== 'boolean') throw `'print' must be boolean.`;
+        Validate.isObjField({ damageType }, CONFIG.DND5E.damageTypes);
+        Validate.isInteger({ value });
+        Validate.isBoolean({ print });
     }
 
     /**
@@ -93,8 +90,8 @@ class Healing extends Damage {
      * @throws 'print' must be boolean.
      */
     static validateData({ value, print }) {
-        if (!Number.isInteger(value)) throw `'value' must be integer.`;
-        if (typeof print !== 'boolean') throw `'print' must be boolean.`;
+        Validate.isInteger({ value });
+        Validate.isBoolean({ print });
     }
 
     /**
@@ -141,24 +138,12 @@ class SavingThrow extends Action {
      * @param {Action[]} data.passActions
      * @param {Action[]} data.failActions
      * @param {boolean} data.print
-     * @throws 'save' invalid.
-     * @throws 'bonus' must be integer.
-     * @throws 'dc' must be integer.
-     * @throws 'passActions' must be instance(s) of Action.
-     * @throws 'failActions' must be instance(s) of Action.
-     * @throws 'print' must be boolean.
      */
     static validateData({ save, bonus, dc, passActions, failActions, print }) {
-        if (!CONFIG.DND5E.abilities.hasOwnProperty(save)) throw `'save' invalid.`;
-        if (!Number.isInteger(bonus)) throw `'bonus' must be integer.`;
-        if (!Number.isInteger(dc)) throw `'dc' must be integer.`;
-        passActions.forEach((a) => {
-            if (!(a instanceof Action)) throw `'passActions' must be instances of Action.`;
-        });
-        failActions.forEach((a) => {
-            if (!(a instanceof Action)) throw `'failActions' must be instances of Action.`;
-        });
-        if (typeof print !== 'boolean') throw `'print' must be boolean.`;
+        Validate.isObjField({ save }, CONFIG.DND5E.abilities);
+        Validate.isInteger({ bonus, dc });
+        Validate.isClass({ passActions, failActions }, Action);
+        Validate.isBoolean({ print });
     }
 
     // https://github.com/foundryvtt/dnd5e/blob/master/module/dice/dice.mjs
