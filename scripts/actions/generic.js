@@ -22,6 +22,18 @@ export class Validate {
 
     /**
      * @param {object} vals
+     * @param {object} arr
+     * @throws ${varName} invalid option.
+     */
+    static isObjField(vals, obj) {
+        function validator(varName, val, obj) {
+            if (!obj.hasOwnProperty(val)) throw `${varName} invalid option.`;
+        }
+        this.#validate(validator, vals, obj);
+    }
+
+    /**
+     * @param {object} vals
      * @throws ${varName} must be a number.
      */
     static isNumber(vals) {
