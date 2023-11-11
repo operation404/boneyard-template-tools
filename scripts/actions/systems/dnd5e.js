@@ -111,91 +111,18 @@ class Healing extends Damage {
     }
 }
 
-class SavingThrow extends Action {
-    /**
-     * @param {object} data
-     * @param {string} data.save
-     * @param {number} [data.bonus]
-     * @param {number} data.dc
-     * @param {Action|Action[]} data.passActions
-     * @param {Action|Action[]} [data.failActions]
-     * @param {boolean} [data.print]
-     */
-    constructor(data) {
-        data.passActions = Array.isArray(data.passActions) ? data.passActions : [data.passActions];
-        if (!data.hasOwnProperty('bonus')) data.bonus = 0;
-        if (!data.hasOwnProperty('failActions')) data.failActions = [];
-        else data.failActions = Array.isArray(data.failActions) ? data.failActions : [data.failActions];
-        if (!data.hasOwnProperty('print')) data.print = false;
-        super(data);
-    }
-
-    /**
-     * @param {object} data
-     * @param {string} data.save
-     * @param {number} data.bonus
-     * @param {number} data.dc
-     * @param {Action[]} data.passActions
-     * @param {Action[]} data.failActions
-     * @param {boolean} data.print
-     */
-    static validateData({ save, bonus, dc, passActions, failActions, print }) {
-        Validate.isObjField({ save }, CONFIG.DND5E.abilities);
-        Validate.isInteger({ bonus, dc });
-        Validate.isClass({ passActions, failActions }, Action);
-        Validate.isBoolean({ print });
-    }
+/**
+ * @class
+ * @abstract
+ */
+class Roll5E extends Roll {
+    static options = {};
 
     // https://github.com/foundryvtt/dnd5e/blob/master/module/dice/dice.mjs
 
     /**
-     * @param {ActorDocument} actor
-     * @param {string} save
-     * @param {number} bonus
-     * @param {number} dc
-     * @param {boolean} print
-     * @returns {boolean}               Whether the save passed or failed.
-     */
-    static async _makeSave(actor, save, bonus, dc, print) {
-        const saveRoll = await actor.rollAbilitySave(save, {
-            fastForward: true,
-            targetValue: dc,
-            parts: ['@bonus'],
-            data: { bonus },
-            critical: null,
-            fumble: null,
-            chatMessage: print,
-            messageData: {
-                speaker: ChatMessage.getSpeaker({ actor }),
-            },
-        });
-        return saveRoll.total >= dc;
-    }
-
-    /**
-     * Make a saving throw for the actor and resolve actions based on whether
-     * the save passed or failed.
-     * @param {ActorDocument} actor
      * @param {object} data
-     * @param {string} data.save
-     * @param {number} data.bonus
-     * @param {number} data.dc
-     * @param {Action[]} data.passActions
-     * @param {Action[]} data.failActions
-     * @param {boolean} data.print
-     */
-    static async resolve(actor, { save, bonus, dc, passActions, failActions, print }) {
-        if (await this._makeSave(actor, save, bonus, dc, print)) await _resolveParse(actor, passActions);
-        else await _resolveParse(actor, failActions);
-    }
-}
-
-class AbilityCheck extends Roll {
-    static options = {};
-
-    /**
-     * @param {object} data
-     * @param {string} data.check
+     * @param {string} data.type
      * @param {number} [data.bonus]
      * @param {number} data.dc
      * @param {Action|Action[]} data.trueActions
@@ -209,22 +136,29 @@ class AbilityCheck extends Roll {
 
     /**
      * @param {object} data
-     * @param {string} data.check
+     * @param {string} data.type
      * @param {number} data.bonus
      * @param {number} data.dc
      * @param {Action[]} data.trueActions
      * @param {Action[]} data.falseActions
      * @param {boolean} data.print
      */
-    static validateData({ check, bonus, dc, trueActions, falseActions, print }) {
-        Validate.isObjField({ check }, CONFIG.DND5E.abilities);
+    static validateData({ bonus, dc, trueActions, falseActions, print }) {
         Validate.isInteger({ bonus, dc });
         Validate.isClass({ trueActions, falseActions }, Action);
         Validate.isBoolean({ print });
     }
 
-    static async evaluateRoll(actor, { check, bonus, dc, print }) {
-        const abilityRoll = await actor.rollAbilityTest(check, {
+    /**
+     * @abstract
+     */
+    static getRollType() {
+        throw `Cannot call abstract method.`;
+    }
+
+    static async evaluateRoll(actor, { type, bonus, dc, print }) {
+        const rollType = this.getRollType();
+        const roll = await actor[rollType](type, {
             fastForward: true,
             targetValue: dc,
             parts: ['@bonus'],
@@ -236,7 +170,75 @@ class AbilityCheck extends Roll {
                 speaker: ChatMessage.getSpeaker({ actor }),
             },
         });
-        return abilityRoll.total >= dc;
+        return roll.total >= dc;
+    }
+}
+
+class SavingThrow extends Roll5E {
+    /**
+     * @param {object} data
+     * @param {string} data.type
+     * @param {number} [data.bonus]
+     * @param {number} data.dc
+     * @param {Action|Action[]} data.trueActions
+     * @param {Action|Action[]} [data.falseActions]
+     * @param {boolean} [data.print]
+     */
+    constructor(data) {
+        super(data);
+    }
+
+    /**
+     * @param {object} data
+     * @param {string} data.type
+     * @param {number} data.bonus
+     * @param {number} data.dc
+     * @param {Action[]} data.trueActions
+     * @param {Action[]} data.falseActions
+     * @param {boolean} data.print
+     */
+    static validateData(data) {
+        const { type } = data;
+        Validate.isObjField({ type }, CONFIG.DND5E.abilities);
+        super.validateData(data);
+    }
+
+    static getRollType() {
+        return 'rollAbilitySave';
+    }
+}
+
+class AbilityCheck extends Roll5E {
+    /**
+     * @param {object} data
+     * @param {string} data.type
+     * @param {number} [data.bonus]
+     * @param {number} data.dc
+     * @param {Action|Action[]} data.trueActions
+     * @param {Action|Action[]} [data.falseActions]
+     * @param {boolean} [data.print]
+     */
+    constructor(data) {
+        super(data);
+    }
+
+    /**
+     * @param {object} data
+     * @param {string} data.type
+     * @param {number} data.bonus
+     * @param {number} data.dc
+     * @param {Action[]} data.trueActions
+     * @param {Action[]} data.falseActions
+     * @param {boolean} data.print
+     */
+    static validateData(data) {
+        const { type } = data;
+        Validate.isObjField({ type }, CONFIG.DND5E.abilities);
+        super.validateData(data);
+    }
+
+    static getRollType() {
+        return 'rollAbilityTest';
     }
 }
 
