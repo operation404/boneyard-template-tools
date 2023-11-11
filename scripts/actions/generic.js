@@ -163,12 +163,17 @@ export class Action {
 export class Comparison extends Action {
     static options = {
         operations: {
+            // a is the attribute value, b is passed val
             '=': (a, b) => a === b,
             '!=': (a, b) => a !== b,
             '>': (a, b) => a > b,
             '<': (a, b) => a < b,
             '>=': (a, b) => a >= b,
             '<=': (a, b) => a <= b,
+            'includes': (a, b) => a.includes(b),
+            'in': (a, b) => b.includes(a),
+            'hasKey': (a, b) => a.hasOwnProperty(b),
+            'isKey': (a, b) => b.hasOwnProperty(a),
         },
     };
 
