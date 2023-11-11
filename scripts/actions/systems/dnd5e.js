@@ -264,7 +264,8 @@ class CreatureType extends Comparison {
     }
 
     static resolve(actor, data) {
-        super.resolve;
+        const proto = Object.getPrototypeOf(this);
+        super.resolve.bind(proto)(actor, data);
     }
 }
 
