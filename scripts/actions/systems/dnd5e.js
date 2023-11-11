@@ -247,7 +247,6 @@ class CreatureType extends Comparison {
      * @param {Action|Action[]} [data.falseActions]
      */
     constructor({ type, trueActions, falseActions }) {
-        data.trueActions = Array.isArray(data.trueActions) ? data.trueActions : [data.trueActions];
         super({
             operation: 'in',
             attributePath: 'system.details.type.value',
