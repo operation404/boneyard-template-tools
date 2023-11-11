@@ -259,13 +259,11 @@ class CreatureType extends Comparison {
     static validateData(data) {
         const { value } = data;
         Validate.isObjField({ value }, CONFIG.DND5E.creatureTypes);
-        const proto = Object.getPrototypeOf(this);
-        super.validateData.bind(proto)(data);
+        super.validateData.bind(Object.getPrototypeOf(this))(data);
     }
 
     static resolve(actor, data) {
-        const proto = Object.getPrototypeOf(this);
-        super.resolve.bind(proto)(actor, data);
+        super.resolve.bind(Object.getPrototypeOf(this))(actor, data);
     }
 }
 
