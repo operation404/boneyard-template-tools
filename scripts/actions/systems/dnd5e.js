@@ -1,4 +1,4 @@
-import { Action, Validate, Roll } from '../generic.js';
+import { Validate, Action, Comparison, Roll } from '../generic.js';
 import { _resolveParse } from '../handler.js';
 
 export const systemId = 'dnd5e';
@@ -237,6 +237,31 @@ class SkillCheck extends Roll5E {
     }
 }
 
-class CreatureType extends Action {}
+class CreatureType extends Comparison {
+    static options = {};
 
-export const actions = [Damage, Healing, SavingThrow, AbilityCheck, SkillCheck];
+    /**
+     * @param {object} data
+     * @param {string|string[]} data.type
+     * @param {Action|Action[]} data.trueActions
+     * @param {Action|Action[]} [data.falseActions]
+     */
+    constructor({ type, trueActions, falseActions }) {
+        data.trueActions = Array.isArray(data.trueActions) ? data.trueActions : [data.trueActions];
+        super({
+            operation: 'in',
+            attributePath: 'system.details.type.value',
+            value: Array.isArray(type) ? type : [type],
+            trueActions: trueActions,
+            false: falseActions,
+        });
+    }
+
+    static validateData(data) {
+        const { type } = data;
+        Validate.isObjField({ type }, CONFIG.DND5E.creatureTypes);
+        super.validateData(data);
+    }
+}
+
+export const actions = [Damage, Healing, SavingThrow, AbilityCheck, SkillCheck, CreatureType];
