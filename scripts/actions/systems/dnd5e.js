@@ -267,6 +267,4 @@ class CreatureType extends Comparison {
     }
 }
 
-window.CreatureType = CreatureType;
-
 export const actions = [Damage, Healing, SavingThrow, AbilityCheck, SkillCheck, CreatureType];
