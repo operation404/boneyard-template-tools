@@ -222,7 +222,7 @@ export class Comparison extends Action {
         let attributeValue = document;
         attributePath.split('.').forEach((pathToken) => (attributeValue = attributeValue?.[pathToken]));
         if (attributeValue === undefined) throw `'attributePath' does not exist or its value is undefined.`;
-        if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
+        //if (typeof attributeValue !== typeof value) throw `Attribute value and 'value' parameter not same type.`;
         if (this.options.operations[operation](attributeValue, value)) _resolveParse(document, trueActions);
         else _resolveParse(document, falseActions);
     }
