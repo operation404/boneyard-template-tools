@@ -263,7 +263,7 @@ class CreatureType extends Comparison {
     }
 
     static resolve(actor, data) {
-        super.resolve.bind(Object.getPrototypeOf(this))(actor, data);
+        if (actor.type === 'npc') super.resolve.bind(Object.getPrototypeOf(this))(actor, data);
     }
 }
 
