@@ -355,4 +355,35 @@ export class Roll extends Action {
     }
 }
 
-export const actions = [Comparison, UpdateDoc, Roll];
+export class ActiveEffect extends Action {
+    static options = {
+        operations: {
+            apply: '',
+            remove: '',
+        },
+    };
+
+    /**
+     * @param {object} data
+     * @param {string} data.operation
+     * @param {object|object[]} data.effectData
+     * @param {boolean} [data.print]
+     */
+    constructor(data) {
+        data.effectData = Array.isArray(data.effectData) ? data.effectData : [data.effectData];
+        if (!data.hasOwnProperty('print')) data.print = false;
+        super(data);
+    }
+
+    /**
+     * @param {object} data
+     * @param {string} data.operation
+     * @param {object[]} data.effectData
+     * @param {boolean} data.print
+     */
+    static validateData({ operation, effectData, print }) {
+        Validate.isInArray({ operation }, Object.keys(this.options.operations));
+    }
+}
+
+export const actions = [Comparison, UpdateDoc, Roll, ActiveEffect];
