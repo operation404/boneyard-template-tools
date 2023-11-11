@@ -329,7 +329,7 @@ export class Roll extends Action {
     }
 
     static async evaluateRoll(document, { rollStr, operation, value, print }) {
-        const roll = await new Roll(rollStr).roll();
+        const roll = await new Roll(rollStr, document?.getRollData()).roll();
         if (print) roll.toMessage();
         return this.options.operations[operation](roll.total, value);
     }
