@@ -169,7 +169,7 @@ export class PreviewTemplate extends MeasuredTemplate {
             });
         }
 
-        const placedTemplate = await templateObj.drawPreview()?.[0];
+        const placedTemplate = (await templateObj.drawPreview())?.[0];
 
         // Manually refresh shape so it can be used for collision even if not drawn yet
         placedTemplate?.object._applyRenderFlags({ refreshShape: true });
