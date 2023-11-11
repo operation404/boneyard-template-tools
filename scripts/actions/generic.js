@@ -109,6 +109,17 @@ export class Validate {
         }
         this.#validate(validator, vals);
     }
+
+    /**
+     * @param {object} vals
+     * @throws ${varName} must be an object.
+     */
+    static isObject(vals) {
+        function validator(varName, val) {
+            if (typeof val !== 'object') throw `${varName} must be an object.`;
+        }
+        this.#validate(validator, vals);
+    }
 }
 
 /**
