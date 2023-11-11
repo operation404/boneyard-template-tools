@@ -256,10 +256,9 @@ class CreatureType extends Comparison {
         });
     }
 
-    static validateData(data) {
-        const { value } = data;
+    static validateData({ value, trueActions, falseActions }) {
         Validate.isObjField({ value }, CONFIG.DND5E.creatureTypes);
-        super.validateData(data);
+        Validate.isClass({ trueActions, falseActions }, Action);
     }
 }
 
