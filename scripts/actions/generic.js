@@ -328,16 +328,14 @@ export class Roll extends Action {
         Validate.isBoolean({ print });
     }
 
-    static async _evalRoll(document, { rollStr, operation, value, print }) {
+    static async evaluateRoll(document, { rollStr, operation, value, print }) {
         const roll = await new Roll(rollStr).roll();
-        if (print) roll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: document }) });
+        if (print) roll.toMessage();
         return this.options.operations[operation](roll.total, value);
     }
 
     static async resolve(document, data) {
-        const { trueActions, falseActions } = data;
-        if (await this._evalRoll(document, data)) await _resolveParse(document, trueActions);
-        else await _resolveParse(document, falseActions);
+        await _resolveParse(document, this.evaluateRoll(document, data) ? data.trueActions : data.falseActions);
     }
 }
 
