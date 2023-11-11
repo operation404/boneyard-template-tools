@@ -257,8 +257,8 @@ class CreatureType extends Comparison {
     }
 
     static validateData(data) {
-        const { type } = data;
-        Validate.isObjField({ type }, CONFIG.DND5E.creatureTypes);
+        const { value } = data;
+        Validate.isObjField({ value }, CONFIG.DND5E.creatureTypes);
         super.validateData(data);
     }
 }
