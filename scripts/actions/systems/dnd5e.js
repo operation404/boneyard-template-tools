@@ -196,7 +196,6 @@ class AbilityCheck extends Roll {
     /**
      * @param {object} data
      * @param {string} data.check
-     * @param {string} [data.skill]
      * @param {number} [data.bonus]
      * @param {number} data.dc
      * @param {Action|Action[]} data.trueActions
@@ -205,35 +204,42 @@ class AbilityCheck extends Roll {
      */
     constructor(data) {
         if (!data.hasOwnProperty('bonus')) data.bonus = 0;
-        if (!data.hasOwnProperty('skill')) data.skill = null;
         super(data);
     }
 
     /**
      * @param {object} data
      * @param {string} data.check
-     * @param {string} data.skill
      * @param {number} data.bonus
      * @param {number} data.dc
      * @param {Action[]} data.trueActions
      * @param {Action[]} data.falseActions
      * @param {boolean} data.print
      */
-    static validateData({ check, skill, bonus, dc, trueActions, falseActions, print }) {
+    static validateData({ check, bonus, dc, trueActions, falseActions, print }) {
         Validate.isObjField({ check }, CONFIG.DND5E.abilities);
-        if (skill !== null) Validate.isObjField({ skill }, CONFIG.DND5E.skills);
         Validate.isInteger({ bonus, dc });
         Validate.isClass({ trueActions, falseActions }, Action);
         Validate.isBoolean({ print });
     }
 
-    static async _evalRoll(document, { check, skill, bonus, dc, trueActions, falseActions, print }) {
-        if (skill) {
-        } else {
-        }
+    static async evaluateRoll(actor, { check, bonus, dc, print }) {
+        const abilityRoll = await actor.rollAbilityTest(check, {
+            fastForward: true,
+            targetValue: dc,
+            parts: ['@bonus'],
+            data: { bonus },
+            critical: null,
+            fumble: null,
+            chatMessage: print,
+            messageData: {
+                speaker: ChatMessage.getSpeaker({ actor }),
+            },
+        });
+        return abilityRoll.total >= dc;
     }
 }
 
 class CreatureType extends Action {}
 
-export const actions = [Damage, Healing, SavingThrow];
+export const actions = [Damage, Healing, SavingThrow, AbilityCheck];
