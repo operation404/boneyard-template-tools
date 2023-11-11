@@ -178,19 +178,6 @@ class SavingThrow extends Roll5E {
     /**
      * @param {object} data
      * @param {string} data.type
-     * @param {number} [data.bonus]
-     * @param {number} data.dc
-     * @param {Action|Action[]} data.trueActions
-     * @param {Action|Action[]} [data.falseActions]
-     * @param {boolean} [data.print]
-     */
-    constructor(data) {
-        super(data);
-    }
-
-    /**
-     * @param {object} data
-     * @param {string} data.type
      * @param {number} data.bonus
      * @param {number} data.dc
      * @param {Action[]} data.trueActions
@@ -209,19 +196,6 @@ class SavingThrow extends Roll5E {
 }
 
 class AbilityCheck extends Roll5E {
-    /**
-     * @param {object} data
-     * @param {string} data.type
-     * @param {number} [data.bonus]
-     * @param {number} data.dc
-     * @param {Action|Action[]} data.trueActions
-     * @param {Action|Action[]} [data.falseActions]
-     * @param {boolean} [data.print]
-     */
-    constructor(data) {
-        super(data);
-    }
-
     /**
      * @param {object} data
      * @param {string} data.type
@@ -246,19 +220,6 @@ class SkillCheck extends Roll5E {
     /**
      * @param {object} data
      * @param {string} data.type
-     * @param {number} [data.bonus]
-     * @param {number} data.dc
-     * @param {Action|Action[]} data.trueActions
-     * @param {Action|Action[]} [data.falseActions]
-     * @param {boolean} [data.print]
-     */
-    constructor(data) {
-        super(data);
-    }
-
-    /**
-     * @param {object} data
-     * @param {string} data.type
      * @param {number} data.bonus
      * @param {number} data.dc
      * @param {Action[]} data.trueActions
@@ -278,4 +239,4 @@ class SkillCheck extends Roll5E {
 
 class CreatureType extends Action {}
 
-export const actions = [Damage, Healing, SavingThrow, AbilityCheck];
+export const actions = [Damage, Healing, SavingThrow, AbilityCheck, SkillCheck];
