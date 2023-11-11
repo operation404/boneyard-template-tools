@@ -256,10 +256,18 @@ class CreatureType extends Comparison {
         });
     }
 
-    static validateData({ value, trueActions, falseActions }) {
+    static validateData(data) {
+        const { value } = data;
         Validate.isObjField({ value }, CONFIG.DND5E.creatureTypes);
-        Validate.isClass({ trueActions, falseActions }, Action);
+        const proto = Object.getPrototypeOf(this);
+        super.validateData.bind(proto)(data);
+    }
+
+    static resolve(actor, data) {
+        super.resolve;
     }
 }
+
+window.CreatureType = CreatureType;
 
 export const actions = [Damage, Healing, SavingThrow, AbilityCheck, SkillCheck, CreatureType];
