@@ -335,7 +335,7 @@ export class Roll extends Action {
     }
 
     static async resolve(document, data) {
-        await _resolveParse(document, this.evaluateRoll(document, data) ? data.trueActions : data.falseActions);
+        await _resolveParse(document, (await this.evaluateRoll(document, data)) ? data.trueActions : data.falseActions);
     }
 }
 
