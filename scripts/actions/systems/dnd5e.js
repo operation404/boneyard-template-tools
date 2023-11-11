@@ -242,6 +242,40 @@ class AbilityCheck extends Roll5E {
     }
 }
 
+class SkillCheck extends Roll5E {
+    /**
+     * @param {object} data
+     * @param {string} data.type
+     * @param {number} [data.bonus]
+     * @param {number} data.dc
+     * @param {Action|Action[]} data.trueActions
+     * @param {Action|Action[]} [data.falseActions]
+     * @param {boolean} [data.print]
+     */
+    constructor(data) {
+        super(data);
+    }
+
+    /**
+     * @param {object} data
+     * @param {string} data.type
+     * @param {number} data.bonus
+     * @param {number} data.dc
+     * @param {Action[]} data.trueActions
+     * @param {Action[]} data.falseActions
+     * @param {boolean} data.print
+     */
+    static validateData(data) {
+        const { type } = data;
+        Validate.isObjField({ type }, CONFIG.DND5E.skills);
+        super.validateData(data);
+    }
+
+    static getRollType() {
+        return 'rollSkill';
+    }
+}
+
 class CreatureType extends Action {}
 
 export const actions = [Damage, Healing, SavingThrow, AbilityCheck];
