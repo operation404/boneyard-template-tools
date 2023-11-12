@@ -359,7 +359,6 @@ export class ActiveEffect extends Action {
     static options = {
         operations: {
             apply: async (actor, { effectData, print }) => {
-                const { effectData, print } = data;
                 await this.options.operations.remove(actor, { effectData, print });
                 await actor.createEmbeddedDocuments('ActiveEffect', effectData);
                 // TODO print
