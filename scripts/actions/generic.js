@@ -358,8 +358,20 @@ export class Roll extends Action {
 export class ActiveEffect extends Action {
     static options = {
         operations: {
-            apply: '',
-            remove: '',
+            apply: async (actor, { effectData, print }) => {
+                const { effectData, print } = data;
+                await this.options.operations.remove(actor, { effectData, print });
+                await actor.createEmbeddedDocuments('ActiveEffect', effectData);
+                // TODO print
+            },
+            remove: async (actor, { effectData, print }) => {
+                const effectsToRemove = effectData.filter((e) => {
+                    const effect = actor.effects.find((f) => f.label === e.label);
+                    if (effect) return effect.id;
+                });
+                await actor.deleteEmbeddedDocuments('ActiveEffect', effectsToRemove);
+                // TODO print
+            },
         },
     };
 
@@ -385,6 +397,7 @@ export class ActiveEffect extends Action {
         Validate.isInArray({ operation }, Object.keys(this.options.operations));
         Validate.isObject({ effectData });
         Validate.isBoolean({ print });
+        this.validateEffectData(effectData);
     }
 
     static validateEffectData(effectData) {
@@ -398,7 +411,10 @@ export class ActiveEffect extends Action {
         }
     }
 
-    static resolve(document, data) {}
+    static async resolve(actor, data) {
+        const { operation } = data;
+        await this.options.operations[operation](actor, data);
+    }
 }
 
 export const actions = [Comparison, UpdateDoc, Roll, ActiveEffect];
