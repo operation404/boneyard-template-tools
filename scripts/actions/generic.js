@@ -426,18 +426,18 @@ export class StatusEffect extends ActiveEffect {
      * @param {object} data
      * @param {string} data.operation
      * @param {string|string[]} data.statuses
-     * @param {boolean} data.print
+     * @param {boolean} [data.print]
      */
     constructor(data) {
         data.statuses = Array.isArray(data.statuses) ? data.statuses : [data.statuses];
         const { operation, statuses, print } = data;
-        Validate.isInArray({ statuses }, this.options.statusEffects);
+        //Validate.isInArray({ statuses }, this.options.statusEffects);
         const effectData = statuses.map((status) => {
             const statusData = CONFIG.statusEffects.find((s) => s.id === status);
             return {
-                label: statusData.name,
+                label: statusData?.name.split('EFFECT.Status')[1],
                 statuses: [status],
-                icon: statusData.icon,
+                icon: statusData?.icon,
             };
         });
         super({ operation, effectData, print });
