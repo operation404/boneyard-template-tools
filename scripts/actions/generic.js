@@ -359,14 +359,12 @@ export class ActiveEffect extends Action {
     static options = {
         operations: {
             apply: async (actor, { effectData, print }) => {
-                //await this.options.operations.remove(actor, { effectData, print });
                 const updateEffects = [];
                 const createEffects = effectData.filter((e) => {
                     const effect = actor.effects.find((f) => f.label === e.label);
                     if (effect) updateEffects.push({ _id: effect.id, ...e });
-                    else return e;
+                    else return true;
                 });
-
                 await actor.updateEmbeddedDocuments('ActiveEffect', updateEffects);
                 await actor.createEmbeddedDocuments('ActiveEffect', createEffects);
                 // TODO print
