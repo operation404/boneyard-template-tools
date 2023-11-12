@@ -383,7 +383,22 @@ export class ActiveEffect extends Action {
      */
     static validateData({ operation, effectData, print }) {
         Validate.isInArray({ operation }, Object.keys(this.options.operations));
+        Validate.isObject({ effectData });
+        Validate.isBoolean({ print });
     }
+
+    static validateEffectData(effectData) {
+        try {
+            const docClass = CONFIG.ActiveEffect.documentClass;
+            effectData.forEach((d) => new docClass(d));
+        } catch (e) {
+            console.error('Invalid ActiveEffect data.');
+            console.error(e.message);
+            console.error(e);
+        }
+    }
+
+    static resolve(document, data) {}
 }
 
 export const actions = [Comparison, UpdateDoc, Roll, ActiveEffect];
