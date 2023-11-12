@@ -417,4 +417,31 @@ export class ActiveEffect extends Action {
     }
 }
 
-export const actions = [Comparison, UpdateDoc, Roll, ActiveEffect];
+export class StatusEffect extends ActiveEffect {
+    static options = {
+        statusEffects: CONFIG.statusEffects.map((e) => e.id),
+    };
+
+    /**
+     * @param {object} data
+     * @param {string} data.operation
+     * @param {string|string[]} data.statuses
+     * @param {boolean} data.print
+     */
+    constructor(data) {
+        data.statuses = Array.isArray(data.statuses) ? data.statuses : [data.statuses];
+        const { operation, statuses, print } = data;
+        Validate.isInArray({ statuses }, this.options.statusEffects);
+        const effectData = statuses.map((status) => {
+            const statusData = CONFIG.statusEffects.find((s) => s.id === status);
+            return {
+                label: statusData.name,
+                statuses: [status],
+                icon: statusData.icon,
+            };
+        });
+        super({ operation, effectData, print });
+    }
+}
+
+export const actions = [Comparison, UpdateDoc, Roll, ActiveEffect, StatusEffect];
