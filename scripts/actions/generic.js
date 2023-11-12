@@ -364,9 +364,10 @@ export class ActiveEffect extends Action {
                 // TODO print
             },
             remove: async (actor, { effectData, print }) => {
-                const effectsToRemove = effectData.filter((e) => {
+                const effectsToRemove = [];
+                effectData.forEach((e) => {
                     const effect = actor.effects.find((f) => f.label === e.label);
-                    if (effect) return effect.id;
+                    if (effect) effectsToRemove.push(effect.id);
                 });
                 await actor.deleteEmbeddedDocuments('ActiveEffect', effectsToRemove);
                 // TODO print
