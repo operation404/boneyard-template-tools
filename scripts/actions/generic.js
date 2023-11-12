@@ -440,7 +440,15 @@ export class StatusEffect extends ActiveEffect {
                 icon: statusData?.icon,
             };
         });
-        super({ operation, effectData, print });
+        super({ operation, effectData, print: print ?? false });
+    }
+
+    static validateData(data) {
+        super.validateData.bind(Object.getPrototypeOf(this))(data);
+    }
+
+    static resolve(actor, data) {
+        super.resolve.bind(Object.getPrototypeOf(this))(actor, data);
     }
 }
 
