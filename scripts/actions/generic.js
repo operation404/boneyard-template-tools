@@ -403,7 +403,7 @@ export class ActiveEffect extends Action {
     static validateEffectData(effectData) {
         try {
             const docClass = CONFIG.ActiveEffect.documentClass;
-            effectData.forEach((d) => new docClass(d));
+            effectData.forEach((d) => new docClass({ ...d }));
         } catch (e) {
             console.error('Invalid ActiveEffect data.');
             console.error(e.message);
