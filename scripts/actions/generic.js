@@ -359,8 +359,16 @@ export class ActiveEffect extends Action {
     static options = {
         operations: {
             apply: async (actor, { effectData, print }) => {
-                await this.options.operations.remove(actor, { effectData, print });
-                await actor.createEmbeddedDocuments('ActiveEffect', effectData);
+                //await this.options.operations.remove(actor, { effectData, print });
+                const updateEffects = [];
+                const createEffects = effectData.filter((e) => {
+                    const effect = actor.effects.find((f) => f.label === e.label);
+                    if (effect) updateEffects.push({ _id: effect.id, ...e });
+                    else return e;
+                });
+
+                await actor.updateEmbeddedDocuments('ActiveEffect', updateEffects);
+                await actor.createEmbeddedDocuments('ActiveEffect', createEffects);
                 // TODO print
             },
             remove: async (actor, { effectData, print }) => {
@@ -412,8 +420,7 @@ export class ActiveEffect extends Action {
     }
 
     static async resolve(actor, data) {
-        const { operation } = data;
-        await this.options.operations[operation](actor, data);
+        await this.options.operations[data.operation](actor, data);
     }
 }
 
@@ -431,7 +438,6 @@ export class StatusEffect extends ActiveEffect {
     constructor(data) {
         data.statuses = Array.isArray(data.statuses) ? data.statuses : [data.statuses];
         const { operation, statuses, print } = data;
-        //Validate.isInArray({ statuses }, this.options.statusEffects);
         const effectData = statuses.map((status) => {
             const statusData = CONFIG.statusEffects.find((s) => s.id === status);
             return {
