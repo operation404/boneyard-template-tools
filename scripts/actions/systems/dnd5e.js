@@ -238,7 +238,14 @@ class SkillCheck extends Roll5E {
 }
 
 class CreatureType extends Comparison {
-    static options = {};
+    static options = {
+        //types: Object.keys(CONFIG.DND5E.creatureTypes),
+        // TODO
+        // Have action init method to set values available later in setup
+        // Actually I should probably not use hardcoded values here after all
+        // I should be checking at creation time in the live game, as it's possible
+        // the user has added new types/etc, same with other features
+    };
 
     /**
      * @param {object} data
