@@ -30,7 +30,9 @@
             }
         ]
     },
-    "esmodules": ["setup.js"],
+    "esmodules": [
+        "setup.js"
+    ],
     "scripts": [],
     "styles": [],
     "languages": [
