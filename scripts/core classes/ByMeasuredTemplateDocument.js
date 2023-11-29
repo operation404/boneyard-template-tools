@@ -71,7 +71,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
              * @param {Action|Action[]} actions
              */
             this.actionOnTokens = async function (actions) {
-                for (const token of this.getTokens()) await Boneyard.ActionPrefabs.actions.resolve(token, actions);
+                for (const token of this.getTokens()) await Boneyard.ActionPrefabs.resolve(token, actions);
             };
 
             /**
@@ -79,8 +79,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
              * @param {Action|Action[]} actions
              */
             this.actionOnTokenActors = async function (actions) {
-                for (const token of this.getTokens())
-                    await Boneyard.ActionPrefabs.actions.resolve(token.actor, actions);
+                for (const token of this.getTokens()) await Boneyard.ActionPrefabs.resolve(token.actor, actions);
             };
         }
     }
