@@ -65,8 +65,6 @@ export class PreviewTemplate extends MeasuredTemplate {
                 ? {
                       min: 0,
                       max: 0,
-                      // TODO restricted angle support
-                      // other shapes besides circles? Could do actual pixi shapes
                   }
                 : null,
             lockSize: true,
@@ -86,6 +84,9 @@ export class PreviewTemplate extends MeasuredTemplate {
             rememberControlled: false,
             callbacks: {},
         };
+        // TODO restricted angle support
+        // other shapes besides circles? Could do actual pixi shapes. 
+        // Point must be inside the shape to be valid.
     }
 
     /**

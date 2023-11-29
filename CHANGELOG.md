@@ -1,3 +1,21 @@
+# Changelog
+
+## 3.0.0
+
+Templates:
+
+- Added method `targetTokens` - targets all colliding tokens.
+- Added method `forEachToken` - runs passed function on all colliding tokens.
+- Bugfix for incorrect bounding box collision calculation resulting in failed collisions.
+
+Template Previews:
+
+- Template Previews added.
+  - Pass initial data and create the template with live previewing enabled, allowing adjustments to be made before placing the template.
+  - Restrictions can be added, limiting the ability to move the template, change its size, or rotate it.
+
+Current roadmap is to work on a way to make compositions of basic shapes for t emplating as well as using shapes to further restrict the placement of template previews.
+
 ## 2.0.0
 
 Complete rewrite of the original module.
