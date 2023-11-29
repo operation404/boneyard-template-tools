@@ -1,5 +1,5 @@
 export const MODULE = 'boneyard-template-tools';
-export const SOCKET = 'module.boneyard-template-tools';
+export const SOCKET = `module.${MODULE}`;
 
 export const SETTINGS = Object.freeze(
     Object.fromEntries(
@@ -9,7 +9,6 @@ export const SETTINGS = Object.freeze(
             'PERCENTAGE_OUTPUT',
             'TOKEN_COLLISION_SHAPE',
             'CONSIDER_TEMPLATE_RATIO',
-            'PLAYERS_CAN_USE_ACTIONS',
         ].map((v) => [v, v])
     )
 );

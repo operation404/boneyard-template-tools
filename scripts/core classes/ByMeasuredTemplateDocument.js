@@ -1,6 +1,5 @@
 import * as CONST from '../constants.js';
 import { ByTokenDocument } from './ByTokenDocument.js';
-import { actionAPI } from '../actions/handler.js';
 
 /**
  * @classdesc   An extension of the client-side Measured Template document that implements
@@ -61,6 +60,30 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     static _defaultConsiderTemplateRatio;
 
     // -------------------- Private Instance Fields --------------------
+
+    constructor(...args) {
+        super(...args);
+
+        // If Action Prefabs module is present, add utility functions to run actions
+        if (game.modules.get('boneyard-action-prefabs')?.active) {
+            /**
+             * Run action prefabs on tokens colliding with template.
+             * @param {Action|Action[]} actions
+             */
+            this.actionOnTokens = async function (actions) {
+                for (const token of this.getTokens()) await Boneyard.ActionPrefabs.actions.resolve(token, actions);
+            };
+
+            /**
+             * Run action prefabs on actors of tokens colliding with template.
+             * @param {Action|Action[]} actions
+             */
+            this.actionOnTokenActors = async function (actions) {
+                for (const token of this.getTokens())
+                    await Boneyard.ActionPrefabs.actions.resolve(token.actor, actions);
+            };
+        }
+    }
 
     /**
      * Find the percentage of how many points from a set are contained inside of a template.
@@ -284,19 +307,5 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      */
     forEachToken(func) {
         for (const token of this.getTokens) func(token);
-    }
-
-    /**
-     * @param {Action|Action[]} actions
-     */
-    async actionOnTokens(actions) {
-        for (const token of this.getTokens()) await actionAPI.resolve(token, actions);
-    }
-
-    /**
-     * @param {Action|Action[]} actions
-     */
-    async actionOnTokenActors(actions) {
-        for (const token of this.getTokens()) await actionAPI.resolve(token.actor, actions);
     }
 }
