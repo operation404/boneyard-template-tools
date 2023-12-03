@@ -85,14 +85,26 @@ export class PreviewTemplate extends MeasuredTemplate {
             callbacks: {},
         };
         // TODO restricted angle support
-        // other shapes besides circles? Could do actual pixi shapes. 
+        // other shapes besides circles? Could do actual pixi shapes.
         // Point must be inside the shape to be valid.
     }
 
     /**
+     * @typedef {Object} PreviewConfiguration
+     * @property {number} [interval]                                Interval for grid snapping. An interval of 1 snaps to grid vertices only, an interval of 2 allows placement at the halfway point, and so on.
+     * @property {boolean} [lockPosition]                           Whether the template is allowed to move or not.
+     * @property {{min: number, max: number}} [restrictPosition]    Restricts the template to being within a certain range of distance from its original position.
+     * @property {boolean} [lockSize]                               Whether the template can be resized or not.
+     * @property {{min: number, max: number}} [restrictSize]        Restricts the template's size to being within the specified range. Uses the canvas distance units.
+     * @property {boolean} [lockRotation]                           Whether the template can be rotated or not.
+     * @property {{min: number, max: number}} [restrictRotation]    Restricts the template's direction to being within the specified range. Values must fall between 0 and 360. If min is larger than max the allowed range starts at min and continues to 360, at which the direction wraps to 0, and continues to max.
+     * @property {boolean} [rememberControlled]                     Whether to reselect the currently controlled tokens after previewing template placement is complete.
+     */
+
+    /**
      *
      * @param {Object} templateData
-     * @param {Object} config
+     * @param {PreviewConfiguration} [config]
      * @returns {MeasuredTemplate|undefined}
      */
     static async createPreview(templateData, config) {
@@ -311,7 +323,7 @@ export class PreviewTemplate extends MeasuredTemplate {
     }
 
     /**
-     * Rotate the template preview by 3˚ increments when the mouse wheel is rotated.
+     * Rotate the template preview by 5˚ increments when the mouse wheel is rotated.
      * @param {Event} event  Triggering mouse event.
      */
     _onRotatePlacement(event) {
