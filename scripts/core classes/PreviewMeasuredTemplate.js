@@ -102,9 +102,14 @@ export class PreviewTemplate extends MeasuredTemplate {
      */
 
     /**
-     *
-     * @param {Object} templateData
-     * @param {PreviewConfiguration} [config]
+     * Creates a live preview template from the `templateData` parameter, allowing updates
+     * to its position, size, and rotation that can be viewed as changes are made. Left-clicking
+     * on the canvas will place the template and return the newly generated document, other
+     * actions will cancel template placement.
+     * @param {Object} templateData             The data from which to construct a measured template.
+     * @param {number} [templateData.x]         If both an x and y value are defined, the template is generated at that position. If either is missing, the template is generated at the mouse pointer's current position.
+     * @param {number} [templateData.y]
+     * @param {PreviewConfiguration} [config]   Options for previewing template placement.
      * @returns {MeasuredTemplate|undefined}
      */
     static async createPreview(templateData, config) {
