@@ -91,7 +91,7 @@ export class PreviewTemplate extends MeasuredTemplate {
 
     /**
      * @typedef {Object} PreviewConfiguration
-     * @property {number} [interval]                                Interval for grid snapping. An interval of 1 snaps to grid vertices only, an interval of 2 allows placement at the halfway point, and so on.
+     * @property {number} [interval]                                Interval for grid snapping. An interval of 1 snaps to grid vertices only, an interval of 2 allows placement at the halfway point, and so on. An Interval of 0 does not snap to the grid.
      * @property {boolean} [lockPosition]                           Whether the template is allowed to move or not.
      * @property {{min: number, max: number}} [restrictPosition]    Restricts the template to being within a certain range of distance from its original position.
      * @property {boolean} [lockSize]                               Whether the template can be resized or not.
