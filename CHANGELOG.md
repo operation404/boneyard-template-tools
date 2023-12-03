@@ -14,7 +14,7 @@ Template Previews:
   - Pass initial data and create the template with live previewing enabled, allowing adjustments to be made before placing the template.
   - Restrictions can be added, limiting the ability to move the template, change its size, or rotate it.
 
-Current roadmap is to work on a way to make compositions of basic shapes for t emplating as well as using shapes to further restrict the placement of template previews.
+Current roadmap is to work on a way to make compositions of basic shapes for templating as well as using shapes to further restrict the placement of template previews.
 
 ## 2.0.0
 
