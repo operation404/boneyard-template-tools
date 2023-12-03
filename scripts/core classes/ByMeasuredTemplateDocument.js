@@ -294,7 +294,6 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * @param {string} [options.collisionMethod]            Type of collision detection method to use.
      * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
      * @param {string} [options.tokenCollisionShape]        What shape type to use for the token's collision area.
-    
      */
     targetTokens(options) {
         game.user.updateTokenTargets(this.getTokens(options).map((t) => t.id));
