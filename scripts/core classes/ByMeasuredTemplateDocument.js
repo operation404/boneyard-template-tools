@@ -290,8 +290,8 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     /**
      * Update user targets to the tokens colliding with the template.
      */
-    targetTokens() {
-        game.user.updateTokenTargets(this.getTokens().map((t) => t.id));
+    targetTokens(options) {
+        game.user.updateTokenTargets(this.getTokens(options).map((t) => t.id));
     }
 
     /**
@@ -304,7 +304,7 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
      * Run the passed callback on each token colliding with the template.
      * @param {forEachTokenCallback} func
      */
-    forEachToken(func) {
-        for (const token of this.getTokens) func(token);
+    forEachToken(func, options) {
+        for (const token of this.getTokens(options)) func(token);
     }
 }
