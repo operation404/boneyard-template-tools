@@ -289,6 +289,12 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
 
     /**
      * Update user targets to the tokens colliding with the template.
+     * @param {object} [options]                            Options to configure how collision is calculated.
+     * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
+     * @param {string} [options.collisionMethod]            Type of collision detection method to use.
+     * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
+     * @param {string} [options.tokenCollisionShape]        What shape type to use for the token's collision area.
+    
      */
     targetTokens(options) {
         game.user.updateTokenTargets(this.getTokens(options).map((t) => t.id));
@@ -303,6 +309,11 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
     /**
      * Run the passed callback on each token colliding with the template.
      * @param {forEachTokenCallback} func
+     * @param {object} [options]                            Options to configure how collision is calculated.
+     * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
+     * @param {string} [options.collisionMethod]            Type of collision detection method to use.
+     * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
+     * @param {string} [options.tokenCollisionShape]        What shape type to use for the token's collision area.
      */
     forEachToken(func, options) {
         for (const token of this.getTokens(options)) func(token);
