@@ -67,19 +67,29 @@ export class ByMeasuredTemplateDocument extends CONFIG.MeasuredTemplate.document
         // If Action Prefabs module is present, add utility functions to run actions
         if (game.modules.get('boneyard-action-prefabs')?.active) {
             /**
-             * Run action prefabs on tokens colliding with template.
-             * @param {Action|Action[]} actions
+             * Resolve Action Prefabs on tokens colliding with template.
+             * @param {Action|Action[]} actions                     Action instances to resolve on the documents of the colliding tokens.
+             * @param {object} [options]                            Options to configure how collision is calculated.
+             * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
+             * @param {string} [options.collisionMethod]            Type of collision detection method to use.
+             * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
+             * @param {string} [options.tokenCollisionShape]        What shape type to use for the token's collision area.
              */
-            this.actionOnTokens = async function (actions) {
-                for (const token of this.getTokens()) await Boneyard.ActionPrefabs.resolve(token, actions);
+            this.actionOnTokens = async function (actions, options) {
+                for (const token of this.getTokens(options)) await Boneyard.ActionPrefabs.resolve(token, actions);
             };
 
             /**
-             * Run action prefabs on actors of tokens colliding with template.
-             * @param {Action|Action[]} actions
+             * Resolve Action Prefabs on actors of tokens colliding with template.
+             * @param {Action|Action[]} actions                     Action instances to resolve on the actor documents of the colliding tokens.
+             * @param {object} [options]                            Options to configure how collision is calculated.
+             * @param {number} [options.tolerance]                  Percentage of overlap needed to be considered inside the template.
+             * @param {string} [options.collisionMethod]            Type of collision detection method to use.
+             * @param {boolean} [options.considerTemplateRatio]     Whether to account for the ratio of the intersection and template areas.
+             * @param {string} [options.tokenCollisionShape]        What shape type to use for the token's collision area.
              */
-            this.actionOnTokenActors = async function (actions) {
-                for (const token of this.getTokens()) await Boneyard.ActionPrefabs.resolve(token.actor, actions);
+            this.actionOnTokenActors = async function (actions, options) {
+                for (const token of this.getTokens(options)) await Boneyard.ActionPrefabs.resolve(token.actor, actions);
             };
         }
     }
