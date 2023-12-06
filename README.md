@@ -4,7 +4,7 @@ See my other modules in the [Boneyard Collection](https://github.com/operation40
 
 Boneyard Template Tools extends the `MeasuredTemplateDocument` and `TokenDocument` classes to add new functionality for detecting collisions between tokens and templates, as well as adding utilities for live previewing of template placement.
 
-Documentation on how to use template collision and template previews has been moved to the repository [wiki](https://github.com/operation404/boneyard-template-tools/wiki).
+Documentation and examples can be found in the repository [wiki](https://github.com/operation404/boneyard-template-tools/wiki).
 
 ## TODO
 - [ ] Create a new template subclass that represents a set operation on two or more templates.
