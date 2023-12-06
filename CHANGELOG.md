@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.0
+
+- Bugfixes and documentation for Action Prefab utility methods.
+
 ## 3.0.0
 
 Templates:
