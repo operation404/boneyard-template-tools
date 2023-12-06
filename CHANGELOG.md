@@ -2,7 +2,7 @@
 
 ## 3.1.0
 
-- Bugfixes and documentation for Action Prefab utility methods.
+- Bugfixes and documentation for Action Prefab utility methods `actionOnTokens` and `actionOnTokenActors`.
 
 ## 3.0.0
 
